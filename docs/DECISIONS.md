@@ -35,9 +35,23 @@
 - **Decision:** Do not add provider-specific AI or payment dependencies until the owner approves a separate scope and operational review.
 - **Consequences:** Initial releases focus on portfolio, knowledge, enquiries, booking requests, and basic support. Later integrations require security, cost, compliance, and failure-mode reviews.
 
+## ADR-0006: Use Filament 5 and Livewire 4 for the CMS foundation
+
+- **Status:** Accepted for the administration interface.
+- **Context:** The project needs a maintainable Laravel-native admin interface with reusable CRUD patterns and no separate frontend deployment.
+- **Decision:** Use Filament 5.11 with its Livewire 4 dependency for the initial admin panel. Keep domain rules and access decisions in Laravel models/policies and validate accessibility on actual workflows before release.
+- **Consequences:** The initial admin panel is available at `/admin`, with account access explicitly restricted to users marked as administrators. Filament assets must be published for deployment. The generated panel is a foundation, not a completed CMS.
+
+## ADR-0007: Require explicit administrator provisioning
+
+- **Status:** Accepted for the initial admin foundation.
+- **Context:** The CMS must not be available to ordinary customer accounts, and no admin credentials should be embedded in source control or seeded by default.
+- **Decision:** Add a non-mass-assignable `is_admin` flag defaulting to false and require `canAccessPanel()` to approve panel access. Provision administrators through the interactive `app:create-admin-user` command; use a minimum 12-character password and do not commit credentials.
+- **Consequences:** There is no public admin registration route. Granular roles/permissions remain future work; the boolean is a deliberately narrow initial boundary and must be replaced/extended before adding multiple editor/technician permission levels.
+
 ## Open decisions
 
 - Confirm production host, database, object storage, queue and mail services.
-- Validate Filament and Livewire against accessibility and admin workflow needs before selecting/adding packages.
+- Run manual accessibility testing on Filament admin workflows before claiming conformance.
 - Select the Flutter state-management library during the mobile foundation spike.
 - Define business timezone and booking rules before scheduling implementation.

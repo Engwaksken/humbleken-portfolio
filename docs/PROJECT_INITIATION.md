@@ -1,8 +1,8 @@
 # IT Problem Solver — Project Initiation Report
 
-**Status:** Phase 0 proposal for owner review  
+**Status:** Phase 0 planning underway; direction approved, final decisions remain open
 **Date:** 28 October 2026  
-**Decision requested:** Approve or amend the MVP boundaries and proposed architecture before implementation.
+**Decision status:** Direction approved; confirm/amend remaining MVP details and architecture decisions before implementation.
 
 ## 1. Executive summary
 
@@ -12,7 +12,7 @@ The platform should launch in useful increments. The first release should establ
 
 ## 2. Discovery baseline and assumptions
 
-- The supplied working directory contains no project files and is not a Git repository. No existing application, stack, or repository conventions were available to audit.
+- The supplied working directory contains an existing project/repository; its contents and conventions must be audited before implementation. Do not treat it as an empty directory.
 - “IT Problem Solver” is the current working name. Name, domain, logo, owner identity, and brand settings must be configurable.
 - Initial language is English. The product should be localization-ready without embedding Uganda-specific rules in core logic.
 - A single engineer is the initial operating assumption; roles and assignments should accommodate a small support team later.
@@ -54,7 +54,7 @@ A practical, accessible IT consultancy platform that demonstrates engineering ca
 | Booking | Service request and booking workflow, configurable availability, confirmation | Payments, calendar/meeting integrations, reminders |
 | Support | Basic private ticket create/reply/status workflow | SLA reporting, assignment automation, customer satisfaction |
 | Customer account | Authentication and own bookings/tickets | Full customer portal, MFA, exports and retention controls |
-| Mobile app | Public portfolio/services/articles and contact; API foundation | Customer tickets/bookings, push, offline content, AI |
+| Mobile app | API foundation only; Flutter app is later/post-MVP | Public portfolio/services/articles/contact, then customer tickets/bookings, push, offline content |
 | AI assistant | Not required for MVP; establish safe extension points only | Public knowledge assistant, source attribution, escalation, then authorized customer context |
 | Billing and payments | Out of MVP | Quotes, invoices, payment adapters and verified webhooks |
 | Analytics | Operational counts needed by admin | Privacy-conscious engagement, AI and revenue reporting |
@@ -66,7 +66,7 @@ A practical, accessible IT consultancy platform that demonstrates engineering ca
 - **Backend:** Supported Laravel release with a supported PHP version, modular monolith, PostgreSQL, versioned REST JSON API, Laravel Sanctum for first-party/mobile authentication, policies for authorization, and queued notifications where warranted.
 - **Web:** Laravel Blade with Livewire for interactive workflows. This keeps public pages server-rendered for SEO and bandwidth-conscious use, while reducing separate frontend deployment and API duplication. Use semantic HTML and progressive enhancement; avoid making JavaScript essential for core tasks.
 - **CMS/admin:** Evaluate and, unless a proof-of-fit reveals a blocker, use Filament for authenticated administration. Keep domain rules in application services/models and policies rather than admin resources so web and API clients share behavior.
-- **Mobile:** Flutter application consuming the same versioned API. A feature-oriented structure with presentation, application/state, domain, and data boundaries; choose Riverpod or an equivalent maintained state solution during the Flutter foundation spike. Use secure platform token storage.
+- **Mobile (later/post-MVP):** Flutter application consuming the same versioned API. A feature-oriented structure with presentation, application/state, domain, and data boundaries; choose Riverpod or an equivalent maintained state solution during the Flutter foundation spike. Use secure platform token storage.
 - **Infrastructure:** Environment-based configuration; Docker Compose for reproducible local development if the selected host supports the same container model; object storage abstraction for media; Redis only when queue/cache/rate-limit scale justifies operating it. Start with database-backed queues if operational simplicity is preferable.
 - **API contract:** OpenAPI documentation, consistent validation/error envelopes, pagination, explicit resource authorization, and contract/feature tests. Public content endpoints separated from authenticated customer endpoints.
 
@@ -111,7 +111,7 @@ Test critical journeys manually with keyboard-only use and screen readers (web a
 
 ### Included
 
-Laravel foundation; secure admin/CMS; configurable professional profile; portfolio projects and case studies; managed service catalogue; searchable troubleshooting/article content; contact enquiries; basic appointment request/availability workflow; basic customer accounts and private support tickets; responsive accessible public website; versioned API foundation; Flutter public companion foundation; email notifications; SEO essentials; automated tests and deployment documentation.
+Laravel foundation; secure admin/CMS; configurable professional profile; portfolio projects and case studies; managed service catalogue; searchable troubleshooting/article content; contact enquiries; basic appointment request/availability workflow; basic customer accounts and private support tickets; responsive accessible public website; versioned API foundation for a future Flutter client; email notifications; SEO essentials; automated tests and deployment documentation. Flutter is later/post-MVP.
 
 ### Explicitly deferred
 
@@ -130,8 +130,8 @@ Critical public journeys work on mobile and desktop; owner can publish/update co
 | 2 — Public portfolio and CMS | Public profile, project catalogue/case studies, media/video embeds, services, contact and admin publishing workflow. |
 | 3 — Knowledge platform | Articles/troubleshooting, taxonomy, search/filter, safety content, SEO and accessibility review. |
 | 4 — Consultancy | Customer access, booking availability/request flow, support tickets, notifications, admin workflows and ownership tests. |
-| 5 — AI assistance | Only after approval: provider adapter, public retrieval, source attribution, safety/abuse controls, escalation, cost monitoring; customer-aware mode separately gated. |
-| 6 — Flutter | Public screens against API, then authenticated booking/ticket workflows, secure storage, accessibility and release preparation. |
+| Later — AI assistance | Only after approval: provider adapter, public retrieval, source attribution, safety/abuse controls, escalation, cost monitoring; customer-aware mode separately gated. |
+| Later — Flutter (post-MVP) | Public screens against API, then authenticated booking/ticket workflows, secure storage, accessibility and release preparation. No ordering between Flutter and AI is approved. |
 | 7 — Business enhancements | Evaluate regional/international payment providers; implement approved quote/invoice/payment scope and reporting. |
 | 8 — Production hardening | Security/accessibility/performance testing, UAT, deployment/monitoring, restore drill, documentation, launch gate. |
 
@@ -148,12 +148,12 @@ Planning estimates are relative person-weeks for one experienced full-stack engi
 | Public site, CMS content and portfolio/media | 4–6 |
 | Services, articles, knowledge search and SEO | 3–5 |
 | Booking, customer accounts, tickets, notifications | 4–7 |
-| Flutter public companion and API integration | 4–7 |
+| Flutter public companion and API integration (later/post-MVP) | 4–7 |
 | AI assistant (separate later scope) | 4–8 |
 | Quotes/payments/financial workflows (separate later scope) | 4–8+ |
 | Hardening, accessibility, UAT and production readiness | 3–5 |
 
-Overall MVP is approximately **20–33 person-weeks** including foundation, core web, basic consultancy workflows, a basic Flutter companion, and hardening. The range is wide because content, booking rules, hosting, mobile release needs, and the depth of admin workflows remain unconfirmed. A solo developer's calendar duration will be longer than person-weeks where review or operational work is concurrent.
+The web MVP is approximately **19-31 person-weeks**, the sum of the listed web MVP work-area ranges (excluding Flutter), not a separate overlap-adjusted estimate. The broader option including a basic Flutter companion was approximately **20-33 person-weeks** in the original initiation estimate; it is not an approved sequencing decision. These are planning ranges, not commitments. The range is wide because content, booking rules, hosting, and the depth of admin workflows remain unconfirmed. A solo developer's calendar duration will be longer than person-weeks where review or operational work is concurrent. Flutter and AI are both later/post-MVP, with no approved ordering between them.
 
 ## 13. Major risks and mitigations
 
@@ -176,7 +176,7 @@ These answers refine scope; safe defaults allow planning to continue.
 
 1. **Owner identity and business name?** Required before public launch; use configurable placeholder content meanwhile.
 2. **Final platform/brand name, domain, logo, colours?** Required for launch polish; default working name and proposed navy/blue/teal palette.
-3. **Existing repository or code to import?** Current supplied directory is empty; confirm whether another repository exists before scaffolding.
+3. **Existing repository or code to import?** An existing project/repository is present in the supplied working directory; audit its state, structure, and conventions before proposing implementation changes.
 4. **Hosting preference and operational constraints?** Needed before environment/deployment work; default to a managed Linux host supporting PHP, PostgreSQL, HTTPS, queues and object storage.
 5. **Initial audience and service region/business jurisdiction?** Needed for localization, timezone, privacy and payment decisions; default English-first, region-flexible.
 6. **Mobile platforms?** Confirm whether Android and iOS both must launch together; default Flutter source supports both, with store release timing decided later.
@@ -206,8 +206,8 @@ These answers refine scope; safe defaults allow planning to continue.
 Please review and approve or amend:
 
 1. The MVP boundary and deliberate deferral of AI and payments.
-2. Laravel modular monolith with Blade/Livewire public web, Filament admin, PostgreSQL, versioned REST API, and Flutter clients.
+2. Laravel modular monolith with Blade/Livewire public web, Filament admin, PostgreSQL and versioned REST API; Flutter is a later/post-MVP client.
 3. Solo-engineer, English-first and no-online-payment launch assumptions.
-4. The proposed discovery sprint and the effort range as a planning baseline.
+4. The proposed discovery sprint and effort ranges as planning baselines. Direction is approved; final brand, hosting, and production database choices remain open.
 
 No major application feature implementation is authorized by this report alone.

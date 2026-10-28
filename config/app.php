@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'SmartEngineer'),
+    'name' => env('APP_NAME', 'IT Problem Solver'),
 
     /*
     |--------------------------------------------------------------------------

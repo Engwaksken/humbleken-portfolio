@@ -18,9 +18,9 @@ class ExampleTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Turning Complex IT Challenges into')
-            ->assertSee('Technology that works for your business.')
-            ->assertSee('Let’s make your next IT challenge simpler.')
-            ->assertSee('Contact details coming soon.');
+            ->assertSee('IT should make your day easier.')
+            ->assertSee('The tech stuff that keeps nagging at you.')
+            ->assertSee('Plain talk. Useful answers. No pressure.')
+            ->assertSee('Contact details are being added.');
     }
 }

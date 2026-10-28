@@ -1,6 +1,6 @@
 # humbleken-portfolio
 
-SmartEngineer is a configurable IT consultancy portfolio and customer support platform.
+IT Problem Solver is a configurable IT consultancy portfolio and customer support platform.
 The current foundation uses Laravel 12 and PHP 8.2+, with a versioned JSON API.
 
 ## Local setup

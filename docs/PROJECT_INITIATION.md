@@ -1,4 +1,4 @@
-# SmartEngineer — Project Initiation Report
+# IT Problem Solver — Project Initiation Report
 
 **Status:** Phase 0 proposal for owner review  
 **Date:** 28 October 2026  
@@ -6,14 +6,14 @@
 
 ## 1. Executive summary
 
-SmartEngineer is envisioned as a professional digital home and operating platform for an independent Computer Engineer and IT Consultant. It should combine a search-friendly public portfolio and service catalogue with practical customer workflows, a secure content-management experience, and a Flutter companion app. The guiding promise is **“Turning Complex IT Challenges into Simple, Reliable Solutions.”**
+IT Problem Solver is envisioned as a professional digital home and operating platform for an independent Computer Engineer and IT Consultant. It should combine a search-friendly public portfolio and service catalogue with practical customer workflows, a secure content-management experience, and a Flutter companion app. The guiding promise is **“Turning Complex IT Challenges into Simple, Reliable Solutions.”**
 
 The platform should launch in useful increments. The first release should establish a trustworthy public presence and reliable ways to discover work, learn from troubleshooting content, make enquiries, request a consultation, and submit a basic support ticket. AI, payments, complex CRM, and advanced analytics should follow only when their requirements, operating costs, and safeguards are understood.
 
 ## 2. Discovery baseline and assumptions
 
 - The supplied working directory contains no project files and is not a Git repository. No existing application, stack, or repository conventions were available to audit.
-- “SmartEngineer” is a working name, not a final brand. Name, domain, logo, owner identity, and brand settings must be configurable.
+- “IT Problem Solver” is the current working name. Name, domain, logo, owner identity, and brand settings must be configurable.
 - Initial language is English. The product should be localization-ready without embedding Uganda-specific rules in core logic.
 - A single engineer is the initial operating assumption; roles and assignments should accommodate a small support team later.
 - Public content is anonymous and indexable where appropriate. Customer records and support content are private by default.

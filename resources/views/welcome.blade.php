@@ -41,32 +41,32 @@
                         <a href="#services" class="inline-flex items-center rounded-full border border-slate-300 bg-white/60 px-6 py-3.5 text-sm font-semibold transition hover:border-slate-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">Explore services</a>
                     </div>
                 </div>
-                <div aria-label="Technology made clear: understand, simplify, strengthen" class="rounded-[2rem] border border-slate-200 bg-white/75 p-7 shadow-[0_24px_80px_-40px_rgba(15,23,42,.3)] sm:p-10">
-                    <p class="text-xs font-semibold uppercase tracking-[.2em] text-slate-500">A clearer way forward</p>
+                <aside aria-labelledby="process-title" class="rounded-[2rem] border border-slate-200 bg-white/75 p-7 shadow-[0_24px_80px_-40px_rgba(15,23,42,.3)] sm:p-10">
+                    <h2 id="process-title" class="text-xs font-semibold uppercase tracking-[.2em] text-slate-500">A clearer way forward</h2>
                     <ol class="mt-8 space-y-7">
                         <li class="flex gap-5">
                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-sm font-bold text-teal-800">01</span>
                             <div>
-                                <h2 class="font-semibold">Understand the challenge</h2>
+                                <h3 class="font-semibold">Understand the challenge</h3>
                                 <p class="mt-1 text-sm leading-6 text-slate-600">Start with your goals, constraints, and the people who rely on your systems.</p>
                             </div>
                         </li>
                         <li class="flex gap-5">
                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-sm font-bold text-amber-800">02</span>
                             <div>
-                                <h2 class="font-semibold">Make complexity manageable</h2>
+                                <h3 class="font-semibold">Make complexity manageable</h3>
                                 <p class="mt-1 text-sm leading-6 text-slate-600">Turn the problem into practical options and a clear plan.</p>
                             </div>
                         </li>
                         <li class="flex gap-5">
                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-bold text-slate-700">03</span>
                             <div>
-                                <h2 class="font-semibold">Build for reliability</h2>
+                                <h3 class="font-semibold">Build for reliability</h3>
                                 <p class="mt-1 text-sm leading-6 text-slate-600">Focus on solutions that are understandable, maintainable, and fit for purpose.</p>
                             </div>
                         </li>
                     </ol>
-                </div>
+                </aside>
             </div>
         </section>
 

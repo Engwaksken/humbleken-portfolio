@@ -16,6 +16,11 @@ class ExampleTest extends TestCase
 
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response
+            ->assertOk()
+            ->assertSee('Turning Complex IT Challenges into')
+            ->assertSee('Technology that works for your business.')
+            ->assertSee('Let’s make your next IT challenge simpler.')
+            ->assertSee('Contact details coming soon.');
     }
 }

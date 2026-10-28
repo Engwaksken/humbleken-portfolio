@@ -35,4 +35,30 @@ commit `.env` or production credentials.
 php artisan test
 ```
 
+## Production deployment checklist
+
+Before exposing the application publicly:
+
+- Set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` to the HTTPS site URL,
+  and provide a unique `APP_KEY` through the deployment secret manager. Never
+  regenerate the key for an existing installation.
+- Configure a production database and run `php artisan migrate --force` during
+  deployment. Set up backups and verify that a restore works.
+- Configure a real mail transport and sender address. The example environment
+  uses the `log` mailer and is not suitable for delivering email.
+- Configure persistent storage and queue/cache services appropriate for the
+  deployment. Run a supervised queue worker if queued jobs are enabled.
+- Serve the app over HTTPS and set `SESSION_SECURE_COOKIE=true`. Ensure the web
+  server points to Laravel's `public/` directory and that `storage/` and
+  `bootstrap/cache/` are writable by the application process.
+- Install frontend dependencies and build assets with `npm ci && npm run build`.
+  The CI workflow checks this build, but deployment still needs to publish the
+  generated `public/build` directory with the application release.
+- Run `php artisan optimize` after deployment configuration is available, and
+  verify the site and `/api/v1/health` endpoint from outside the host.
+
+The repository does not include a hosting-specific deployment definition.
+Validate these items against the selected host's secret management, database,
+TLS, backups, process supervision, and rollback procedures before launch.
+
 Product planning and scope are documented in [`docs/PROJECT_INITIATION.md`](docs/PROJECT_INITIATION.md).

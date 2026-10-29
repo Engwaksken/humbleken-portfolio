@@ -28,6 +28,6 @@ class BookingRequestController extends Controller
         // Alert admins by email without coupling the request to a particular notification channel.
         Notification::send(User::query()->where('is_admin', true)->get(), new BookingRequestReceived($booking));
 
-        return redirect()->to(route('home').'#booking')->with('booking_sent', true);
+        return redirect()->route('booking')->with('booking_sent', true);
     }
 }

@@ -100,7 +100,7 @@ class ProjectPublishingTest extends TestCase
         Project::factory()->create(['title' => 'Hidden draft']);
 
         $this->get('/')
-            ->assertSee('Recent work.')
+            ->assertSee('Recent work')
             ->assertSee('Visible on home')
             ->assertDontSee('Hidden draft')
             ->assertSee('href="'.route('projects.index').'"', false);

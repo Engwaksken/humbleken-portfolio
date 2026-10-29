@@ -19,12 +19,11 @@ class HomepageContentTest extends TestCase
         $this->withoutVite();
     }
 
-    public function test_fallback_services_are_shown_when_none_are_published(): void
+    public function test_services_page_is_linked_from_the_homepage(): void
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('Recurring technical issues')
-            ->assertSee('Contact details are being added.');
+            ->assertSee('href="'.route('services.index').'"', false);
     }
 
     public function test_active_services_are_listed_under_their_active_category(): void
@@ -36,7 +35,7 @@ class HomepageContentTest extends TestCase
             'summary' => 'Find and fix dead zones.',
         ]);
 
-        $this->get('/')
+        $this->get(route('services.index'))
             ->assertOk()
             ->assertSeeInOrder(['Network Support', 'Wi-Fi coverage audit', 'Find and fix dead zones.'])
             ->assertDontSee('Recurring technical issues');
@@ -47,7 +46,7 @@ class HomepageContentTest extends TestCase
         Service::factory()->create(['name' => 'Visible service']);
         Service::factory()->create(['name' => 'Hidden service', 'is_active' => false]);
 
-        $this->get('/')
+        $this->get(route('services.index'))
             ->assertSee('Visible service')
             ->assertDontSee('Hidden service');
     }
@@ -57,7 +56,7 @@ class HomepageContentTest extends TestCase
         $category = ServiceCategory::factory()->create(['name' => 'Retired Category', 'is_active' => false]);
         Service::factory()->create(['service_category_id' => $category->id, 'name' => 'Orphaned service']);
 
-        $this->get('/')
+        $this->get(route('services.index'))
             ->assertSee('Orphaned service')
             ->assertDontSee('Retired Category');
     }
@@ -68,9 +67,9 @@ class HomepageContentTest extends TestCase
         Settings::set('contact_email', 'hello@example.test');
         Settings::set('social_links', ['linkedin' => 'https://linkedin.example.test/acme', 'x' => '  ']);
 
-        $this->get('/')
+        $this->get(route('contact'))
             ->assertOk()
-            ->assertSee('<title>Acme Tech Help', false)
+            ->assertSee('<title>Discuss your technical requirements. — Acme Tech Help', false)
             ->assertSee('hello@example.test')
             ->assertSee('https://linkedin.example.test/acme')
             ->assertDontSee('Contact details are being added.');

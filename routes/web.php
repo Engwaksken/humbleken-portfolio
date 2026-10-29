@@ -10,10 +10,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicMediaController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SitePageController;
 use App\Http\Middleware\EnsureAdminMfaForTicketAttachments;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/services', [SitePageController::class, 'services'])->name('services.index');
+Route::get('/services/{slug}', [SitePageController::class, 'service'])->name('services.show');
+Route::get('/approach', [SitePageController::class, 'approach'])->name('approach');
+Route::get('/booking', [SitePageController::class, 'booking'])->name('booking');
+Route::get('/contact', [SitePageController::class, 'contact'])->name('contact');
 Route::get('/site-assets/{key}', [PublicMediaController::class, 'branding'])
     ->whereIn('key', ['logo', 'favicon'])
     ->name('site-assets.show');

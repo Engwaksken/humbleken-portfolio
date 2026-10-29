@@ -25,7 +25,7 @@ class BookingRequestTest extends TestCase
         $this->post(route('booking-requests.store'), [
             'name' => 'Ken', 'email' => 'ken@example.test', 'preferred_at' => now()->addDays(3)->format('Y-m-d\TH:i'),
             'message' => 'Discuss reliability.',
-        ])->assertRedirect(route('home').'#booking')->assertSessionHas('booking_sent');
+        ])->assertRedirect(route('booking'))->assertSessionHas('booking_sent');
 
         $this->assertDatabaseHas('booking_requests', ['email' => 'ken@example.test', 'status' => 'new']);
         Notification::assertSentTo($admin, BookingRequestReceived::class);

@@ -52,6 +52,6 @@ class StoreEnquiryRequest extends FormRequest
 
     protected function getRedirectUrl(): string
     {
-        return route('home').'#contact';
+        return route('contact');
     }
 }

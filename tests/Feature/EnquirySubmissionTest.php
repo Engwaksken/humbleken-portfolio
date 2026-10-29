@@ -36,9 +36,9 @@ class EnquirySubmissionTest extends TestCase
         ], $overrides);
     }
 
-    public function test_homepage_shows_the_enquiry_form(): void
+    public function test_contact_page_shows_the_enquiry_form(): void
     {
-        $this->get('/')
+        $this->get(route('contact'))
             ->assertOk()
             ->assertSee('action="'.route('enquiries.store').'"', false)
             ->assertSee('Send enquiry');
@@ -49,7 +49,7 @@ class EnquirySubmissionTest extends TestCase
         $service = Service::factory()->create();
 
         $this->post('/enquiries', $this->validPayload(['service_id' => $service->id]))
-            ->assertRedirect(route('home').'#contact')
+            ->assertRedirect(route('contact'))
             ->assertSessionHas('enquiry_sent', true);
 
         $enquiry = Enquiry::sole();
@@ -91,6 +91,7 @@ class EnquirySubmissionTest extends TestCase
     public function test_validation_errors_are_shown_next_to_fields(): void
     {
         $this->followingRedirects()
+            ->from(route('contact'))
             ->post('/enquiries', $this->validPayload(['email' => 'not-an-email']))
             ->assertSee('Please correct the highlighted fields')
             ->assertSee('id="enquiry-email-error"', false)

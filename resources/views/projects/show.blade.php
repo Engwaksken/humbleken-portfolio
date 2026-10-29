@@ -35,7 +35,7 @@
 
         <div class="mt-14 border-l-2 border-brand pl-4">
             <p class="font-semibold">Working on something similar?</p>
-            <a href="{{ route('home') }}#contact" class="mt-2 inline-block text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Send an enquiry</a>
+            <a href="{{ route('contact') }}" class="mt-2 inline-block text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Send an enquiry</a>
         </div>
     </article>
 </x-layouts.site>

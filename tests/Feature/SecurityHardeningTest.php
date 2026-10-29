@@ -23,7 +23,7 @@ class SecurityHardeningTest extends TestCase
 
     public function test_security_headers_are_sent(): void
     {
-        $this->get('/')
+        $this->get(route('contact'))
             ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
             ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
@@ -71,7 +71,7 @@ class SecurityHardeningTest extends TestCase
             'data' => 'data:text/html,hi',
         ]);
 
-        $this->get('/')
+        $this->get(route('contact'))
             ->assertSee('https://linkedin.example.test/me', false)
             ->assertDontSee('javascript:alert', false)
             ->assertDontSee('data:text/html', false);

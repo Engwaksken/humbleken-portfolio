@@ -36,7 +36,7 @@ class AdminServiceMediaTest extends TestCase
         Storage::disk('public')->assertExists($service->sample_image);
         $this->get(route('samples.show', ['type' => 'service', 'record' => $service->id]))->assertOk();
 
-        $this->get('/')
+        $this->get(route('services.show', $service->slug))
             ->assertSee('Sample image for Network assessment')
             ->assertSee('https://www.youtube-nocookie.com/embed/abcdefghijk');
     }

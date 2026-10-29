@@ -18,7 +18,7 @@ class EnquiryController extends Controller
         Notification::send(User::query()->where('is_admin', true)->get(), new EnquiryReceived($enquiry));
 
         return redirect()
-            ->to(route('home').'#contact')
+            ->route('contact')
             ->with('enquiry_sent', true);
     }
 }

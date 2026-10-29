@@ -30,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
             'articles.index', 'articles.show',
             'auth.login', 'auth.register', 'auth.forgot-password', 'auth.reset-password', 'auth.verify-email', 'auth.confirm-password',
             'account.dashboard', 'account.tickets.index', 'account.tickets.create', 'account.tickets.show',
+            'pages.*',
             'welcome',
         ], SiteComposer::class);
 

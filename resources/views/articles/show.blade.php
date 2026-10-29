@@ -44,7 +44,7 @@
 
         <div class="mt-14 border-l-2 border-brand pl-4">
             <p class="font-semibold">Need help applying this?</p>
-            <a href="{{ route('home') }}#contact" class="mt-2 inline-block text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-dark {{ $linkClass }}">Send an enquiry</a>
+            <a href="{{ route('contact') }}" class="mt-2 inline-block text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-dark {{ $linkClass }}">Send an enquiry</a>
         </div>
     </article>
 </x-layouts.site>

@@ -21,8 +21,7 @@ class ExampleTest extends TestCase
         $response
             ->assertOk()
             ->assertSee('Engineering solutions for')
-            ->assertSee('Technical expertise for systems and decisions.')
-            ->assertSee('Clear analysis. Practical recommendations.')
-            ->assertSee('Contact details are being added.');
+            ->assertSee('Explore services')
+            ->assertSee('href="'.route('services.index').'"', false);
     }
 }

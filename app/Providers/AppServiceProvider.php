@@ -24,8 +24,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer(['components.layouts.site', 'welcome', 'projects.index', 'projects.show', 'articles.index', 'articles.show'], SiteComposer::class);
+        View::composer([
+            'components.layouts.site',
+            'welcome',
+            'projects.index', 'projects.show',
+            'articles.index', 'articles.show',
+            'auth.login', 'auth.register', 'auth.forgot-password', 'auth.reset-password', 'auth.verify-email', 'auth.confirm-password',
+            'account.dashboard', 'account.tickets.index', 'account.tickets.create', 'account.tickets.show',
+        ], SiteComposer::class);
 
         RateLimiter::for('enquiries', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+        RateLimiter::for('tickets', fn (Request $request) => Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()));
     }
 }

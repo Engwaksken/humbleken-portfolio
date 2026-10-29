@@ -38,6 +38,13 @@ Planning decisions below reflect the approved direction, not proof that the asso
 - **Decision:** Articles share the projects' draft/scheduled publishing and safe Markdown rendering through a `Publishable` trait and a common `PublicationStatus` enum. Each article has at most one category and any number of tags. Search is a case-insensitive keyword match (`LIKE`) on title, excerpt and body, combined with category and tag filters; it is portable across SQLite and PostgreSQL. A full-text index can replace it once the production database is chosen and content volume justifies it. `/sitemap.xml` lists only public pages. Pages carry description, canonical and Open Graph tags; articles add published and modified times.
 - **Consequences:** `public/robots.txt` does not yet reference the sitemap because the production domain is open; add `Sitemap: https://<domain>/sitemap.xml` at launch.
 
+## ADR-0009: Customer accounts and support tickets
+- **Status:** Implemented for MVP. Booking requests and ticket attachments **deferred** pending owner decisions (booking rules, timezone, storage).
+- **Decision:** Customer sign-in uses Laravel Fortify (registration, sign-in, password reset, password change) with Blade views. Registration is open, but customers must confirm their email before using account pages. Sign-up never grants admin access. Login is limited to 5 attempts per minute per email and IP; registration to 10 accounts per hour per IP; ticket submissions to 10 per minute per user. Two-factor sign-in and passkeys are not enabled yet.
+- **Ownership:** Customer ticket pages always look tickets up through the signed-in user, so another customer's ticket is "not found". Admins work tickets only in the admin panel. Staff can add internal notes that customers never see. Owner and status are never taken from request input.
+- **Notifications:** Admins receive queued emails for new tickets and customer replies; customers receive one when staff reply. Emails contain a link, not the ticket content.
+- **Consequences:** Switching to invite-only registration means removing the registration feature in `config/fortify.php`. Two-factor sign-in for admin accounts is recommended before launch. Ticket retention is **OPEN**.
+
 ## Open decisions
 - Final brand/name/domain, owner-approved public profile and content.
 - Hosting target, production database, storage, queue, mail, monitoring and region/provider choices; all configurable and **OPEN**.

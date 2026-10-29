@@ -42,6 +42,15 @@
                 @endif
                 <a class="{{ $linkClass }}" href="{{ $home }}#approach">Approach</a>
                 <a class="font-semibold text-[#077784] underline decoration-[#077784] decoration-2 underline-offset-4 hover:text-[#075d68] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#077784]" href="{{ $home }}#contact">Contact</a>
+                @auth
+                    <a class="{{ $linkClass }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="{{ $linkClass }}">Sign out</button>
+                    </form>
+                @else
+                    <a class="{{ $linkClass }}" href="{{ route('login') }}">Sign in</a>
+                @endauth
             </nav>
         </div>
     </header>

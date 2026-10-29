@@ -149,6 +149,32 @@ class SiteAppearanceTest extends TestCase
         Storage::disk('public')->assertExists(Settings::get('favicon'));
     }
 
+    public function test_admin_can_replace_existing_logo_and_favicon(): void
+    {
+        Storage::disk('public')->put('branding/old-logo.png', 'old logo');
+        Storage::disk('public')->put('branding/old-favicon.ico', 'old favicon');
+        Settings::set('logo', 'branding/old-logo.png');
+        Settings::set('favicon', 'branding/old-favicon.ico');
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+
+        $livewire = Livewire::test(SettingsPage::class)
+            ->fillForm([
+                'logo' => $this->pngUpload('new-logo.png'),
+                'favicon' => UploadedFile::fake()->create('new-favicon.ico', 2, 'image/x-icon'),
+            ]);
+        $livewire
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Settings saved');
+
+        $this->assertNotSame('branding/old-logo.png', Settings::get('logo'));
+        $this->assertNotSame('branding/old-favicon.ico', Settings::get('favicon'));
+        Storage::disk('public')->assertMissing('branding/old-logo.png');
+        Storage::disk('public')->assertMissing('branding/old-favicon.ico');
+        Storage::disk('public')->assertExists(Settings::get('logo'));
+        Storage::disk('public')->assertExists(Settings::get('favicon'));
+    }
+
     public function test_unreadable_colour_is_rejected_in_settings(): void
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));

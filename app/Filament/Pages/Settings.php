@@ -67,10 +67,12 @@ class Settings extends Page
                                     ->maxLength(255),
                                 FileUpload::make('logo')
                                     ->label('Logo')
-                                    ->helperText('PNG, JPG or WebP, up to 1 MB. Raster images are compressed to WebP on upload. SVG is not accepted because it can contain scripts.')
+                                    ->helperText('PNG, JPG or WebP, up to 1 MB. Upload a replacement alongside the current logo; the latest upload is saved. Raster images are compressed to WebP. SVG is not accepted.')
                                     ->disk('public')
                                     ->directory('branding')
                                     ->visibility('public')
+                                    ->multiple()
+                                    ->maxFiles(2)
                                     ->image()
                                     ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
                                     ->maxSize(1024)
@@ -79,10 +81,12 @@ class Settings extends Page
                                     ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
                                 FileUpload::make('favicon')
                                     ->label('Favicon')
-                                    ->helperText('Square PNG or ICO, up to 256 KB. PNG images are compressed to WebP; ICO files are kept as-is.')
+                                    ->helperText('Square PNG or ICO, up to 256 KB. Upload a replacement alongside the current favicon; the latest upload is saved. PNG images are compressed to WebP.')
                                     ->disk('public')
                                     ->directory('branding')
                                     ->visibility('public')
+                                    ->multiple()
+                                    ->maxFiles(2)
                                     ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])
                                     ->maxSize(256)
                                     ->fetchFileInformation(false)
@@ -181,6 +185,29 @@ class Settings extends Page
     public function save(): void
     {
         $state = $this->form->getState();
+
+        // A single FileUpload field can temporarily contain the persisted path and a
+        // replacement upload together. Prefer the newly stored path for these settings.
+        foreach (['logo', 'favicon'] as $key) {
+            if (! is_array($state[$key] ?? null)) {
+                continue;
+            }
+
+            $previous = SettingsStore::get($key);
+            $paths = collect($state[$key])
+                ->flatten()
+                ->filter(fn (mixed $path): bool => is_string($path) && Storage::disk('public')->exists($path))
+                ->values();
+            $replacement = $paths->last(fn (string $path): bool => $path !== $previous);
+
+            $state[$key] = $replacement ?? ($paths->contains($previous) ? $previous : null);
+
+            foreach ($paths as $path) {
+                if ($path !== $previous && $path !== $state[$key]) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+        }
 
         // Remove replaced or cleared branding files so old uploads do not linger.
         foreach (['logo', 'favicon'] as $key) {

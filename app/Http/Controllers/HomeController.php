@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Support\Settings;
@@ -11,9 +12,6 @@ class HomeController extends Controller
 {
     public function __invoke(): View
     {
-        $brandName = Settings::get('brand_name') ?: 'IT Problem Solver';
-        $brandParts = preg_split('/\s+/', trim($brandName), 2);
-
         $contact = [
             'email' => Settings::get('contact_email'),
             'phone' => Settings::get('contact_phone'),
@@ -40,10 +38,7 @@ class HomeController extends Controller
         );
 
         return view('welcome', [
-            'brandName' => $brandName,
-            'brandLead' => $brandParts[0] ?? $brandName,
-            'brandRemainder' => $brandParts[1] ?? '',
-            'tagline' => Settings::get('tagline') ?: 'Engineering solutions and technical consulting',
+            'featuredProjects' => Project::query()->published()->ordered()->limit(3)->get(),
             'contactEmail' => $contact['email'],
             'contactPhone' => $contact['phone'],
             'whatsapp' => $contact['whatsapp'],

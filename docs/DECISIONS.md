@@ -28,6 +28,11 @@ Planning decisions below reflect the approved direction, not proof that the asso
 - **Decision:** Anonymous visitors submit name, email, optional phone, optional active service and message. Submissions are validated, rate-limited (5/minute per IP) and screened with a honeypot field; IP addresses are not stored. Status (new, in progress, closed) and account association can only be set by administrators. Admin users receive a queued email notification that names the sender and links to the admin panel; the message itself stays out of email.
 - **Consequences:** Requires a running queue worker and configured mail in deployed environments. A retention/deletion rule for enquiries must be agreed before production launch.
 
+## ADR-0007: Portfolio projects
+- **Status:** Implemented for MVP; project categories and media **deferred**.
+- **Decision:** Projects have draft/published status and a publish date. Publishing without a date publishes immediately; a future date schedules the project. Public pages only resolve projects that are published and whose date has passed; anything else returns 404. Bodies are Markdown rendered with raw HTML stripped and unsafe links removed. The Projects navigation link and homepage section appear only when at least one project is public. No sample projects are seeded, so no client work is invented.
+- **Consequences:** Project categories and images (`Project *──* Category`, `Project *──* MediaAsset` in DATABASE.md) wait for the media/storage decision.
+
 ## Open decisions
 - Final brand/name/domain, owner-approved public profile and content.
 - Hosting target, production database, storage, queue, mail, monitoring and region/provider choices; all configurable and **OPEN**.

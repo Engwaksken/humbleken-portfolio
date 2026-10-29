@@ -66,6 +66,7 @@ class AdminProjectResourceTest extends TestCase
         $project = Project::query()->where('slug', 'sample-project')->sole();
         $this->assertSame('https://www.youtube-nocookie.com/embed/abcdefghijk', $project->sampleVideoEmbedUrl());
         Storage::disk('public')->assertExists($project->sample_image);
+        $this->get(route('samples.show', ['type' => 'project', 'record' => $project->id]))->assertOk();
 
         $this->get(route('projects.show', $project->slug))
             ->assertSee('Sample image for Sample project')

@@ -34,6 +34,7 @@ class AdminServiceMediaTest extends TestCase
         $service = Service::query()->where('slug', 'network-assessment')->sole();
         $this->assertSame('https://www.youtube-nocookie.com/embed/abcdefghijk', $service->sampleVideoEmbedUrl());
         Storage::disk('public')->assertExists($service->sample_image);
+        $this->get(route('samples.show', ['type' => 'service', 'record' => $service->id]))->assertOk();
 
         $this->get('/')
             ->assertSee('Sample image for Network assessment')

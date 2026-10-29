@@ -23,11 +23,11 @@ class Settings
     {
         $path = static::get($key);
 
-        if (! is_string($path) || $path === '' || ! Storage::disk('public')->exists($path)) {
+        if (! in_array($key, ['logo', 'favicon'], true) || ! is_string($path) || $path === '' || ! Storage::disk('public')->exists($path)) {
             return null;
         }
 
-        return Storage::disk('public')->url($path);
+        return route('site-assets.show', ['key' => $key]);
     }
 
     public static function set(string $key, mixed $value): void

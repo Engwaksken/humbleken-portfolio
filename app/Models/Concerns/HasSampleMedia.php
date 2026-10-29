@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\Project;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,9 +29,13 @@ trait HasSampleMedia
     {
         $path = $this->sample_image;
 
-        return is_string($path) && Storage::disk('public')->exists($path)
-            ? Storage::disk('public')->url($path)
-            : null;
+        if (! is_string($path) || ! Storage::disk('public')->exists($path)) {
+            return null;
+        }
+
+        $type = $this instanceof Project ? 'project' : 'service';
+
+        return route('samples.show', ['type' => $type, 'record' => $this->getKey()]);
     }
 
     public function sampleVideoEmbedUrl(): ?string

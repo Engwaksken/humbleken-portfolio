@@ -8,11 +8,19 @@ use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PublicMediaController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\EnsureAdminMfaForTicketAttachments;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/site-assets/{key}', [PublicMediaController::class, 'branding'])
+    ->whereIn('key', ['logo', 'favicon'])
+    ->name('site-assets.show');
+Route::get('/samples/{type}/{record}', [PublicMediaController::class, 'sample'])
+    ->whereIn('type', ['project', 'service'])
+    ->whereNumber('record')
+    ->name('samples.show');
 
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');

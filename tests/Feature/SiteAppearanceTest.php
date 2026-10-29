@@ -100,8 +100,19 @@ class SiteAppearanceTest extends TestCase
         Settings::set('favicon', 'branding/icon.png');
 
         $this->get('/')
-            ->assertSee('<img src="'.Storage::disk('public')->url('branding/logo.png').'" alt="Acme IT"', false)
-            ->assertSee('<link rel="icon" href="'.Storage::disk('public')->url('branding/icon.png').'">', false);
+            ->assertSee('<img src="'.route('site-assets.show', 'logo').'" alt="Acme IT"', false)
+            ->assertSee('<link rel="icon" href="'.route('site-assets.show', 'favicon').'">', false);
+    }
+
+    public function test_branding_assets_are_served_without_a_public_storage_symlink(): void
+    {
+        Storage::disk('public')->put('branding/logo.png', 'logo bytes');
+        Settings::set('logo', 'branding/logo.png');
+
+        $this->get(route('site-assets.show', 'logo'))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'image/png')
+            ->assertHeader('Cache-Control', 'max-age=3600, public');
     }
 
     public function test_missing_logo_file_falls_back_to_brand_text(): void

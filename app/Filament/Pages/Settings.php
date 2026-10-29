@@ -29,6 +29,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Throwable;
 use UnitEnum;
 
 class Settings extends Page
@@ -73,6 +74,8 @@ class Settings extends Page
                                     ->image()
                                     ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
                                     ->maxSize(1024)
+                                    ->fetchFileInformation(false)
+                                    ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
                                     ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
                                 FileUpload::make('favicon')
                                     ->label('Favicon')
@@ -82,6 +85,8 @@ class Settings extends Page
                                     ->visibility('public')
                                     ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])
                                     ->maxSize(256)
+                                    ->fetchFileInformation(false)
+                                    ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
                                     ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
                             ]),
                         Tab::make('Appearance')
@@ -179,8 +184,21 @@ class Settings extends Page
 
         // Remove replaced or cleared branding files so old uploads do not linger.
         foreach (['logo', 'favicon'] as $key) {
+            $path = $state[$key] ?? null;
+
+            if (filled($path) && (! is_string($path) || ! Storage::disk('public')->exists($path))) {
+                Notification::make()
+                    ->danger()
+                    ->title(ucfirst($key).' upload is not ready')
+                    ->body('The image has not finished uploading. Please retry it and save again.')
+                    ->persistent()
+                    ->send();
+
+                return;
+            }
+
             $previous = SettingsStore::get($key);
-            if (is_string($previous) && $previous !== '' && $previous !== ($state[$key] ?? null)) {
+            if (is_string($previous) && $previous !== '' && $previous !== $path) {
                 Storage::disk('public')->delete($previous);
             }
         }
@@ -201,6 +219,48 @@ class Settings extends Page
             ->components([
                 $this->getFormContentComponent(),
             ]);
+    }
+
+    /** @return array{name: string, size: int, type: string, url: string}|null */
+    private static function getStoredBrandingFile(BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array
+    {
+        try {
+            $disk = $component->getDisk();
+
+            if (! $disk->exists($file)) {
+                Notification::make()
+                    ->danger()
+                    ->title('Saved image is unavailable')
+                    ->body('Remove the missing file, upload it again, and save settings.')
+                    ->persistent()
+                    ->send();
+
+                return null;
+            }
+
+            $contents = $disk->get($file);
+            $type = $disk->mimeType($file) ?: 'application/octet-stream';
+            $name = is_array($storedFileNames)
+                ? ($storedFileNames[$file] ?? basename($file))
+                : ($storedFileNames ?: basename($file));
+
+            return [
+                'name' => $name,
+                'size' => strlen($contents),
+                'type' => $type,
+                'url' => 'data:'.$type.';base64,'.base64_encode($contents),
+            ];
+        } catch (Throwable $exception) {
+            report($exception);
+            Notification::make()
+                ->danger()
+                ->title('Could not load saved image')
+                ->body('The saved file is unavailable. Remove it, upload it again, and save settings.')
+                ->persistent()
+                ->send();
+
+            return null;
+        }
     }
 
     protected function getFormContentComponent(): Component

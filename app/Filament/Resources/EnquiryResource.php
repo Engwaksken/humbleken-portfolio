@@ -6,6 +6,7 @@ use App\Enums\EnquiryStatus;
 use App\Filament\Resources\EnquiryResource\Pages;
 use App\Models\Enquiry;
 use BackedEnum;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -13,6 +14,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -82,17 +84,33 @@ class EnquiryResource extends Resource
                 SelectFilter::make('status')->options(EnquiryStatus::class),
             ])
             ->actions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()->modalWidth(Width::ThreeExtraLarge),
+                EditAction::make()
+                    ->label('Update status')
+                    ->modalHeading('Update enquiry status')
+                    ->using(function (Enquiry $record, array $data): Enquiry {
+                        // Status is not mass-assignable (public submissions must not set it), so set it explicitly.
+                        $record->status = $data['status'];
+                        $record->save();
+
+                        return $record;
+                    }),
+                DeleteAction::make(),
             ]);
+    }
+
+    /**
+     * Admin link that opens this enquiry's view dialog on the list page.
+     */
+    public static function getRecordUrl(Enquiry $enquiry): string
+    {
+        return static::getUrl('index', ['tableAction' => 'view', 'tableActionRecord' => $enquiry->getKey()]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEnquiries::route('/'),
-            'view' => Pages\ViewEnquiry::route('/{record}'),
-            'edit' => Pages\EditEnquiry::route('/{record}/edit'),
+            'index' => Pages\ManageEnquiries::route('/'),
         ];
     }
 }

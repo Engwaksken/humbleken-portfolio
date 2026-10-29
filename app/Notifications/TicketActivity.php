@@ -32,6 +32,6 @@ class TicketActivity extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject($this->isNew ? "New support ticket #{$this->ticket->id}" : "Customer replied to ticket #{$this->ticket->id}")
             ->line($this->isNew ? 'A customer opened a new support ticket.' : 'A customer replied to a support ticket.')
-            ->action('Open ticket', SupportTicketResource::getUrl('view', ['record' => $this->ticket]));
+            ->action('Open ticket', SupportTicketResource::getRecordUrl($this->ticket));
     }
 }

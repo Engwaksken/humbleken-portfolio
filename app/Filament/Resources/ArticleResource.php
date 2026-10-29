@@ -6,6 +6,8 @@ use App\Enums\PublicationStatus;
 use App\Filament\Resources\ArticleResource\Pages;
 use App\Models\Article;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -16,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -97,7 +100,15 @@ class ArticleResource extends Resource
                 SelectFilter::make('article_category_id')->label('Category')->relationship('category', 'name'),
             ])
             ->actions([
-                EditAction::make(),
+                Action::make('viewPublic')
+                    ->label('View on site')
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                    ->color('gray')
+                    ->url(fn (Article $record): string => route('articles.show', ['article' => $record->slug]))
+                    ->openUrlInNewTab()
+                    ->visible(fn (Article $record): bool => $record->isPublished()),
+                EditAction::make()->modalWidth(Width::FiveExtraLarge),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -107,9 +118,7 @@ class ArticleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListArticles::route('/'),
-            'create' => Pages\CreateArticle::route('/create'),
-            'edit' => Pages\EditArticle::route('/{record}/edit'),
+            'index' => Pages\ManageArticles::route('/'),
         ];
     }
 }

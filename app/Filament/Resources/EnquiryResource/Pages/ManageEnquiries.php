@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\EnquiryResource\Pages;
 
 use App\Filament\Resources\EnquiryResource;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListEnquiries extends ListRecords
+class ManageEnquiries extends ManageRecords
 {
     protected static string $resource = EnquiryResource::class;
 }

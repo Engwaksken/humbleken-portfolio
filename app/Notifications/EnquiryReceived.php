@@ -29,6 +29,6 @@ class EnquiryReceived extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('New enquiry received')
             ->line("A new enquiry was submitted by {$this->enquiry->name}.")
-            ->action('Review enquiry', EnquiryResource::getUrl('view', ['record' => $this->enquiry]));
+            ->action('Review enquiry', EnquiryResource::getRecordUrl($this->enquiry));
     }
 }

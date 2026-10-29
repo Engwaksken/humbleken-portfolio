@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ServiceCategoryResource\Pages;
 use App\Models\ServiceCategory;
 use BackedEnum;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
@@ -61,6 +62,7 @@ class ServiceCategoryResource extends Resource
             ->defaultSort('sort_order')
             ->actions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -70,9 +72,7 @@ class ServiceCategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListServiceCategories::route('/'),
-            'create' => Pages\CreateServiceCategory::route('/create'),
-            'edit' => Pages\EditServiceCategory::route('/{record}/edit'),
+            'index' => Pages\ManageServiceCategories::route('/'),
         ];
     }
 }

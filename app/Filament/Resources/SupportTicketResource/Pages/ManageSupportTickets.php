@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\SupportTicketResource\Pages;
 
 use App\Filament\Resources\SupportTicketResource;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListSupportTickets extends ListRecords
+class ManageSupportTickets extends ManageRecords
 {
     protected static string $resource = SupportTicketResource::class;
 }

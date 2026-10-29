@@ -6,6 +6,8 @@ use App\Enums\PublicationStatus;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Models\Project;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -17,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -86,7 +89,15 @@ class ProjectResource extends Resource
                 SelectFilter::make('status')->options(PublicationStatus::class),
             ])
             ->actions([
-                EditAction::make(),
+                Action::make('viewPublic')
+                    ->label('View on site')
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                    ->color('gray')
+                    ->url(fn (Project $record): string => route('projects.show', ['project' => $record->slug]))
+                    ->openUrlInNewTab()
+                    ->visible(fn (Project $record): bool => $record->isPublished()),
+                EditAction::make()->modalWidth(Width::FiveExtraLarge),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -96,9 +107,7 @@ class ProjectResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProjects::route('/'),
-            'create' => Pages\CreateProject::route('/create'),
-            'edit' => Pages\EditProject::route('/{record}/edit'),
+            'index' => Pages\ManageProjects::route('/'),
         ];
     }
 }

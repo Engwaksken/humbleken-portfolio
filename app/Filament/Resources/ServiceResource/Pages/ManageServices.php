@@ -3,17 +3,18 @@
 namespace App\Filament\Resources\ServiceResource\Pages;
 
 use App\Filament\Resources\ServiceResource;
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\Width;
 
-class EditService extends EditRecord
+class ManageServices extends ManageRecords
 {
     protected static string $resource = ServiceResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            CreateAction::make()->modalWidth(Width::ThreeExtraLarge),
         ];
     }
 }

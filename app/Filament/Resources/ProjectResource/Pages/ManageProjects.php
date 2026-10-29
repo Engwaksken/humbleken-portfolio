@@ -4,16 +4,17 @@ namespace App\Filament\Resources\ProjectResource\Pages;
 
 use App\Filament\Resources\ProjectResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\Width;
 
-class ListProjects extends ListRecords
+class ManageProjects extends ManageRecords
 {
     protected static string $resource = ProjectResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()->modalWidth(Width::FiveExtraLarge),
         ];
     }
 }

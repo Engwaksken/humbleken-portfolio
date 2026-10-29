@@ -134,6 +134,72 @@
                         @endforeach
                     </ul>
                 @endif
+
+                <div class="sm:col-span-2">
+                    @if (session('enquiry_sent'))
+                        <p role="status" class="border-l-2 border-[#087e8b] bg-white px-4 py-3 text-sm font-medium">Thank you. Your enquiry has been received and will be reviewed shortly.</p>
+                    @else
+                        <form method="POST" action="{{ route('enquiries.store') }}" class="grid gap-5 bg-white p-6 sm:grid-cols-2 sm:p-8" novalidate>
+                            @csrf
+
+                            @if ($errors->enquiry->any())
+                                <p role="alert" class="text-sm font-medium text-[#b42318] sm:col-span-2">Please correct the highlighted fields and try again.</p>
+                            @endif
+
+                            @foreach ([
+                                ['name', 'Name', 'text', 'name', true],
+                                ['email', 'Email', 'email', 'email', true],
+                                ['phone', 'Phone (optional)', 'tel', 'tel', false],
+                            ] as [$field, $label, $type, $autocomplete, $required])
+                                <div class="grid gap-2">
+                                    <label for="enquiry-{{ $field }}" class="text-sm font-semibold">{{ $label }}</label>
+                                    <input id="enquiry-{{ $field }}" name="{{ $field }}" type="{{ $type }}" autocomplete="{{ $autocomplete }}" value="{{ old($field) }}" @if ($required) required aria-required="true" @endif
+                                        @error($field, 'enquiry') aria-invalid="true" aria-describedby="enquiry-{{ $field }}-error" @enderror
+                                        class="rounded border border-[#14263d]/25 px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#087e8b] aria-invalid:border-[#b42318]">
+                                    @error($field, 'enquiry')
+                                        <p id="enquiry-{{ $field }}-error" class="text-sm text-[#b42318]">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            @endforeach
+
+                            @if ($services->isNotEmpty())
+                                <div class="grid gap-2">
+                                    <label for="enquiry-service_id" class="text-sm font-semibold">Service (optional)</label>
+                                    <select id="enquiry-service_id" name="service_id"
+                                        @error('service_id', 'enquiry') aria-invalid="true" aria-describedby="enquiry-service_id-error" @enderror
+                                        class="rounded border border-[#14263d]/25 px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#087e8b]">
+                                        <option value="">Not sure yet</option>
+                                        @foreach ($services as $service)
+                                            <option value="{{ $service->id }}" @selected((string) old('service_id') === (string) $service->id)>{{ $service->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('service_id', 'enquiry')
+                                        <p id="enquiry-service_id-error" class="text-sm text-[#b42318]">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            @endif
+
+                            <div class="grid gap-2 sm:col-span-2">
+                                <label for="enquiry-message" class="text-sm font-semibold">How can we help?</label>
+                                <textarea id="enquiry-message" name="message" rows="5" required aria-required="true"
+                                    @error('message', 'enquiry') aria-invalid="true" aria-describedby="enquiry-message-error" @enderror
+                                    class="rounded border border-[#14263d]/25 px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#087e8b] aria-invalid:border-[#b42318]">{{ old('message') }}</textarea>
+                                @error('message', 'enquiry')
+                                    <p id="enquiry-message-error" class="text-sm text-[#b42318]">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="hidden" aria-hidden="true">
+                                <label for="enquiry-website">Leave this field empty</label>
+                                <input id="enquiry-website" name="website" type="text" tabindex="-1" autocomplete="off">
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <button type="submit" class="rounded bg-[#087e8b] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#075d68] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#087e8b]">Send enquiry</button>
+                            </div>
+                        </form>
+                    @endif
+                </div>
             </div>
         </section>
     </main>

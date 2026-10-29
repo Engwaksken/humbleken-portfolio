@@ -27,9 +27,17 @@ class MigrationSmokeTest extends TestCase
         $this->assertTrue(Schema::hasColumn('service_categories', 'slug'));
     }
 
+    public function test_enquiries_table_exists_with_status_and_service_columns(): void
+    {
+        $this->assertTrue(Schema::hasTable('enquiries'));
+        $this->assertTrue(Schema::hasColumns('enquiries', ['service_id', 'user_id', 'status']));
+    }
+
     public function test_new_tables_can_be_rolled_back_and_re_migrated(): void
     {
-        $this->artisan('migrate:rollback', ['--step' => 3])->assertSuccessful();
+        $this->artisan('migrate:rollback', ['--step' => 4])->assertSuccessful();
+
+        $this->assertFalse(Schema::hasTable('enquiries'));
 
         $this->assertFalse(Schema::hasTable('services'));
         $this->assertFalse(Schema::hasTable('service_categories'));
@@ -37,6 +45,7 @@ class MigrationSmokeTest extends TestCase
 
         $this->artisan('migrate')->assertSuccessful();
 
+        $this->assertTrue(Schema::hasTable('enquiries'));
         $this->assertTrue(Schema::hasTable('services'));
         $this->assertTrue(Schema::hasTable('service_categories'));
         $this->assertTrue(Schema::hasTable('settings'));

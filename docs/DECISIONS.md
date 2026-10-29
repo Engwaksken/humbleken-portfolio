@@ -23,6 +23,11 @@ Planning decisions below reflect the approved direction, not proof that the asso
 - **Status:** Accepted for MVP planning.
 - **Decision:** No production AI or payment integration in MVP. Require separate business, security, privacy, cost and provider approval.
 
+## ADR-0006: Public enquiry handling
+- **Status:** Implemented for MVP; retention period **OPEN**.
+- **Decision:** Anonymous visitors submit name, email, optional phone, optional active service and message. Submissions are validated, rate-limited (5/minute per IP) and screened with a honeypot field; IP addresses are not stored. Status (new, in progress, closed) and account association can only be set by administrators. Admin users receive a queued email notification that names the sender and links to the admin panel; the message itself stays out of email.
+- **Consequences:** Requires a running queue worker and configured mail in deployed environments. A retention/deletion rule for enquiries must be agreed before production launch.
+
 ## Open decisions
 - Final brand/name/domain, owner-approved public profile and content.
 - Hosting target, production database, storage, queue, mail, monitoring and region/provider choices; all configurable and **OPEN**.

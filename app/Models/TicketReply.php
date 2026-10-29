@@ -30,6 +30,7 @@ class TicketReply extends Model
     {
         return [
             'is_internal' => 'boolean',
+            'attachments' => 'array',
         ];
     }
 

@@ -8,7 +8,9 @@ use App\Models\TicketReply;
 use App\Models\User;
 use App\Notifications\TicketActivity;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SupportTicketTest extends TestCase
@@ -207,5 +209,23 @@ class SupportTicketTest extends TestCase
         $reply->ticket->delete();
 
         $this->assertModelMissing($reply);
+    }
+
+    public function test_ticket_attachments_are_private_and_downloadable_only_by_owner_or_admin(): void
+    {
+        Storage::fake('local');
+        $owner = User::factory()->create();
+        $other = User::factory()->create();
+        $ticket = SupportTicket::factory()->for($owner)->create();
+        $this->actingAs($owner)->post(route('account.tickets.reply', $ticket), [
+            'body' => 'Please see this attached document.',
+            'attachments' => [UploadedFile::fake()->create('report.pdf', 50, 'application/pdf')],
+        ])->assertRedirect();
+        $reply = $ticket->replies()->latest('id')->firstOrFail();
+        $path = $reply->attachments[0]['path'];
+        Storage::disk('local')->assertExists($path);
+
+        $this->actingAs($other)->get(route('account.tickets.attachments.download', [$reply->id, 0]))->assertNotFound();
+        $this->actingAs($owner)->get(route('account.tickets.attachments.download', [$reply->id, 0]))->assertOk();
     }
 }

@@ -97,6 +97,32 @@
         </div>
     </section>
 
+    <section id="booking" aria-labelledby="booking-title" class="border-b border-[#14263d]/10 bg-white">
+        <div class="mx-auto max-w-6xl px-6 py-20 lg:px-8 lg:py-24">
+            <div class="max-w-2xl">
+                <p class="text-sm font-semibold uppercase tracking-[.16em] text-brand">Appointment request</p>
+                <h2 id="booking-title" class="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">Request a consultation.</h2>
+                <p class="mt-4 leading-7 text-[#506176]">Share a preferred time and we’ll get back to you to confirm availability. This is a request, not a confirmed booking.</p>
+            </div>
+            @if (session('booking_sent'))
+                <p role="status" class="mt-8 border-l-2 border-brand bg-brand-tint px-4 py-3 text-sm font-medium">Thank you. Your appointment request has been received.</p>
+            @else
+                <form method="POST" action="{{ route('booking-requests.store') }}" class="mt-8 grid gap-5 bg-brand-tint p-6 sm:grid-cols-2 sm:p-8" novalidate>
+                    @csrf
+                    @if ($errors->booking->any())<p role="alert" class="text-sm font-medium text-[#b42318] sm:col-span-2">Please correct the highlighted fields and try again.</p>@endif
+                    @foreach ([['name','Name','text'],['email','Email','email'],['phone','Phone (optional)','tel']] as [$field,$label,$type])
+                        <div class="grid gap-2"><label for="booking-{{ $field }}" class="text-sm font-semibold">{{ $label }}</label><input id="booking-{{ $field }}" name="{{ $field }}" type="{{ $type }}" value="{{ old($field) }}" @if($field !== 'phone') required @endif class="rounded border border-[#14263d]/25 px-3 py-2">@error($field,'booking')<p class="text-sm text-[#b42318]">{{ $message }}</p>@enderror</div>
+                    @endforeach
+                    <div class="grid gap-2"><label for="booking-preferred_at" class="text-sm font-semibold">Preferred date and time</label><input id="booking-preferred_at" name="preferred_at" type="datetime-local" value="{{ old('preferred_at') }}" required class="rounded border border-[#14263d]/25 px-3 py-2">@error('preferred_at','booking')<p class="text-sm text-[#b42318]">{{ $message }}</p>@enderror</div>
+                    @if ($services->isNotEmpty())<div class="grid gap-2"><label for="booking-service_id" class="text-sm font-semibold">Service (optional)</label><select id="booking-service_id" name="service_id" class="rounded border border-[#14263d]/25 px-3 py-2"><option value="">Not sure yet</option>@foreach($services as $service)<option value="{{ $service->id }}" @selected((string)old('service_id') === (string)$service->id)>{{ $service->name }}</option>@endforeach</select></div>@endif
+                    <div class="grid gap-2 sm:col-span-2"><label for="booking-message" class="text-sm font-semibold">What would you like to discuss? (optional)</label><textarea id="booking-message" name="message" rows="4" class="rounded border border-[#14263d]/25 px-3 py-2">{{ old('message') }}</textarea></div>
+                    <div class="hidden" aria-hidden="true"><label for="booking-website">Leave this field empty</label><input id="booking-website" name="website" tabindex="-1" autocomplete="off"></div>
+                    <div class="sm:col-span-2"><button type="submit" class="rounded bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-brand-dark">Request appointment</button></div>
+                </form>
+            @endif
+        </div>
+    </section>
+
     <section id="contact" aria-labelledby="contact-title" class="border-b border-[#14263d]/10 bg-brand-tint">
         <div class="mx-auto grid max-w-6xl gap-8 px-6 py-20 sm:grid-cols-[1fr_auto] sm:items-end lg:px-8 lg:py-24">
             <div class="max-w-2xl">

@@ -73,11 +73,12 @@ class SupportTicket extends Model
     /**
      * Add a reply and move the ticket to the status that follows from who wrote it.
      */
-    public function addReply(User $author, string $body, bool $internal = false): TicketReply
+    public function addReply(User $author, string $body, bool $internal = false, array $attachments = []): TicketReply
     {
         $reply = new TicketReply(['body' => $body]);
         $reply->user()->associate($author);
         $reply->is_internal = $internal;
+        $reply->attachments = $attachments ?: null;
         $this->replies()->save($reply);
 
         if (! $internal) {

@@ -26,11 +26,11 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer([
             'components.layouts.site',
-            'welcome',
             'projects.index', 'projects.show',
             'articles.index', 'articles.show',
             'auth.login', 'auth.register', 'auth.forgot-password', 'auth.reset-password', 'auth.verify-email', 'auth.confirm-password',
             'account.dashboard', 'account.tickets.index', 'account.tickets.create', 'account.tickets.show',
+            'welcome',
         ], SiteComposer::class);
 
         RateLimiter::for('enquiries', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));

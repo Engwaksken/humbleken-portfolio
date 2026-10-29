@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\Account\DashboardController;
 use App\Http\Controllers\Account\SupportTicketController;
+use App\Http\Controllers\Account\TicketAttachmentController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Middleware\EnsureAdminMfaForTicketAttachments;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -23,12 +26,20 @@ Route::post('/enquiries', [EnquiryController::class, 'store'])
     ->middleware('throttle:enquiries')
     ->name('enquiries.store');
 
+Route::post('/booking-requests', [BookingRequestController::class, 'store'])
+    ->middleware('throttle:enquiries')
+    ->name('booking-requests.store');
+
 Route::middleware(['auth', 'verified'])->prefix('account')->name('account.')->group(function (): void {
     Route::get('/', DashboardController::class)->name('dashboard');
 
     Route::get('/tickets', [SupportTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/create', [SupportTicketController::class, 'create'])->name('tickets.create');
     Route::get('/tickets/{ticket}', [SupportTicketController::class, 'show'])->whereNumber('ticket')->name('tickets.show');
+    Route::get('/ticket-replies/{reply}/attachments/{attachment}', TicketAttachmentController::class)
+        ->whereNumber(['reply', 'attachment'])
+        ->middleware(EnsureAdminMfaForTicketAttachments::class)
+        ->name('tickets.attachments.download');
 
     Route::middleware('throttle:tickets')->group(function (): void {
         Route::post('/tickets', [SupportTicketController::class, 'store'])->name('tickets.store');

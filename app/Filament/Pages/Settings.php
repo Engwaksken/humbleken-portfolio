@@ -2,11 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Support\ImageCompressor;
 use App\Support\Settings as SettingsStore;
 use App\Support\Theme;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
@@ -26,6 +28,8 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
 class Settings extends Page
@@ -63,29 +67,41 @@ class Settings extends Page
                                     ->maxLength(255),
                                 FileUpload::make('logo')
                                     ->label('Logo')
-                                    ->helperText('PNG, JPG or WebP, up to 1 MB. Shown in the site header and admin panel instead of the brand name. SVG is not accepted because it can contain scripts.')
+                                    ->helperText('PNG, JPG or WebP, up to 1 MB. Raster images are compressed to WebP on upload. SVG is not accepted because it can contain scripts.')
                                     ->disk('public')
                                     ->directory('branding')
                                     ->visibility('public')
                                     ->image()
                                     ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
-                                    ->maxSize(1024),
+                                    ->maxSize(1024)
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => static::storeCompressedImage($component, $file)),
                                 FileUpload::make('favicon')
                                     ->label('Favicon')
-                                    ->helperText('Square PNG or ICO, up to 256 KB. Shown in browser tabs.')
+                                    ->helperText('Square PNG or ICO, up to 256 KB. PNG images are compressed to WebP; ICO files are kept as-is.')
                                     ->disk('public')
                                     ->directory('branding')
                                     ->visibility('public')
                                     ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])
-                                    ->maxSize(256),
+                                    ->maxSize(256)
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => static::storeCompressedImage($component, $file)),
                             ]),
                         Tab::make('Appearance')
                             ->icon(Heroicon::OutlinedSwatch)
                             ->schema([
                                 ColorPicker::make('theme_color')
-                                    ->label('Main colour')
+                                    ->label('Primary colour')
                                     ->hex()
                                     ->helperText('Used for links, buttons and highlights on the website and in this admin panel. Colours too light to read are rejected.')
+                                    ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                                        if (filled($value) && ($problem = Theme::problem(strtolower($value))) !== null) {
+                                            $fail($problem);
+                                        }
+                                    }),
+                                ColorPicker::make('theme_secondary_color')
+                                    ->label('Secondary colour')
+                                    ->hex()
+                                    ->default(Theme::DEFAULT_SECONDARY_COLOR)
+                                    ->helperText('Used for supporting accents. Colours too light to read are rejected.')
                                     ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
                                         if (filled($value) && ($problem = Theme::problem(strtolower($value))) !== null) {
                                             $fail($problem);
@@ -97,6 +113,12 @@ class Settings extends Page
                                     ->default('system')
                                     ->selectablePlaceholder(false)
                                     ->helperText('Downloadable fonts load from Bunny Fonts, which does not track visitors.'),
+                                TextInput::make('theme_custom_font')
+                                    ->label('Custom font family')
+                                    ->placeholder('e.g. Arial or My Custom Font')
+                                    ->maxLength(80)
+                                    ->regex('/^[\pL\pN][\pL\pN \-_]{0,79}$/u')
+                                    ->helperText('Overrides the preset above. Use a font installed on the visitor’s device; webfont files are not uploaded.'),
                                 Radio::make('theme_font_size')
                                     ->label('Base text size')
                                     ->options(collect(Theme::SIZES)->map(fn (array $size): string => $size['label']))
@@ -215,6 +237,7 @@ class Settings extends Page
 
         $data['brand_name'] = $data['brand_name'] ?? 'IT Problem Solver';
         $data['theme_color'] = filled($data['theme_color'] ?? null) ? $data['theme_color'] : Theme::DEFAULT_COLOR;
+        $data['theme_secondary_color'] = filled($data['theme_secondary_color'] ?? null) ? $data['theme_secondary_color'] : Theme::DEFAULT_SECONDARY_COLOR;
         $data['theme_font'] = Theme::fontKey();
         $data['theme_font_size'] = Theme::sizeKey();
         $data['maintenance_enabled'] = (bool) ($data['maintenance_enabled'] ?? false);
@@ -224,5 +247,22 @@ class Settings extends Page
         }
 
         return $data;
+    }
+
+    private static function storeCompressedImage(BaseFileUpload $component, TemporaryUploadedFile $file): ?string
+    {
+        $disk = $component->getDisk();
+        $compressed = ImageCompressor::compress($file->getRealPath(), $file->getMimeType());
+
+        if ($compressed === null) {
+            return $component->saveUploadedFile($file);
+        }
+
+        $path = trim($component->getDirectory().'/'.Str::uuid().'.webp', '/');
+        if (! $disk->put($path, $compressed, ['visibility' => $component->getVisibility()])) {
+            throw new \RuntimeException('The uploaded image could not be stored. Please try again.');
+        }
+
+        return $path;
     }
 }

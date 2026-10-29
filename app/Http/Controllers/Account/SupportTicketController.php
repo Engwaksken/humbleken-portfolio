@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Notifications\TicketActivity;
+use App\Support\ImageCompressor;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 
 class SupportTicketController extends Controller
 {
@@ -86,9 +88,19 @@ class SupportTicketController extends Controller
     private function storeAttachments(Request $request): array
     {
         return collect($request->file('attachments', []))->map(function ($file): array {
+            $compressed = ImageCompressor::compress($file->getRealPath(), $file->getMimeType());
+            $originalName = $file->getClientOriginalName();
+            $path = $compressed === null
+                ? $file->store('ticket-attachments', 'local')
+                : 'ticket-attachments/'.Str::uuid().'.webp';
+
+            if ($compressed !== null) {
+                Storage::disk('local')->put($path, $compressed);
+            }
+
             return [
-                'path' => $file->store('ticket-attachments', 'local'),
-                'name' => $file->getClientOriginalName(),
+                'path' => $path,
+                'name' => $compressed === null ? $originalName : pathinfo($originalName, PATHINFO_FILENAME).'.webp',
             ];
         })->all();
     }

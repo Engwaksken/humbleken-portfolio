@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Support\Settings as SettingsStore;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,20 @@ class Backups
 {
     public static function disk(): string
     {
-        return config('backup.backup.destination.disks')[0] ?? 'local';
+        return 'local';
+    }
+
+    /** @return list<string> */
+    public static function disks(): array
+    {
+        $disks = [static::disk()];
+        $remote = (string) SettingsStore::get('backup_remote_disk', 's3');
+
+        if ((bool) SettingsStore::get('backup_remote_enabled', false) && in_array($remote, ['s3'], true)) {
+            $disks[] = $remote;
+        }
+
+        return $disks;
     }
 
     public static function directory(): string
@@ -29,16 +43,25 @@ class Backups
      */
     public static function all(): Collection
     {
-        $disk = Storage::disk(static::disk());
+        return collect(static::disks())->flatMap(function (string $diskName): array {
+            try {
+                $disk = Storage::disk($diskName);
 
-        return collect($disk->files(static::directory()))
-            ->filter(fn (string $path): bool => str_ends_with($path, '.zip'))
-            ->map(fn (string $path): array => [
-                'path' => $path,
-                'name' => basename($path),
-                'size' => $disk->size($path),
-                'created_at' => $disk->lastModified($path),
-            ])
+                return collect($disk->files(static::directory()))
+                    ->filter(fn (string $path): bool => str_ends_with($path, '.zip'))
+                    ->map(fn (string $path): array => [
+                        'disk' => $diskName,
+                        'path' => $path,
+                        'name' => basename($path),
+                        'size' => $disk->size($path),
+                        'created_at' => $disk->lastModified($path),
+                    ])->all();
+            } catch (\Throwable $exception) {
+                report($exception);
+
+                return [];
+            }
+        })
             ->sortByDesc('created_at')
             ->values();
     }
@@ -69,15 +92,15 @@ class Backups
         }
     }
 
-    public static function delete(string $name): void
+    public static function delete(string $name, string $disk = 'local'): void
     {
-        Storage::disk(static::disk())->delete(static::pathFor($name));
+        Storage::disk(static::validatedDisk($disk))->delete(static::pathFor($name, $disk));
     }
 
     /**
      * Resolve a backup file name to its storage path, refusing anything outside the backup folder.
      */
-    public static function pathFor(string $name): string
+    public static function pathFor(string $name, string $disk = 'local'): string
     {
         if ($name !== basename($name) || ! str_ends_with($name, '.zip')) {
             throw new RuntimeException('Invalid backup name.');
@@ -85,7 +108,7 @@ class Backups
 
         $path = static::directory().'/'.$name;
 
-        if (! Storage::disk(static::disk())->exists($path)) {
+        if (! Storage::disk(static::validatedDisk($disk))->exists($path)) {
             throw new RuntimeException('Backup not found.');
         }
 
@@ -97,10 +120,28 @@ class Backups
      */
     private static function run(array $options): void
     {
-        $exitCode = Artisan::call('backup:run', ['--disable-notifications' => true, ...$options]);
+        $previousDisks = config('backup.backup.destination.disks');
+        config(['backup.backup.destination.disks' => static::disks()]);
+        app()->forgetScopedInstances();
 
-        if ($exitCode !== 0) {
-            throw new RuntimeException(trim(Artisan::output()) ?: 'The backup could not be created.');
+        try {
+            $exitCode = Artisan::call('backup:run', ['--disable-notifications' => true, ...$options]);
+
+            if ($exitCode !== 0) {
+                throw new RuntimeException(trim(Artisan::output()) ?: 'The backup could not be created.');
+            }
+        } finally {
+            config(['backup.backup.destination.disks' => $previousDisks]);
+            app()->forgetScopedInstances();
         }
+    }
+
+    private static function validatedDisk(string $disk): string
+    {
+        if (! in_array($disk, static::disks(), true)) {
+            throw new RuntimeException('Invalid backup disk.');
+        }
+
+        return $disk;
     }
 }

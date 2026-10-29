@@ -56,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(fn (): ?string => rescue(fn () => Settings::publicFileUrl('favicon'), null, report: false))
             ->colors(fn (): array => [
                 'primary' => Color::hex(rescue(fn () => Theme::color(), Theme::DEFAULT_COLOR, report: false)),
+                'secondary' => Color::hex(rescue(fn () => Theme::secondaryColor(), Theme::DEFAULT_SECONDARY_COLOR, report: false)),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

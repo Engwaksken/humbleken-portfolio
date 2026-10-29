@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\Settings as SettingsPage;
 use App\Models\User;
+use App\Support\ImageCompressor;
 use App\Support\Settings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -34,6 +35,20 @@ class SiteAppearanceTest extends TestCase
         );
     }
 
+    public function test_raster_uploads_are_compressed_to_webp_when_gd_is_available(): void
+    {
+        if (! extension_loaded('gd')) {
+            $this->markTestSkipped('GD is required to test image compression.');
+        }
+
+        $compressed = ImageCompressor::compress($this->pngUpload('logo.png')->getRealPath(), 'image/png');
+
+        $this->assertNotNull($compressed);
+        $this->assertStringStartsWith('RIFF', $compressed);
+        $this->assertSame('WEBP', substr($compressed, 8, 4));
+        $this->assertNull(ImageCompressor::compress(__FILE__, 'application/pdf'));
+    }
+
     public function test_default_theme_uses_system_font_and_no_colour_override(): void
     {
         $this->get('/')
@@ -57,6 +72,16 @@ class SiteAppearanceTest extends TestCase
             ->assertSee("--font-sans: 'Inter'", false)
             ->assertSee('https://fonts.bunny.net/css?family=inter', false)
             ->assertSee('html { font-size: 112.5%; }', false);
+    }
+
+    public function test_custom_secondary_colour_and_font_family_are_applied(): void
+    {
+        Settings::set('theme_secondary_color', '#123456');
+        Settings::set('theme_custom_font', 'My Custom Font');
+
+        $this->get('/')
+            ->assertSee('--color-secondary: #123456;', false)
+            ->assertSee("--font-sans: 'My Custom Font', ui-sans-serif", false);
     }
 
     public function test_stored_unreadable_colour_falls_back_to_default(): void
@@ -93,17 +118,24 @@ class SiteAppearanceTest extends TestCase
         Livewire::test(SettingsPage::class)
             ->fillForm([
                 'theme_color' => '#7a1f1f',
+                'theme_secondary_color' => '#123456',
                 'theme_font' => 'georgia',
+                'theme_custom_font' => 'Arial',
                 'theme_font_size' => 'small',
                 'logo' => $this->pngUpload('logo.png'),
+                'favicon' => UploadedFile::fake()->create('favicon.ico', 2, 'image/x-icon'),
             ])
             ->call('save')
             ->assertHasNoFormErrors();
 
         $this->assertSame('#7a1f1f', Settings::get('theme_color'));
+        $this->assertSame('#123456', Settings::get('theme_secondary_color'));
         $this->assertSame('georgia', Settings::get('theme_font'));
+        $this->assertSame('Arial', Settings::get('theme_custom_font'));
         $this->assertSame('small', Settings::get('theme_font_size'));
         Storage::disk('public')->assertExists(Settings::get('logo'));
+        $this->assertIsString(Settings::get('favicon'));
+        Storage::disk('public')->assertExists(Settings::get('favicon'));
     }
 
     public function test_unreadable_colour_is_rejected_in_settings(): void

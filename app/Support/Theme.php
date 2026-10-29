@@ -11,6 +11,8 @@ class Theme
 {
     public const DEFAULT_COLOR = '#077784';
 
+    public const DEFAULT_SECONDARY_COLOR = '#14263d';
+
     /** Light backgrounds that brand-coloured text and links sit on. */
     private const BACKGROUNDS = ['#ffffff', '#f4f7fb'];
 
@@ -63,6 +65,24 @@ class Theme
         return static::isHex($color) && static::problem($color) === null ? $color : self::DEFAULT_COLOR;
     }
 
+    public static function secondaryColor(): string
+    {
+        $color = strtolower((string) Settings::get('theme_secondary_color'));
+
+        return static::isHex($color) && static::problem($color) === null ? $color : self::DEFAULT_SECONDARY_COLOR;
+    }
+
+    public static function fontStack(): string
+    {
+        $custom = trim((string) Settings::get('theme_custom_font'));
+
+        if ($custom !== '' && preg_match('/^[\pL\pN][\pL\pN \-_]{0,79}$/u', $custom)) {
+            return "'{$custom}', ui-sans-serif, system-ui, sans-serif";
+        }
+
+        return self::FONTS[static::fontKey()]['stack'];
+    }
+
     public static function fontKey(): string
     {
         $key = (string) Settings::get('theme_font');
@@ -82,11 +102,11 @@ class Theme
      */
     public static function headTags(): HtmlString
     {
-        $font = self::FONTS[static::fontKey()];
         $color = static::color();
+        $secondaryColor = static::secondaryColor();
 
         $variables = [
-            '--font-sans' => $font['stack'],
+            '--font-sans' => static::fontStack(),
         ];
 
         // The default palette is hand-tuned in app.css; only derive shades for a custom colour.
@@ -99,10 +119,19 @@ class Theme
             ];
         }
 
+        if ($secondaryColor !== self::DEFAULT_SECONDARY_COLOR) {
+            $variables += [
+                '--color-secondary' => $secondaryColor,
+                '--color-secondary-dark' => static::mix($secondaryColor, '#000000', 0.18),
+                '--color-secondary-tint' => static::mix($secondaryColor, '#ffffff', 0.92),
+            ];
+        }
+
         $css = collect($variables)->map(fn (string $value, string $name): string => "{$name}: {$value};")->implode(' ');
         $html = '<style>:root { '.$css.' } html { font-size: '.self::SIZES[static::sizeKey()]['value'].'; }</style>';
 
-        if ($font['webfont'] !== null) {
+        $font = self::FONTS[static::fontKey()];
+        if ($font['webfont'] !== null && trim((string) Settings::get('theme_custom_font')) === '') {
             $html = '<link rel="preconnect" href="https://fonts.bunny.net">'
                 .'<link rel="stylesheet" href="https://fonts.bunny.net/css?family='.e($font['webfont']).'&display=swap">'
                 .$html;

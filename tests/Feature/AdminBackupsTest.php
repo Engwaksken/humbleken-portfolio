@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Pages\Backups as BackupsPage;
 use App\Models\User;
 use App\Support\Backups;
+use App\Support\Settings;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\File;
@@ -64,6 +65,19 @@ class AdminBackupsTest extends TestCase
         $this->assertFalse($names->contains(fn (string $name): bool => str_ends_with($name, '.env')));
     }
 
+    public function test_backup_can_be_written_to_local_and_remote_storage(): void
+    {
+        Storage::fake('s3');
+        Settings::set('backup_remote_enabled', true);
+        $this->actingAsAdmin();
+
+        Backups::create();
+
+        $backups = Backups::all();
+        $this->assertEqualsCanonicalizing(['local', 's3'], $backups->pluck('disk')->all());
+        Storage::disk('s3')->assertExists($backups->firstWhere('disk', 's3')['path']);
+    }
+
     public function test_backups_are_listed_and_can_be_downloaded_and_deleted(): void
     {
         Storage::disk('local')->put('site-backups/2026-01-01-00-00-00.zip', 'zip-bytes');
@@ -85,6 +99,25 @@ class AdminBackupsTest extends TestCase
         Backups::pathFor('../../.env');
     }
 
+    public function test_remote_backups_are_listed_and_deleted_on_their_configured_disk(): void
+    {
+        Storage::fake('s3');
+        Storage::disk('s3')->put('site-backups/remote-copy.zip', 'zip-bytes');
+        Settings::set('backup_remote_enabled', true);
+
+        $this->assertSame('s3', Backups::all()->sole()['disk']);
+        Backups::delete('remote-copy.zip', 's3');
+
+        Storage::disk('s3')->assertMissing('site-backups/remote-copy.zip');
+    }
+
+    public function test_backup_disk_cannot_be_selected_when_remote_storage_is_disabled(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        Backups::pathFor('backup.zip', 's3');
+    }
+
     public function test_non_admins_cannot_open_backups(): void
     {
         $this->actingAs(User::factory()->create())->get('/admin/backups')->assertForbidden();
@@ -97,5 +130,24 @@ class AdminBackupsTest extends TestCase
         $this->actingAsAdmin();
 
         $this->get('/admin/backups')->assertOk()->assertSee('No backups yet');
+    }
+
+    public function test_admin_can_configure_automatic_and_remote_backups(): void
+    {
+        $this->actingAsAdmin();
+
+        Livewire::test(BackupsPage::class)
+            ->callAction('backupSettings', [
+                'schedule_enabled' => true,
+                'schedule_time' => '03:30',
+                'remote_enabled' => true,
+                'remote_disk' => 's3',
+            ])
+            ->assertNotified('Backup settings saved');
+
+        $this->assertSame('1', Settings::get('backup_schedule_enabled'));
+        $this->assertSame('03:30', Settings::get('backup_schedule_time'));
+        $this->assertSame('1', Settings::get('backup_remote_enabled'));
+        $this->assertSame('s3', Settings::get('backup_remote_disk'));
     }
 }

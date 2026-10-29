@@ -45,6 +45,11 @@ Planning decisions below reflect the approved direction, not proof that the asso
 - **Notifications:** Admins receive queued emails for new tickets and customer replies; customers receive one when staff reply. Emails contain a link, not the ticket content.
 - **Consequences:** Switching to invite-only registration means removing the registration feature in `config/fortify.php`. Two-factor sign-in for admin accounts is recommended before launch. Ticket retention is **OPEN**.
 
+## ADR-0010: Release hardening
+- **Status:** Implemented.
+- **Decision:** Administrators must use authenticator-app two-factor sign-in (Filament built-in, recoverable), controlled by `ADMIN_MFA_REQUIRED`, which defaults to on and is turned off only in automated tests. A middleware adds baseline security headers to every response. Password reset responses no longer reveal whether an account exists. CI adds dependency audits and a style check. A Content-Security-Policy is deferred until it can be tested against the admin panel.
+- **Consequences:** Existing administrators are asked to set up two-factor on their next panel visit. Losing both the authenticator and the recovery codes requires clearing the user's `app_authentication_secret` from the server.
+
 ## Open decisions
 - Final brand/name/domain, owner-approved public profile and content.
 - Hosting target, production database, storage, queue, mail, monitoring and region/provider choices; all configurable and **OPEN**.

@@ -13,4 +13,17 @@ Verify supported PHP/Laravel runtime, web root and HTTPS, database compatibility
 5. Run reviewed migrations with a rollback/forward recovery plan; no unreviewed destructive schema changes. Confirm health check and smoke-test public/private paths.
 6. Confirm admin provisioning is performed securely; do not seed passwords or publish credentials.
 
-Deployment commands, worker counts, database settings, region and recovery objectives depend on the OPEN target and are intentionally not invented here. See [SECURITY.md](SECURITY.md) for operational controls.
+## What this application needs on any host
+These follow from the code and hold whatever target is chosen.
+
+- **Runtime:** PHP 8.2+ with the `intl`, `mbstring` and PDO extensions for the chosen database. Composer cannot install dependencies without `intl`. Node is needed only to build assets.
+- **Queue worker:** enquiry and support-ticket emails are queued. Without a running worker (`php artisan queue:work`, kept alive by the host's process manager) no notification emails are sent. Failed jobs land in `failed_jobs`; decide who checks them.
+- **Scheduler:** no scheduled tasks exist yet. Add the scheduler when retention or clean-up jobs are introduced.
+- **Mail:** a real mailer is required for email verification, password reset and notifications. `MAIL_MAILER=log` only writes to the log.
+- **Environment settings:** `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` set to the canonical HTTPS address, `SESSION_SECURE_COOKIE=true`, `LOG_LEVEL` no lower than `warning`. Leave `ADMIN_MFA_REQUIRED` unset (it defaults to on); it is switched off only in `phpunit.xml`.
+- **Build and release commands:** `composer install --no-dev --optimize-autoloader`, `npm ci && npm run build`, `php artisan migrate --force`, `php artisan optimize`, `php artisan filament:optimize`. Restart queue workers after each release (`php artisan queue:restart`).
+- **First administrator:** `php artisan app:create-admin-user` (interactive; 12-character minimum password). On first panel sign-in the administrator must set up an authenticator app and should store the recovery codes offline.
+- **Health checks:** `/up` (framework) and `/api/v1/health` (JSON).
+- **Search engines:** once the domain is known, add `Sitemap: https://<domain>/sitemap.xml` to `public/robots.txt`.
+
+Deployment commands specific to a host, worker counts, database settings, region and recovery objectives depend on the OPEN target and are intentionally not invented here. See [SECURITY.md](SECURITY.md) for operational controls.

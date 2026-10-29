@@ -67,7 +67,8 @@ class HomeController extends Controller
 
         $links = [];
         foreach ($decoded as $platform => $url) {
-            if (is_string($url) && trim($url) !== '') {
+            // Only web links are rendered, so a stored javascript: or data: URL can never reach an href.
+            if (is_string($url) && preg_match('#^https?://#i', trim($url))) {
                 $links[(string) $platform] = trim($url);
             }
         }

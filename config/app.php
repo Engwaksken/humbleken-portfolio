@@ -43,6 +43,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Two-Factor Authentication
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, administrators must set up an authenticator app before
+    | they can use the admin panel. Only disable this for automated tests.
+    |
+    */
+
+    'admin_mfa_required' => (bool) env('ADMIN_MFA_REQUIRED', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |

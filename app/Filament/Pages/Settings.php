@@ -74,7 +74,8 @@ class Settings extends Page
                         KeyValue::make('social_links')
                             ->label('Social links')
                             ->keyLabel('Platform')
-                            ->valueLabel('URL'),
+                            ->valueLabel('URL')
+                            ->helperText('Full web addresses starting with https://. Other links are not shown on the site.'),
                     ]),
             ])
             ->statePath('data');

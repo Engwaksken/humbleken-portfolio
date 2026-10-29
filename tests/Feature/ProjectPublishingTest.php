@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublicationStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -84,7 +84,7 @@ class ProjectPublishingTest extends TestCase
     {
         $project = Project::factory()->create();
 
-        $project->update(['status' => ProjectStatus::Published]);
+        $project->update(['status' => PublicationStatus::Published]);
 
         $this->assertNotNull($project->published_at);
         $this->assertTrue($project->isPublished());

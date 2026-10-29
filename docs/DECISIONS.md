@@ -33,6 +33,11 @@ Planning decisions below reflect the approved direction, not proof that the asso
 - **Decision:** Projects have draft/published status and a publish date. Publishing without a date publishes immediately; a future date schedules the project. Public pages only resolve projects that are published and whose date has passed; anything else returns 404. Bodies are Markdown rendered with raw HTML stripped and unsafe links removed. The Projects navigation link and homepage section appear only when at least one project is public. No sample projects are seeded, so no client work is invented.
 - **Consequences:** Project categories and images (`Project *──* Category`, `Project *──* MediaAsset` in DATABASE.md) wait for the media/storage decision.
 
+## ADR-0008: Knowledge articles, search and SEO
+- **Status:** Implemented for MVP.
+- **Decision:** Articles share the projects' draft/scheduled publishing and safe Markdown rendering through a `Publishable` trait and a common `PublicationStatus` enum. Each article has at most one category and any number of tags. Search is a case-insensitive keyword match (`LIKE`) on title, excerpt and body, combined with category and tag filters; it is portable across SQLite and PostgreSQL. A full-text index can replace it once the production database is chosen and content volume justifies it. `/sitemap.xml` lists only public pages. Pages carry description, canonical and Open Graph tags; articles add published and modified times.
+- **Consequences:** `public/robots.txt` does not yet reference the sitemap because the production domain is open; add `Sitemap: https://<domain>/sitemap.xml` at launch.
+
 ## Open decisions
 - Final brand/name/domain, owner-approved public profile and content.
 - Hosting target, production database, storage, queue, mail, monitoring and region/provider choices; all configurable and **OPEN**.

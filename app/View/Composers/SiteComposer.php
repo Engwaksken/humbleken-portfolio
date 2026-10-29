@@ -2,6 +2,7 @@
 
 namespace App\View\Composers;
 
+use App\Models\Article;
 use App\Models\Project;
 use App\Support\Settings;
 use Illuminate\View\View;
@@ -19,6 +20,7 @@ class SiteComposer
             'brandRemainder' => $brandParts[1] ?? '',
             'tagline' => Settings::get('tagline') ?: 'Engineering solutions and technical consulting',
             'hasPublishedProjects' => Project::query()->published()->exists(),
+            'hasPublishedArticles' => Article::query()->published()->exists(),
         ]);
     }
 }

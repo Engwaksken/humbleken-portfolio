@@ -10,3 +10,21 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Rendered Markdown for projects and articles. */
+@layer components {
+    .markdown-body {
+        @apply leading-8 text-[#14263d];
+    }
+    .markdown-body :where(p) { @apply mt-5; }
+    .markdown-body :where(h2) { @apply mt-10 text-2xl font-semibold; }
+    .markdown-body :where(h3) { @apply mt-8 text-xl font-semibold; }
+    .markdown-body :where(ul) { @apply mt-4 list-disc pl-6; }
+    .markdown-body :where(ol) { @apply mt-4 list-decimal pl-6; }
+    .markdown-body :where(li) { @apply mt-2; }
+    .markdown-body :where(a) { @apply text-[#077784] underline underline-offset-2; }
+    .markdown-body :where(code) { @apply rounded bg-[#e8f2f6] px-1; }
+    .markdown-body :where(pre) { @apply mt-5 overflow-x-auto rounded bg-[#14263d] p-4 text-sm text-white; }
+    .markdown-body :where(pre code) { @apply bg-transparent p-0; }
+    .markdown-body :where(blockquote) { @apply mt-5 border-l-2 border-[#077784] pl-4 text-[#506176]; }
+}

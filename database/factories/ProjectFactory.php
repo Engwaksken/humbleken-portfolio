@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublicationStatus;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -24,7 +24,7 @@ class ProjectFactory extends Factory
             'summary' => fake()->sentence(),
             'body' => fake()->paragraphs(2, true),
             'technologies' => fake()->randomElements(['Laravel', 'PostgreSQL', 'Networking', 'Linux', 'Docker'], 2),
-            'status' => ProjectStatus::Draft,
+            'status' => PublicationStatus::Draft,
             'published_at' => null,
             'sort_order' => 0,
         ];
@@ -33,7 +33,7 @@ class ProjectFactory extends Factory
     public function published(): static
     {
         return $this->state(fn (): array => [
-            'status' => ProjectStatus::Published,
+            'status' => PublicationStatus::Published,
             'published_at' => now()->subDay(),
         ]);
     }
@@ -41,7 +41,7 @@ class ProjectFactory extends Factory
     public function scheduled(): static
     {
         return $this->state(fn (): array => [
-            'status' => ProjectStatus::Published,
+            'status' => PublicationStatus::Published,
             'published_at' => now()->addWeek(),
         ]);
     }

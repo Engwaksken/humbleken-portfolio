@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublicationStatus;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Models\Project;
 use BackedEnum;
@@ -57,8 +57,8 @@ class ProjectResource extends Resource
                 Section::make('Publishing')
                     ->schema([
                         Select::make('status')
-                            ->options(ProjectStatus::class)
-                            ->default(ProjectStatus::Draft)
+                            ->options(PublicationStatus::class)
+                            ->default(PublicationStatus::Draft)
                             ->required(),
                         DateTimePicker::make('published_at')
                             ->label('Publish date')
@@ -83,7 +83,7 @@ class ProjectResource extends Resource
             ])
             ->defaultSort('sort_order')
             ->filters([
-                SelectFilter::make('status')->options(ProjectStatus::class),
+                SelectFilter::make('status')->options(PublicationStatus::class),
             ])
             ->actions([
                 EditAction::make(),

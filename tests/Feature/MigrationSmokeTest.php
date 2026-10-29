@@ -35,8 +35,9 @@ class MigrationSmokeTest extends TestCase
 
     public function test_new_tables_can_be_rolled_back_and_re_migrated(): void
     {
-        $this->artisan('migrate:rollback', ['--step' => 5])->assertSuccessful();
+        $this->artisan('migrate:rollback', ['--step' => 8])->assertSuccessful();
 
+        $this->assertFalse(Schema::hasTable('articles'));
         $this->assertFalse(Schema::hasTable('projects'));
         $this->assertFalse(Schema::hasTable('enquiries'));
 

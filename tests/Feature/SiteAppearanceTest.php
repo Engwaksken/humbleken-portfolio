@@ -175,6 +175,27 @@ class SiteAppearanceTest extends TestCase
         Storage::disk('public')->assertExists(Settings::get('favicon'));
     }
 
+    public function test_admin_can_replace_stale_branding_paths_whose_files_are_missing(): void
+    {
+        Settings::set('logo', 'branding/missing-logo.png');
+        Settings::set('favicon', 'branding/missing-favicon.ico');
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+
+        Livewire::test(SettingsPage::class)
+            ->fillForm([
+                'logo' => $this->pngUpload('replacement-logo.png'),
+                'favicon' => UploadedFile::fake()->create('replacement-favicon.ico', 2, 'image/x-icon'),
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Settings saved');
+
+        $this->assertNotSame('branding/missing-logo.png', Settings::get('logo'));
+        $this->assertNotSame('branding/missing-favicon.ico', Settings::get('favicon'));
+        Storage::disk('public')->assertExists(Settings::get('logo'));
+        Storage::disk('public')->assertExists(Settings::get('favicon'));
+    }
+
     public function test_unreadable_colour_is_rejected_in_settings(): void
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));

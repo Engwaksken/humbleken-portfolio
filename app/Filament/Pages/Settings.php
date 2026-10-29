@@ -255,13 +255,6 @@ class Settings extends Page
             $disk = $component->getDisk();
 
             if (! $disk->exists($file)) {
-                Notification::make()
-                    ->danger()
-                    ->title('Saved image is unavailable')
-                    ->body('Remove the missing file, upload it again, and save settings.')
-                    ->persistent()
-                    ->send();
-
                 return null;
             }
 
@@ -327,6 +320,13 @@ class Settings extends Page
         $data['theme_font'] = Theme::fontKey();
         $data['theme_font_size'] = Theme::sizeKey();
         $data['maintenance_enabled'] = (bool) ($data['maintenance_enabled'] ?? false);
+
+        foreach (['logo', 'favicon'] as $key) {
+            if (filled($data[$key] ?? null) && ! Storage::disk('public')->exists($data[$key])) {
+                // A stale DB path should not prevent choosing a replacement upload.
+                $data[$key] = null;
+            }
+        }
 
         if (isset($data['social_links']) && is_string($data['social_links'])) {
             $data['social_links'] = json_decode($data['social_links'], true) ?? [];

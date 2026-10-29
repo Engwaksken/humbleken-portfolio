@@ -27,6 +27,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
@@ -180,6 +181,32 @@ class Settings extends Page
                                 TextInput::make('contact_title')->label('Contact page heading')->maxLength(255),
                                 Textarea::make('contact_intro')->label('Contact page introduction')->rows(3)->maxLength(1000),
                             ]),
+                        Tab::make('AI assistant')
+                            ->icon(Heroicon::OutlinedChatBubbleLeftRight)
+                            ->schema([
+                                Toggle::make('ai_chat_enabled')
+                                    ->label('Enable public AI chatbot')
+                                    ->helperText('The chatbot will answer visitor questions using published website content. Test the API settings before enabling it.'),
+                                TextInput::make('ai_api_base_url')
+                                    ->label('OpenAI-compatible API base URL')
+                                    ->url()
+                                    ->placeholder('https://api.openai.com')
+                                    ->maxLength(500)
+                                    ->helperText('Use the provider API base URL (without /chat/completions). The platform sends requests to /v1/chat/completions.'),
+                                TextInput::make('ai_api_model')
+                                    ->label('Model name')
+                                    ->placeholder('e.g. gpt-4o-mini')
+                                    ->maxLength(255),
+                                TextInput::make('ai_api_key')
+                                    ->label('API key')
+                                    ->password()
+                                    ->revealable()
+                                    ->dehydrated()
+                                    ->helperText(SettingsStore::get('ai_api_key_ciphertext') ? 'A key is stored encrypted. Leave blank to keep it, or enter a new key to replace it.' : 'The key is encrypted before it is stored. It is never sent to visitors.'),
+                                Toggle::make('ai_api_key_clear')
+                                    ->label('Remove stored API key')
+                                    ->helperText('This disables chatbot responses until a new API key is configured.'),
+                            ]),
                         Tab::make('Maintenance')
                             ->icon(Heroicon::OutlinedWrenchScrewdriver)
                             ->schema([
@@ -200,6 +227,30 @@ class Settings extends Page
     public function save(): void
     {
         $state = $this->form->getState();
+
+        $apiKey = trim((string) ($state['ai_api_key'] ?? ''));
+        $clearApiKey = (bool) ($state['ai_api_key_clear'] ?? false);
+        unset($state['ai_api_key'], $state['ai_api_key_clear']);
+
+        if (($state['ai_chat_enabled'] ?? false)
+            && (blank($state['ai_api_base_url'] ?? null)
+                || blank($state['ai_api_model'] ?? null)
+                || ($apiKey === '' && ($clearApiKey || blank(SettingsStore::get('ai_api_key_ciphertext')))))) {
+            Notification::make()
+                ->danger()
+                ->title('AI provider configuration is incomplete')
+                ->body('Set an API base URL, model, and API key before enabling the chatbot.')
+                ->send();
+
+            return;
+        }
+
+        if ($apiKey !== '') {
+            SettingsStore::set('ai_api_key_ciphertext', Crypt::encryptString($apiKey));
+        } elseif ($clearApiKey) {
+            SettingsStore::forget('ai_api_key_ciphertext');
+            $state['ai_chat_enabled'] = false;
+        }
 
         // A single FileUpload field can temporarily contain the persisted path and a
         // replacement upload together. Prefer the newly stored path for these settings.

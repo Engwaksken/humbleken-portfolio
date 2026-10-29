@@ -14,6 +14,7 @@
     <meta name="theme-color" content="#f4f7fb">
     <title>{{ $title ?? $brandName }}</title>
     <meta name="description" content="{{ $description ?? $tagline }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="{{ $ogType }}">
     <meta property="og:site_name" content="{{ $brandName }}">
@@ -79,5 +80,8 @@
     <footer class="bg-white px-6 py-6 text-center text-sm text-[#506176]">
         <p>© {{ now()->year }} {{ $brandName }}. Technical consulting and engineering solutions.</p>
     </footer>
+
+    <x-accessibility-tools />
+    <x-chatbot-widget />
 </body>
 </html>

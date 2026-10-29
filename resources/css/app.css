@@ -41,3 +41,30 @@
     .markdown-body :where(pre code) { @apply bg-transparent p-0; }
     .markdown-body :where(blockquote) { @apply mt-5 border-l-2 border-brand pl-4 text-[#506176]; }
 }
+html.accessibility-high-contrast body {
+    background: #fff !important;
+    color: #000 !important;
+}
+
+html.accessibility-high-contrast body *:not(img):not(video):not(iframe) {
+    background-color: #fff !important;
+    border-color: #000 !important;
+    color: #000 !important;
+}
+
+html.accessibility-high-contrast body a {
+    color: #0039a6 !important;
+    text-decoration: underline;
+}
+
+html.accessibility-high-contrast body button,
+html.accessibility-high-contrast body input,
+html.accessibility-high-contrast body select,
+html.accessibility-high-contrast body textarea {
+    outline-color: #000 !important;
+}
+
+html.accessibility-underlined-links a {
+    text-decoration: underline !important;
+    text-underline-offset: 0.2em;
+}

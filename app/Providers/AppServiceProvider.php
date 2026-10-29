@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         ], SiteComposer::class);
 
         RateLimiter::for('enquiries', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+        RateLimiter::for('chatbot', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('tickets', fn (Request $request) => Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()));
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Account\SupportTicketController;
 use App\Http\Controllers\Account\TicketAttachmentController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BookingRequestController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
@@ -43,6 +44,9 @@ Route::post('/enquiries', [EnquiryController::class, 'store'])
 Route::post('/booking-requests', [BookingRequestController::class, 'store'])
     ->middleware('throttle:enquiries')
     ->name('booking-requests.store');
+Route::post('/chatbot/messages', [ChatbotController::class, 'store'])
+    ->middleware('throttle:chatbot')
+    ->name('chatbot.messages');
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('account.')->group(function (): void {
     Route::get('/', DashboardController::class)->name('dashboard');

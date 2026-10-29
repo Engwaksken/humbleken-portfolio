@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSampleMedia;
 use App\Models\Concerns\Publishable;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -14,6 +15,7 @@ class Project extends Model
     /** @use HasFactory<ProjectFactory> */
     use HasFactory;
 
+    use HasSampleMedia;
     use Publishable;
 
     /**
@@ -30,6 +32,8 @@ class Project extends Model
         'status',
         'published_at',
         'sort_order',
+        'sample_image',
+        'sample_video_url',
     ];
 
     /**

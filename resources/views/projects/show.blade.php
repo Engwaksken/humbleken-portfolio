@@ -10,6 +10,15 @@
             <p class="mt-5 text-lg leading-8 text-[#506176]">{{ $project->summary }}</p>
         @endif
 
+        @if ($project->sampleImageUrl())
+            <img src="{{ $project->sampleImageUrl() }}" alt="Sample image for {{ $project->title }}" loading="lazy" decoding="async" class="mt-8 w-full rounded-lg object-cover">
+        @endif
+        @if ($project->sampleVideoEmbedUrl())
+            <div class="mt-8 aspect-video overflow-hidden rounded-lg bg-[#14263d]">
+                <iframe src="{{ $project->sampleVideoEmbedUrl() }}" title="Video sample for {{ $project->title }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen class="h-full w-full"></iframe>
+            </div>
+        @endif
+
         @if (! empty($project->technologies))
             <ul class="mt-6 flex flex-wrap gap-2" aria-label="Technologies">
                 @foreach ($project->technologies as $technology)

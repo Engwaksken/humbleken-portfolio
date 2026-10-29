@@ -36,6 +36,12 @@
                                 <article class="grid gap-2 border-b border-[#14263d]/10 py-7 sm:grid-cols-[.8fr_1.2fr] sm:gap-8">
                                     <h3 class="text-lg font-semibold">{{ $service->name }}</h3>
                                     <p class="leading-7 text-[#506176]">{{ $service->summary ?: $service->description }}</p>
+                                    @if ($service->sampleImageUrl())
+                                        <img src="{{ $service->sampleImageUrl() }}" alt="Sample image for {{ $service->name }}" loading="lazy" decoding="async" class="max-h-72 w-full rounded object-cover sm:col-span-2">
+                                    @endif
+                                    @if ($service->sampleVideoEmbedUrl())
+                                        <div class="aspect-video overflow-hidden rounded bg-[#14263d] sm:col-span-2"><iframe src="{{ $service->sampleVideoEmbedUrl() }}" title="Video sample for {{ $service->name }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen class="h-full w-full"></iframe></div>
+                                    @endif
                                 </article>
                             @endforeach
                         @endif
@@ -44,6 +50,12 @@
                         <article class="grid gap-2 border-b border-[#14263d]/10 py-7 sm:grid-cols-[.8fr_1.2fr] sm:gap-8">
                             <h3 class="text-lg font-semibold">{{ $service->name }}</h3>
                             <p class="leading-7 text-[#506176]">{{ $service->summary ?: $service->description }}</p>
+                            @if ($service->sampleImageUrl())
+                                <img src="{{ $service->sampleImageUrl() }}" alt="Sample image for {{ $service->name }}" loading="lazy" decoding="async" class="max-h-72 w-full rounded object-cover sm:col-span-2">
+                            @endif
+                            @if ($service->sampleVideoEmbedUrl())
+                                <div class="aspect-video overflow-hidden rounded bg-[#14263d] sm:col-span-2"><iframe src="{{ $service->sampleVideoEmbedUrl() }}" title="Video sample for {{ $service->name }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen class="h-full w-full"></iframe></div>
+                            @endif
                         </article>
                     @endforeach
                 @else

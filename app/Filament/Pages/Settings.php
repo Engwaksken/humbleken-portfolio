@@ -28,7 +28,6 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
@@ -74,7 +73,7 @@ class Settings extends Page
                                     ->image()
                                     ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
                                     ->maxSize(1024)
-                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => static::storeCompressedImage($component, $file)),
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
                                 FileUpload::make('favicon')
                                     ->label('Favicon')
                                     ->helperText('Square PNG or ICO, up to 256 KB. PNG images are compressed to WebP; ICO files are kept as-is.')
@@ -83,7 +82,7 @@ class Settings extends Page
                                     ->visibility('public')
                                     ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])
                                     ->maxSize(256)
-                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => static::storeCompressedImage($component, $file)),
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
                             ]),
                         Tab::make('Appearance')
                             ->icon(Heroicon::OutlinedSwatch)
@@ -247,22 +246,5 @@ class Settings extends Page
         }
 
         return $data;
-    }
-
-    private static function storeCompressedImage(BaseFileUpload $component, TemporaryUploadedFile $file): ?string
-    {
-        $disk = $component->getDisk();
-        $compressed = ImageCompressor::compress($file->getRealPath(), $file->getMimeType());
-
-        if ($compressed === null) {
-            return $component->saveUploadedFile($file);
-        }
-
-        $path = trim($component->getDirectory().'/'.Str::uuid().'.webp', '/');
-        if (! $disk->put($path, $compressed, ['visibility' => $component->getVisibility()])) {
-            throw new \RuntimeException('The uploaded image could not be stored. Please try again.');
-        }
-
-        return $path;
     }
 }

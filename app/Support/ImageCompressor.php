@@ -2,6 +2,9 @@
 
 namespace App\Support;
 
+use Filament\Forms\Components\BaseFileUpload;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use RuntimeException;
 
 class ImageCompressor
@@ -42,5 +45,22 @@ class ImageCompressor
         } finally {
             imagedestroy($image);
         }
+    }
+
+    public static function storeUpload(BaseFileUpload $component, TemporaryUploadedFile $file): ?string
+    {
+        $compressed = static::compress($file->getRealPath(), $file->getMimeType());
+
+        if ($compressed === null) {
+            return $component->saveUploadedFile($file);
+        }
+
+        $path = trim($component->getDirectory().'/'.Str::uuid().'.webp', '/');
+
+        if (! $component->getDisk()->put($path, $compressed, ['visibility' => $component->getVisibility()])) {
+            throw new RuntimeException('The uploaded image could not be stored. Please try again.');
+        }
+
+        return $path;
     }
 }

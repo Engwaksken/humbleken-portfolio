@@ -1,4 +1,7 @@
 <article class="flex flex-col gap-3 border-t-2 border-brand bg-white p-6">
+    @if ($project->sampleImageUrl())
+        <img src="{{ $project->sampleImageUrl() }}" alt="Sample image for {{ $project->title }}" loading="lazy" decoding="async" class="-mx-6 -mt-6 mb-2 aspect-video w-[calc(100%+3rem)] object-cover">
+    @endif
     <h3 class="text-lg font-semibold">
         <a href="{{ route('projects.show', ['project' => $project->slug]) }}" class="hover:text-brand focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">{{ $project->title }}</a>
     </h3>

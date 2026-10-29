@@ -8,6 +8,8 @@ use App\Models\Project;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -42,6 +44,32 @@ class AdminProjectResourceTest extends TestCase
             ->assertHasNoActionErrors();
 
         $this->assertDatabaseHas('projects', ['slug' => 'office-network-refresh', 'status' => 'draft']);
+    }
+
+    public function test_admin_can_add_a_sample_image_and_video_to_a_project(): void
+    {
+        Storage::fake('public');
+        $this->actingAsAdmin();
+
+        Livewire::test(ManageProjects::class)
+            ->callAction('create', data: [
+                'title' => 'Sample project',
+                'slug' => 'sample-project',
+                'status' => PublicationStatus::Published->value,
+                'published_at' => now()->subDay()->toDateTimeString(),
+                'sort_order' => 0,
+                'sample_image' => UploadedFile::fake()->createWithContent('sample.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')),
+                'sample_video_url' => 'https://youtu.be/abcdefghijk',
+            ])
+            ->assertHasNoActionErrors();
+
+        $project = Project::query()->where('slug', 'sample-project')->sole();
+        $this->assertSame('https://www.youtube-nocookie.com/embed/abcdefghijk', $project->sampleVideoEmbedUrl());
+        Storage::disk('public')->assertExists($project->sample_image);
+
+        $this->get(route('projects.show', $project->slug))
+            ->assertSee('Sample image for Sample project')
+            ->assertSee('https://www.youtube-nocookie.com/embed/abcdefghijk');
     }
 
     public function test_create_modal_validates_input(): void

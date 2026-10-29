@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSampleMedia;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,8 @@ class Service extends Model
 {
     /** @use HasFactory<ServiceFactory> */
     use HasFactory;
+
+    use HasSampleMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +31,8 @@ class Service extends Model
         'indicative_price',
         'is_active',
         'sort_order',
+        'sample_image',
+        'sample_video_url',
     ];
 
     /**

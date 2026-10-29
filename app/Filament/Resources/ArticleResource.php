@@ -16,7 +16,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -39,47 +40,59 @@ class ArticleResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Content')
-                    ->schema([
-                        TextInput::make('title')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->alphaDash()
-                            ->unique(ignoreRecord: true)
-                            ->helperText('Used in the public address: /articles/your-slug'),
-                        Textarea::make('excerpt')
-                            ->rows(2)
-                            ->maxLength(500)
-                            ->helperText('Shown in article lists and search results.'),
-                        MarkdownEditor::make('body')
-                            ->helperText('Markdown. Raw HTML is removed when the page is shown.'),
-                    ]),
-                Section::make('Organisation')
-                    ->schema([
-                        Select::make('article_category_id')
-                            ->label('Category')
-                            ->relationship('category', 'name')
-                            ->searchable()
-                            ->preload(),
-                        Select::make('tags')
-                            ->relationship('tags', 'name')
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm(TagResource::fields()),
-                    ]),
-                Section::make('Publishing')
-                    ->schema([
-                        Select::make('status')
-                            ->options(PublicationStatus::class)
-                            ->default(PublicationStatus::Draft)
-                            ->required(),
-                        DateTimePicker::make('published_at')
-                            ->label('Publish date')
-                            ->helperText('Leave empty to publish immediately; a future date schedules the article.'),
+                Tabs::make('Article')
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tab::make('Details')
+                            ->icon(Heroicon::OutlinedInformationCircle)
+                            ->schema([
+                                TextInput::make('title')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->alphaDash()
+                                    ->unique(ignoreRecord: true)
+                                    ->helperText('Used in the public address: /articles/your-slug'),
+                                Textarea::make('excerpt')
+                                    ->rows(2)
+                                    ->maxLength(500)
+                                    ->helperText('Shown in article lists and search results.'),
+                            ]),
+                        Tab::make('Body')
+                            ->icon(Heroicon::OutlinedDocumentText)
+                            ->schema([
+                                MarkdownEditor::make('body')
+                                    ->hiddenLabel()
+                                    ->helperText('Markdown. Raw HTML is removed when the page is shown.'),
+                            ]),
+                        Tab::make('Organisation')
+                            ->icon(Heroicon::OutlinedTag)
+                            ->schema([
+                                Select::make('article_category_id')
+                                    ->label('Category')
+                                    ->relationship('category', 'name')
+                                    ->searchable()
+                                    ->preload(),
+                                Select::make('tags')
+                                    ->relationship('tags', 'name')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm(TagResource::fields()),
+                            ]),
+                        Tab::make('Publishing')
+                            ->icon(Heroicon::OutlinedCalendar)
+                            ->schema([
+                                Select::make('status')
+                                    ->options(PublicationStatus::class)
+                                    ->default(PublicationStatus::Draft)
+                                    ->required(),
+                                DateTimePicker::make('published_at')
+                                    ->label('Publish date')
+                                    ->helperText('Leave empty to publish immediately; a future date schedules the article.'),
+                            ]),
                     ]),
             ]);
     }

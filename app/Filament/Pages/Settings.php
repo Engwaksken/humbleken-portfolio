@@ -13,7 +13,8 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
@@ -36,46 +37,54 @@ class Settings extends Page
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
             ->components([
-                Section::make('Site identity')
-                    ->schema([
-                        TextInput::make('brand_name')
-                            ->label('Brand name')
-                            ->default('IT Problem Solver')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('tagline')
-                            ->label('Tagline')
-                            ->maxLength(255),
-                    ]),
-                Section::make('Contact details')
-                    ->schema([
-                        TextInput::make('contact_email')
-                            ->label('Contact email')
-                            ->email()
-                            ->maxLength(255),
-                        TextInput::make('contact_phone')
-                            ->label('Contact phone')
-                            ->tel()
-                            ->maxLength(255),
-                        TextInput::make('whatsapp')
-                            ->label('WhatsApp')
-                            ->maxLength(255),
-                        TextInput::make('business_hours')
-                            ->label('Business hours')
-                            ->maxLength(255),
-                        TextInput::make('address')
-                            ->label('Address')
-                            ->maxLength(255),
-                    ]),
-                Section::make('Social links')
-                    ->schema([
-                        KeyValue::make('social_links')
-                            ->label('Social links')
-                            ->keyLabel('Platform')
-                            ->valueLabel('URL')
-                            ->helperText('Full web addresses starting with https://. Other links are not shown on the site.'),
+                Tabs::make('Settings')
+                    ->persistTabInQueryString()
+                    ->tabs([
+                        Tab::make('Site identity')
+                            ->icon(Heroicon::OutlinedIdentification)
+                            ->schema([
+                                TextInput::make('brand_name')
+                                    ->label('Brand name')
+                                    ->default('IT Problem Solver')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('tagline')
+                                    ->label('Tagline')
+                                    ->maxLength(255),
+                            ]),
+                        Tab::make('Contact details')
+                            ->icon(Heroicon::OutlinedPhone)
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('contact_email')
+                                    ->label('Contact email')
+                                    ->email()
+                                    ->maxLength(255),
+                                TextInput::make('contact_phone')
+                                    ->label('Contact phone')
+                                    ->tel()
+                                    ->maxLength(255),
+                                TextInput::make('whatsapp')
+                                    ->label('WhatsApp')
+                                    ->maxLength(255),
+                                TextInput::make('business_hours')
+                                    ->label('Business hours')
+                                    ->maxLength(255),
+                                TextInput::make('address')
+                                    ->label('Address')
+                                    ->maxLength(255)
+                                    ->columnSpanFull(),
+                            ]),
+                        Tab::make('Social links')
+                            ->icon(Heroicon::OutlinedLink)
+                            ->schema([
+                                KeyValue::make('social_links')
+                                    ->label('Social links')
+                                    ->keyLabel('Platform')
+                                    ->valueLabel('URL')
+                                    ->helperText('Full web addresses starting with https://. Other links are not shown on the site.'),
+                            ]),
                     ]),
             ])
             ->statePath('data');

@@ -17,7 +17,8 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -37,40 +38,56 @@ class ProjectResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Content')
-                    ->schema([
-                        TextInput::make('title')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->alphaDash()
-                            ->unique(ignoreRecord: true)
-                            ->helperText('Used in the public address: /projects/your-slug'),
-                        Textarea::make('summary')
-                            ->rows(2)
-                            ->maxLength(500)
-                            ->helperText('Shown in project lists and search results.'),
-                        MarkdownEditor::make('body')
-                            ->helperText('Markdown. Raw HTML is removed when the page is shown.'),
-                        TagsInput::make('technologies')
-                            ->placeholder('Add a technology'),
+                Tabs::make('Project')
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tab::make('Details')
+                            ->icon(Heroicon::OutlinedInformationCircle)
+                            ->schema([
+                                TextInput::make('title')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->alphaDash()
+                                    ->unique(ignoreRecord: true)
+                                    ->helperText('Used in the public address: /projects/your-slug'),
+                                Textarea::make('summary')
+                                    ->rows(2)
+                                    ->maxLength(500)
+                                    ->helperText('Shown in project lists and search results.'),
+                                TagsInput::make('technologies')
+                                    ->placeholder('Add a technology'),
+                            ]),
+                        Tab::make('Write-up')
+                            ->icon(Heroicon::OutlinedDocumentText)
+                            ->schema([
+                                MarkdownEditor::make('body')
+                                    ->hiddenLabel()
+                                    ->helperText('Markdown. Raw HTML is removed when the page is shown.'),
+                            ]),
+                        static::publishingTab(),
                     ]),
-                Section::make('Publishing')
-                    ->schema([
-                        Select::make('status')
-                            ->options(PublicationStatus::class)
-                            ->default(PublicationStatus::Draft)
-                            ->required(),
-                        DateTimePicker::make('published_at')
-                            ->label('Publish date')
-                            ->helperText('Leave empty to publish immediately; a future date schedules the project.'),
-                        TextInput::make('sort_order')
-                            ->numeric()
-                            ->default(0)
-                            ->required(),
-                    ]),
+            ]);
+    }
+
+    private static function publishingTab(): Tab
+    {
+        return Tab::make('Publishing')
+            ->icon(Heroicon::OutlinedCalendar)
+            ->schema([
+                Select::make('status')
+                    ->options(PublicationStatus::class)
+                    ->default(PublicationStatus::Draft)
+                    ->required(),
+                DateTimePicker::make('published_at')
+                    ->label('Publish date')
+                    ->helperText('Leave empty to publish immediately; a future date schedules the project.'),
+                TextInput::make('sort_order')
+                    ->numeric()
+                    ->default(0)
+                    ->required(),
             ]);
     }
 

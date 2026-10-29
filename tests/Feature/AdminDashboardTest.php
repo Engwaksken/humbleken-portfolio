@@ -23,6 +23,14 @@ class AdminDashboardTest extends TestCase
             ->assertSeeLivewire(AdminOverview::class);
     }
 
+    public function test_modal_centering_styles_load_after_filament_styles(): void
+    {
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->get('/admin')
+            ->assertOk()
+            ->assertSeeInOrder(['filament/filament/app.css', 'grid-template-rows: 1fr auto 1fr'], false);
+    }
+
     public function test_overview_shows_work_waiting_and_content_counts(): void
     {
         Enquiry::factory()->count(2)->create();

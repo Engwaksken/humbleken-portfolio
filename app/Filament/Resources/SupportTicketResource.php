@@ -94,7 +94,6 @@ class SupportTicketResource extends Resource
             ->actions([
                 ViewAction::make()
                     ->label('Conversation')
-                    ->slideOver()
                     ->modalWidth(Width::ThreeExtraLarge),
                 static::replyAction(),
                 static::changeStatusAction(),

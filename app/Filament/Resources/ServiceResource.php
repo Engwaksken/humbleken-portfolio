@@ -13,7 +13,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -33,42 +34,49 @@ class ServiceResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Details')
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true),
-                        Select::make('service_category_id')
-                            ->label('Category')
-                            ->relationship('category', 'name')
-                            ->searchable(),
-                        Textarea::make('summary')
-                            ->rows(2),
-                        Textarea::make('description')
-                            ->rows(4),
-                    ]),
-                Section::make('Delivery & pricing')
-                    ->schema([
-                        TextInput::make('delivery_method')
-                            ->maxLength(255),
-                        TextInput::make('estimated_duration')
-                            ->maxLength(255),
-                        TextInput::make('indicative_price')
-                            ->numeric()
-                            ->prefix('$'),
-                    ]),
-                Section::make('Visibility')
-                    ->schema([
-                        Toggle::make('is_active')
-                            ->default(true),
-                        TextInput::make('sort_order')
-                            ->numeric()
-                            ->default(0)
-                            ->required(),
+                Tabs::make('Service')
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tab::make('Details')
+                            ->icon(Heroicon::OutlinedInformationCircle)
+                            ->schema([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true),
+                                Select::make('service_category_id')
+                                    ->label('Category')
+                                    ->relationship('category', 'name')
+                                    ->searchable(),
+                                Textarea::make('summary')
+                                    ->rows(2),
+                                Textarea::make('description')
+                                    ->rows(4),
+                            ]),
+                        Tab::make('Delivery & pricing')
+                            ->icon(Heroicon::OutlinedTruck)
+                            ->schema([
+                                TextInput::make('delivery_method')
+                                    ->maxLength(255),
+                                TextInput::make('estimated_duration')
+                                    ->maxLength(255),
+                                TextInput::make('indicative_price')
+                                    ->numeric()
+                                    ->prefix('$'),
+                            ]),
+                        Tab::make('Visibility')
+                            ->icon(Heroicon::OutlinedEye)
+                            ->schema([
+                                Toggle::make('is_active')
+                                    ->default(true),
+                                TextInput::make('sort_order')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->required(),
+                            ]),
                     ]),
             ]);
     }

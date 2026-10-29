@@ -5,7 +5,7 @@
         <p class="mt-3 leading-7 text-[#506176]">{{ $intro }}</p>
     @endif
     @if (session('status') && session('status') !== 'verification-link-sent')
-        <p role="status" class="mt-6 border-l-2 border-[#077784] bg-white px-4 py-3 text-sm font-medium">{{ session('status') }}</p>
+        <p role="status" class="mt-6 border-l-2 border-brand bg-white px-4 py-3 text-sm font-medium">{{ session('status') }}</p>
     @endif
     <div class="mt-8 bg-white p-6 sm:p-8">
         {{ $slot }}

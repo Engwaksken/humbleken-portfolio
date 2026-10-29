@@ -23,6 +23,16 @@ class AdminDashboardTest extends TestCase
             ->assertSeeLivewire(AdminOverview::class);
     }
 
+    public function test_profile_page_opens_inside_the_dashboard_with_a_sidebar_link(): void
+    {
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+
+        $this->get('/admin')->assertSee('My profile');
+        $this->get('/admin/profile')
+            ->assertOk()
+            ->assertSee('fi-sidebar', false);
+    }
+
     public function test_modal_centering_styles_load_after_filament_styles(): void
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]))

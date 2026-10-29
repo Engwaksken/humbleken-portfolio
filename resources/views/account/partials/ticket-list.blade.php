@@ -2,7 +2,7 @@
     @foreach ($tickets as $ticket)
         <li class="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <a href="{{ route('account.tickets.show', $ticket) }}" class="font-semibold hover:text-[#077784] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#077784]">
+                <a href="{{ route('account.tickets.show', $ticket) }}" class="font-semibold hover:text-brand focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
                     #{{ $ticket->id }} {{ $ticket->subject }}
                 </a>
                 <p class="text-sm text-[#506176]">

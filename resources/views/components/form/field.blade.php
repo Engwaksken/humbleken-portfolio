@@ -13,7 +13,7 @@
     $id = 'field-'.$name;
     $error = $errors->getBag($bag)->first($name);
     $describedBy = trim(($hint ? $id.'-hint ' : '').($error ? $id.'-error' : ''));
-    $inputClass = 'rounded border border-[#14263d]/25 bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#077784] aria-invalid:border-[#b42318]';
+    $inputClass = 'rounded border border-[#14263d]/25 bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-invalid:border-[#b42318]';
     $current = $type === 'password' ? null : old($name, $value);
 @endphp
 <div {{ $attributes->class('grid gap-2') }}>

@@ -1,6 +1,6 @@
 <x-layouts.site :title="'Open a support ticket — '.$brandName">
     <div class="mx-auto max-w-2xl px-6 py-16 lg:py-20">
-        <a href="{{ route('account.tickets.index') }}" class="text-sm font-semibold text-[#077784] hover:text-[#075d68] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#077784]">
+        <a href="{{ route('account.tickets.index') }}" class="text-sm font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
             <span aria-hidden="true">←</span> Support tickets
         </a>
         <h1 class="mt-6 text-3xl font-semibold tracking-tight">Open a support ticket</h1>

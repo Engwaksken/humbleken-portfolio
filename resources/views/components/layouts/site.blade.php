@@ -4,7 +4,7 @@
     'ogType' => 'website',
 ])
 @php
-    $linkClass = 'transition hover:text-[#077784] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#077784]';
+    $linkClass = 'transition hover:text-brand focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand';
     $home = request()->routeIs('home') ? '' : route('home');
 @endphp
 <!doctype html>
@@ -21,16 +21,33 @@
     <meta property="og:title" content="{{ $title ?? $brandName }}">
     <meta property="og:description" content="{{ $description ?? $tagline }}">
     <meta property="og:url" content="{{ url()->current() }}">
+    @if ($faviconUrl)
+        <link rel="icon" href="{{ $faviconUrl }}">
+    @endif
+    @if ($logoUrl)
+        <meta property="og:image" content="{{ $logoUrl }}">
+    @endif
     {{ $head ?? '' }}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{ \App\Support\Theme::headTags() }}
 </head>
 <body class="bg-[#f4f7fb] text-[#14263d] antialiased">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-[#14263d] focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#077784]">Skip to content</a>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-[#14263d] focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Skip to content</a>
+
+    @if (\App\Http\Middleware\PublicMaintenanceMode::isEnabled())
+        <p role="status" class="bg-[#7a4100] px-6 py-2 text-center text-sm font-medium text-white">
+            Maintenance mode is on. Visitors see the "back soon" page; you can see the site because you are signed in as an administrator.
+        </p>
+    @endif
 
     <header class="border-b border-[#14263d]/10 bg-white">
         <div class="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-            <a href="{{ $home }}#home" class="w-fit text-base font-bold tracking-tight text-[#14263d] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#077784]" aria-label="{{ $brandName }} home">
-                {{ $brandLead }}@if ($brandRemainder !== '') <span class="text-[#077784]">{{ $brandRemainder }}</span>@endif
+            <a href="{{ $home }}#home" class="w-fit text-base font-bold tracking-tight text-[#14263d] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand" aria-label="{{ $brandName }} home">
+                @if ($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" class="h-10 w-auto max-w-[12rem] object-contain">
+                @else
+                    {{ $brandLead }}@if ($brandRemainder !== '') <span class="text-brand">{{ $brandRemainder }}</span>@endif
+                @endif
             </a>
             <nav aria-label="Main navigation" class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-medium sm:gap-8">
                 <a class="{{ $linkClass }}" href="{{ $home }}#services">Services</a>
@@ -41,7 +58,7 @@
                     <a class="{{ $linkClass }}" href="{{ route('articles.index') }}" @if (request()->routeIs('articles.*')) aria-current="page" @endif>Articles</a>
                 @endif
                 <a class="{{ $linkClass }}" href="{{ $home }}#approach">Approach</a>
-                <a class="font-semibold text-[#077784] underline decoration-[#077784] decoration-2 underline-offset-4 hover:text-[#075d68] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#077784]" href="{{ $home }}#contact">Contact</a>
+                <a class="font-semibold text-brand underline decoration-brand decoration-2 underline-offset-4 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand" href="{{ $home }}#contact">Contact</a>
                 @auth
                     <a class="{{ $linkClass }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account</a>
                     <form method="POST" action="{{ route('logout') }}">

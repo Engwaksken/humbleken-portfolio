@@ -1,5 +1,5 @@
 @php
-    $linkClass = 'focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#077784]';
+    $linkClass = 'focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 @endphp
 <x-layouts.site :title="$article->title.' — '.$brandName" :description="$article->excerpt" og-type="article">
     <x-slot:head>
@@ -8,7 +8,7 @@
     </x-slot:head>
 
     <article aria-labelledby="article-title" class="mx-auto max-w-3xl px-6 py-20 lg:py-24">
-        <a href="{{ route('articles.index') }}" class="text-sm font-semibold text-[#077784] hover:text-[#075d68] {{ $linkClass }}">
+        <a href="{{ route('articles.index') }}" class="text-sm font-semibold text-brand hover:text-brand-dark {{ $linkClass }}">
             <span aria-hidden="true">←</span> All articles
         </a>
 
@@ -18,7 +18,7 @@
             <time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('j F Y') }}</time>
             · {{ $article->readingMinutes() }} min read
             @if ($article->category)
-                · <a href="{{ route('articles.index', ['category' => $article->category->slug]) }}" class="text-[#077784] underline underline-offset-2 {{ $linkClass }}">{{ $article->category->name }}</a>
+                · <a href="{{ route('articles.index', ['category' => $article->category->slug]) }}" class="text-brand underline underline-offset-2 {{ $linkClass }}">{{ $article->category->name }}</a>
             @endif
         </p>
 
@@ -36,15 +36,15 @@
             <ul class="mt-10 flex flex-wrap gap-2" aria-label="Tags">
                 @foreach ($article->tags as $tag)
                     <li>
-                        <a href="{{ route('articles.index', ['tag' => $tag->slug]) }}" class="rounded bg-[#e8f2f6] px-2 py-1 text-xs font-medium hover:bg-[#d3e7ee] {{ $linkClass }}">#{{ $tag->name }}</a>
+                        <a href="{{ route('articles.index', ['tag' => $tag->slug]) }}" class="rounded bg-brand-tint px-2 py-1 text-xs font-medium hover:bg-brand-tint-strong {{ $linkClass }}">#{{ $tag->name }}</a>
                     </li>
                 @endforeach
             </ul>
         @endif
 
-        <div class="mt-14 border-l-2 border-[#077784] pl-4">
+        <div class="mt-14 border-l-2 border-brand pl-4">
             <p class="font-semibold">Need help applying this?</p>
-            <a href="{{ route('home') }}#contact" class="mt-2 inline-block text-sm font-semibold text-[#077784] underline underline-offset-4 hover:text-[#075d68] {{ $linkClass }}">Send an enquiry</a>
+            <a href="{{ route('home') }}#contact" class="mt-2 inline-block text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-dark {{ $linkClass }}">Send an enquiry</a>
         </div>
     </article>
 </x-layouts.site>

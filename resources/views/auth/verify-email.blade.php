@@ -10,7 +10,7 @@
             </form>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="text-sm text-[#077784] underline underline-offset-2 hover:text-[#075d68] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#077784]">Sign out</button>
+                <button type="submit" class="text-sm text-brand underline underline-offset-2 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Sign out</button>
             </form>
         </div>
     </x-auth-card>

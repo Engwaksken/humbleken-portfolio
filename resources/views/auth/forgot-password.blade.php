@@ -7,7 +7,7 @@
             <x-button>Send reset link</x-button>
         </form>
         <x-slot:footer>
-            <p><a href="{{ route('login') }}" class="text-[#077784] underline underline-offset-2 hover:text-[#075d68] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#077784]">Back to sign in</a></p>
+            <p><a href="{{ route('login') }}" class="text-brand underline underline-offset-2 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Back to sign in</a></p>
         </x-slot:footer>
     </x-auth-card>
 </x-layouts.site>

@@ -6,9 +6,19 @@
 @source "../**/*.js";
 @source "../**/*.vue";
 
+/*
+ * Brand colours and font. These defaults are overridden at runtime from the admin
+ * Settings (see components/layouts/site.blade.php), so utilities must use the tokens
+ * (text-brand, bg-brand-tint, ...) rather than hard-coded hex values.
+ */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --color-brand: #077784;
+    --color-brand-dark: #075d68;
+    --color-brand-tint: #e8f2f6;
+    --color-brand-tint-strong: #d3e7ee;
 }
 
 /* Rendered Markdown for projects and articles. */
@@ -22,9 +32,9 @@
     .markdown-body :where(ul) { @apply mt-4 list-disc pl-6; }
     .markdown-body :where(ol) { @apply mt-4 list-decimal pl-6; }
     .markdown-body :where(li) { @apply mt-2; }
-    .markdown-body :where(a) { @apply text-[#077784] underline underline-offset-2; }
-    .markdown-body :where(code) { @apply rounded bg-[#e8f2f6] px-1; }
+    .markdown-body :where(a) { @apply text-brand underline underline-offset-2; }
+    .markdown-body :where(code) { @apply rounded bg-brand-tint px-1; }
     .markdown-body :where(pre) { @apply mt-5 overflow-x-auto rounded bg-[#14263d] p-4 text-sm text-white; }
     .markdown-body :where(pre code) { @apply bg-transparent p-0; }
-    .markdown-body :where(blockquote) { @apply mt-5 border-l-2 border-[#077784] pl-4 text-[#506176]; }
+    .markdown-body :where(blockquote) { @apply mt-5 border-l-2 border-brand pl-4 text-[#506176]; }
 }

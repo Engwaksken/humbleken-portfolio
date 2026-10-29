@@ -21,6 +21,8 @@ class SiteComposer
             'tagline' => Settings::get('tagline') ?: 'Engineering solutions and technical consulting',
             'hasPublishedProjects' => Project::query()->published()->exists(),
             'hasPublishedArticles' => Article::query()->published()->exists(),
+            'logoUrl' => Settings::publicFileUrl('logo'),
+            'faviconUrl' => Settings::publicFileUrl('favicon'),
         ]);
     }
 }

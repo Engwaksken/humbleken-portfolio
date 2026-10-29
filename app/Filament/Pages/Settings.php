@@ -3,10 +3,18 @@
 namespace App\Filament\Pages;
 
 use App\Support\Settings as SettingsStore;
+use App\Support\Theme;
 use BackedEnum;
+use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -17,6 +25,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Storage;
 use UnitEnum;
 
 class Settings extends Page
@@ -52,6 +61,47 @@ class Settings extends Page
                                 TextInput::make('tagline')
                                     ->label('Tagline')
                                     ->maxLength(255),
+                                FileUpload::make('logo')
+                                    ->label('Logo')
+                                    ->helperText('PNG, JPG or WebP, up to 1 MB. Shown in the site header and admin panel instead of the brand name. SVG is not accepted because it can contain scripts.')
+                                    ->disk('public')
+                                    ->directory('branding')
+                                    ->visibility('public')
+                                    ->image()
+                                    ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
+                                    ->maxSize(1024),
+                                FileUpload::make('favicon')
+                                    ->label('Favicon')
+                                    ->helperText('Square PNG or ICO, up to 256 KB. Shown in browser tabs.')
+                                    ->disk('public')
+                                    ->directory('branding')
+                                    ->visibility('public')
+                                    ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])
+                                    ->maxSize(256),
+                            ]),
+                        Tab::make('Appearance')
+                            ->icon(Heroicon::OutlinedSwatch)
+                            ->schema([
+                                ColorPicker::make('theme_color')
+                                    ->label('Main colour')
+                                    ->hex()
+                                    ->helperText('Used for links, buttons and highlights on the website and in this admin panel. Colours too light to read are rejected.')
+                                    ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                                        if (filled($value) && ($problem = Theme::problem(strtolower($value))) !== null) {
+                                            $fail($problem);
+                                        }
+                                    }),
+                                Select::make('theme_font')
+                                    ->label('Font')
+                                    ->options(collect(Theme::FONTS)->map(fn (array $font): string => $font['label']))
+                                    ->default('system')
+                                    ->selectablePlaceholder(false)
+                                    ->helperText('Downloadable fonts load from Bunny Fonts, which does not track visitors.'),
+                                Radio::make('theme_font_size')
+                                    ->label('Base text size')
+                                    ->options(collect(Theme::SIZES)->map(fn (array $size): string => $size['label']))
+                                    ->default('medium')
+                                    ->inline(),
                             ]),
                         Tab::make('Contact details')
                             ->icon(Heroicon::OutlinedPhone)
@@ -85,6 +135,18 @@ class Settings extends Page
                                     ->valueLabel('URL')
                                     ->helperText('Full web addresses starting with https://. Other links are not shown on the site.'),
                             ]),
+                        Tab::make('Maintenance')
+                            ->icon(Heroicon::OutlinedWrenchScrewdriver)
+                            ->schema([
+                                Toggle::make('maintenance_enabled')
+                                    ->label('Show visitors a maintenance page')
+                                    ->helperText('The admin panel keeps working, and you can still browse the site while signed in as an administrator.'),
+                                Textarea::make('maintenance_message')
+                                    ->label('Message for visitors')
+                                    ->placeholder('We are making some improvements and will be back shortly.')
+                                    ->rows(3)
+                                    ->maxLength(500),
+                            ]),
                     ]),
             ])
             ->statePath('data');
@@ -92,7 +154,17 @@ class Settings extends Page
 
     public function save(): void
     {
-        foreach ($this->form->getState() as $key => $value) {
+        $state = $this->form->getState();
+
+        // Remove replaced or cleared branding files so old uploads do not linger.
+        foreach (['logo', 'favicon'] as $key) {
+            $previous = SettingsStore::get($key);
+            if (is_string($previous) && $previous !== '' && $previous !== ($state[$key] ?? null)) {
+                Storage::disk('public')->delete($previous);
+            }
+        }
+
+        foreach ($state as $key => $value) {
             SettingsStore::set($key, $value);
         }
 
@@ -142,6 +214,10 @@ class Settings extends Page
         $data = SettingsStore::all();
 
         $data['brand_name'] = $data['brand_name'] ?? 'IT Problem Solver';
+        $data['theme_color'] = filled($data['theme_color'] ?? null) ? $data['theme_color'] : Theme::DEFAULT_COLOR;
+        $data['theme_font'] = Theme::fontKey();
+        $data['theme_font_size'] = Theme::sizeKey();
+        $data['maintenance_enabled'] = (bool) ($data['maintenance_enabled'] ?? false);
 
         if (isset($data['social_links']) && is_string($data['social_links'])) {
             $data['social_links'] = json_decode($data['social_links'], true) ?? [];

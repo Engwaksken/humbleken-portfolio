@@ -23,6 +23,9 @@ These follow from the code and hold whatever target is chosen.
 - **Environment settings:** `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` set to the canonical HTTPS address, `SESSION_SECURE_COOKIE=true`, `LOG_LEVEL` no lower than `warning`. Leave `ADMIN_MFA_REQUIRED` unset (it defaults to on); it is switched off only in `phpunit.xml`.
 - **Build and release commands:** `composer install --no-dev --optimize-autoloader`, `npm ci && npm run build`, `php artisan migrate --force`, `php artisan optimize`, `php artisan filament:optimize`. Restart queue workers after each release (`php artisan queue:restart`).
 - **First administrator:** `php artisan app:create-admin-user` (interactive; 12-character minimum password). On first panel sign-in the administrator must set up an authenticator app and should store the recovery codes offline.
+- **Uploads:** run `php artisan storage:link` once so uploaded logos and favicons in `storage/app/public` are served from `/storage`. Include `storage/app` in persistent storage, not the release directory.
+- **Backups:** the admin Backups page zips the database plus `storage/app/public` into `storage/app/private/site-backups` (never the code base or `.env`). SQLite is snapshotted from PHP; PostgreSQL or MySQL needs `pg_dump`/`mysqldump` installed on the host. Backups on the same server do not survive a server loss: download copies or add an off-site disk in `config/backup.php`, and rehearse a restore.
+- **Maintenance:** use the switch under admin Settings → Maintenance for planned work. It leaves `/admin`, `/up` and the API health check available. `php artisan down` still exists for deployments but also blocks the admin panel.
 - **Health checks:** `/up` (framework) and `/api/v1/health` (JSON).
 - **Search engines:** once the domain is known, add `Sitemap: https://<domain>/sitemap.xml` to `public/robots.txt`.
 

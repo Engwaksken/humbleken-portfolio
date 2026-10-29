@@ -50,6 +50,15 @@ Planning decisions below reflect the approved direction, not proof that the asso
 - **Decision:** Administrators must use authenticator-app two-factor sign-in (Filament built-in, recoverable), controlled by `ADMIN_MFA_REQUIRED`, which defaults to on and is turned off only in automated tests. A middleware adds baseline security headers to every response. Password reset responses no longer reveal whether an account exists. CI adds dependency audits and a style check. A Content-Security-Policy is deferred until it can be tested against the admin panel.
 - **Consequences:** Existing administrators are asked to set up two-factor on their next panel visit. Losing both the authenticator and the recovery codes requires clearing the user's `app_authentication_secret` from the server.
 
+## ADR-0011: Site appearance, maintenance and backups in admin Settings
+- **Status:** Implemented. AI and payment settings remain deferred under ADR-0005 (owner confirmed 2026-10-29).
+- **Appearance:** Admins choose a main colour, font and base text size. Views use colour tokens (`brand`, `brand-dark`, `brand-tint`), and darker and lighter shades are derived from the chosen colour. A colour is rejected unless it reaches 4.5:1 contrast on the site's light backgrounds, on its own tint, and behind white button text, so theming cannot break the accessibility fix in ADR-0008. Downloadable fonts load from Bunny Fonts; the default is the system font with no download. The admin panel uses the same colour, logo, favicon and brand name.
+- **Branding uploads:** logo (PNG/JPG/WebP, 1 MB) and favicon (PNG/ICO, 256 KB) on the public disk. SVG is refused because it can carry scripts. Replaced files are deleted.
+- **Maintenance:** a Settings switch shows visitors a 503 page with a custom message and `Retry-After`. The admin panel, health checks and signed-in administrators are unaffected; admins see a reminder banner.
+- **Backups:** `spatie/laravel-backup`, restricted to the database and uploaded files and stored on the private disk, with notifications off. SQLite is copied with `VACUUM INTO` because the `sqlite3` CLI is often missing. The admin Backups page creates, lists, downloads and deletes archives; file names are checked so downloads cannot leave the backup folder.
+- **Profile:** the admin profile page (name, email, password, two-factor) opens inside the dashboard layout and is linked from the sidebar.
+- **Consequences:** Off-site backup copies and scheduled backups wait for the hosting decision.
+
 ## Open decisions
 - Final brand/name/domain, owner-approved public profile and content.
 - Hosting target, production database, storage, queue, mail, monitoring and region/provider choices; all configurable and **OPEN**.

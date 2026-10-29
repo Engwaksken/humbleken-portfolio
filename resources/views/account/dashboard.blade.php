@@ -5,6 +5,12 @@
     <div class="mx-auto max-w-4xl px-6 py-16 lg:py-20">
         <h1 class="text-3xl font-semibold tracking-tight">Hello, {{ auth()->user()->name }}</h1>
 
+        @if (auth()->user()->is_admin)
+            <p class="mt-4 border-l-2 border-[#077784] bg-white px-4 py-3 text-sm">
+                You are an administrator. <a href="{{ filament()->getPanel('admin')->getUrl() }}" class="{{ $linkClass }} font-semibold">Go to the admin dashboard</a>
+            </p>
+        @endif
+
         @if (session('status') === 'password-updated')
             <p role="status" class="mt-6 border-l-2 border-[#077784] bg-white px-4 py-3 text-sm font-medium">Your password has been changed.</p>
         @endif

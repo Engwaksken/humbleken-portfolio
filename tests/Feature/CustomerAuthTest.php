@@ -127,6 +127,23 @@ class CustomerAuthTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_admin_signing_in_on_the_site_is_sent_to_the_admin_panel(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true, 'password' => 'correct-password-1']);
+
+        $this->post('/login', ['email' => $admin->email, 'password' => 'correct-password-1'])
+            ->assertRedirect('/admin');
+
+        $this->get('/account')->assertOk()->assertSee('Go to the admin dashboard');
+    }
+
+    public function test_customers_do_not_see_the_admin_link(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get('/account')
+            ->assertDontSee('Go to the admin dashboard');
+    }
+
     public function test_login_is_rate_limited(): void
     {
         $user = User::factory()->create();

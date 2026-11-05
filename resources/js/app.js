@@ -17,8 +17,10 @@ function applyAccessibilityPreferences(preferences) {
     root.style.fontSize = textSize ? `${100 + textSize * 10}%` : '';
     root.classList.toggle('accessibility-high-contrast', Boolean(preferences.highContrast));
     root.classList.toggle('accessibility-underlined-links', Boolean(preferences.underlinedLinks));
+    root.classList.toggle('accessibility-reduced-motion', Boolean(preferences.reducedMotion));
     document.querySelector('[data-accessibility-action="contrast"]')?.setAttribute('aria-pressed', String(Boolean(preferences.highContrast)));
     document.querySelector('[data-accessibility-action="underline"]')?.setAttribute('aria-pressed', String(Boolean(preferences.underlinedLinks)));
+    document.querySelector('[data-accessibility-action="motion"]')?.setAttribute('aria-pressed', String(Boolean(preferences.reducedMotion)));
 }
 
 let accessibilityPreferences = loadAccessibilityPreferences();
@@ -52,6 +54,7 @@ accessibilityTools?.addEventListener('click', (event) => {
     if (action === 'text-reset') accessibilityPreferences.textSize = 0;
     if (action === 'contrast') accessibilityPreferences.highContrast = !accessibilityPreferences.highContrast;
     if (action === 'underline') accessibilityPreferences.underlinedLinks = !accessibilityPreferences.underlinedLinks;
+    if (action === 'motion') accessibilityPreferences.reducedMotion = !accessibilityPreferences.reducedMotion;
     if (action === 'reset') accessibilityPreferences = {};
     applyAccessibilityPreferences(accessibilityPreferences);
     try {
@@ -64,18 +67,30 @@ accessibilityTools?.addEventListener('click', (event) => {
         'text-reset': 'Text size reset.',
         contrast: accessibilityPreferences.highContrast ? 'High contrast enabled.' : 'High contrast disabled.',
         underline: accessibilityPreferences.underlinedLinks ? 'Link underlining enabled.' : 'Link underlining disabled.',
+        motion: accessibilityPreferences.reducedMotion ? 'Reduced motion enabled.' : 'Reduced motion disabled.',
         reset: 'Accessibility preferences reset.',
     };
     if (status) status.textContent = messages[action] || 'Accessibility preference updated.';
 });
 
 document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape' || !accessibilityTools) return;
-    const panel = accessibilityTools.querySelector('#accessibility-panel');
-    if (!panel || panel.hidden) return;
-    panel.hidden = true;
-    accessibilityTools.querySelector('[data-accessibility-toggle]')?.setAttribute('aria-expanded', 'false');
-    accessibilityTools.querySelector('[data-accessibility-toggle]')?.focus();
+    if (event.key !== 'Escape') return;
+
+    const accessibilityPanel = accessibilityTools?.querySelector('#accessibility-panel');
+    if (accessibilityPanel && !accessibilityPanel.hidden) {
+        accessibilityPanel.hidden = true;
+        accessibilityTools.querySelector('[data-accessibility-toggle]')?.setAttribute('aria-expanded', 'false');
+        accessibilityTools.querySelector('[data-accessibility-toggle]')?.focus();
+        return;
+    }
+
+    document.querySelectorAll('[data-chatbot]').forEach((widget) => {
+        const panel = widget.querySelector('#chatbot-panel');
+        if (!panel || panel.hidden) return;
+        panel.hidden = true;
+        widget.querySelector('[data-chatbot-toggle]')?.setAttribute('aria-expanded', 'false');
+        widget.querySelector('[data-chatbot-toggle]')?.focus();
+    });
 });
 
 document.querySelectorAll('[data-chatbot]').forEach((widget) => {
@@ -96,6 +111,8 @@ document.querySelectorAll('[data-chatbot]').forEach((widget) => {
         return;
     }
     const input = form.elements.message;
+    const attachment = form.elements.attachment;
+    const attachmentName = form.querySelector('[data-chatbot-file-name]');
     const log = widget.querySelector('[data-chatbot-log]');
     const messages = [];
 
@@ -112,39 +129,62 @@ document.querySelectorAll('[data-chatbot]').forEach((widget) => {
         const open = toggle.getAttribute('aria-expanded') !== 'true';
         toggle.setAttribute('aria-expanded', String(open));
         panel.hidden = !open;
-        if (open) input.focus();
+        if (open && !input.disabled) input.focus();
     });
     widget.querySelector('[data-chatbot-close]').addEventListener('click', () => {
         panel.hidden = true;
         toggle.setAttribute('aria-expanded', 'false');
         toggle.focus();
     });
+    attachment.addEventListener('change', () => {
+        const file = attachment.files[0];
+        if (file && file.size > 10 * 1024 * 1024) {
+            attachment.value = '';
+            attachmentName.textContent = 'File exceeds the 10 MB limit.';
+            attachmentName.classList.remove('hidden');
+            return;
+        }
+        attachmentName.textContent = file ? `Attached: ${file.name}` : '';
+        attachmentName.classList.toggle('hidden', !file);
+    });
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const text = input.value.trim();
-        if (!text) return;
+        const file = attachment.files[0];
+        if (!text && !file) return;
         input.value = '';
-        messages.push({ role: 'user', content: text });
-        addMessage(text, 'user');
+        const userMessage = text || `Please review the attached file: ${file.name}`;
+        messages.push({ role: 'user', content: userMessage });
+        addMessage(file ? `${userMessage}${text ? ` (attached: ${file.name})` : ''}` : userMessage, 'user');
         const pending = addMessage('Thinking…', 'assistant');
-        form.querySelector('button[type="submit"]').disabled = true;
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
 
         try {
+            const payload = new FormData();
+            messages.slice(-12).forEach((message, index) => {
+                payload.append(`messages[${index}][role]`, message.role);
+                payload.append(`messages[${index}][content]`, message.content);
+            });
+            if (file) payload.append('attachment', file);
             const response = await fetch(widget.dataset.endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-                body: JSON.stringify({ messages: messages.slice(-12) }),
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                body: payload,
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'The assistant is temporarily unavailable.');
             pending.textContent = data.reply;
             messages.push({ role: 'assistant', content: data.reply });
+            attachment.value = '';
+            attachmentName.textContent = '';
+            attachmentName.classList.add('hidden');
         } catch (error) {
             pending.textContent = error.message || 'The assistant is temporarily unavailable. Please try again.';
             pending.setAttribute('role', 'alert');
         } finally {
-            form.querySelector('button[type="submit"]').disabled = false;
-            input.focus();
+            submitButton.disabled = false;
+            if (!input.disabled) input.focus();
             log.scrollTop = log.scrollHeight;
         }
     });

@@ -9,6 +9,7 @@
             <button type="button" data-accessibility-action="text-reset" class="min-h-11 rounded border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-brand">Reset text</button>
             <button type="button" data-accessibility-action="contrast" aria-pressed="false" class="min-h-11 rounded border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-brand">High contrast</button>
             <button type="button" data-accessibility-action="underline" aria-pressed="false" class="min-h-11 rounded border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-brand">Underline links</button>
+            <button type="button" data-accessibility-action="motion" aria-pressed="false" class="col-span-2 min-h-11 rounded border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-brand">Reduce motion</button>
             <button type="button" data-accessibility-action="reset" class="col-span-2 min-h-11 rounded border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-brand">Reset all tools</button>
         </div>
         <p class="sr-only" data-accessibility-status role="status" aria-live="polite"></p>

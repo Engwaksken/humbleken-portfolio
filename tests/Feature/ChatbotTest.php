@@ -166,4 +166,19 @@ class ChatbotTest extends TestCase
             ->call('testAiConnection')
             ->assertNotified('AI API connection failed (HTTP 401)');
     }
+
+    public function test_chat_replies_are_returned_as_plain_text_without_dashes_or_markdown(): void
+    {
+        Settings::set('ai_chat_enabled', true);
+        Settings::set('ai_api_base_url', 'https://api.example.test');
+        Settings::set('ai_api_model', 'example-chat-model');
+        Settings::set('ai_api_key_ciphertext', Crypt::encryptString('secret-test-key'));
+        Http::fake(['api.example.test/*' => Http::response(['choices' => [['message' => ['content' => "## Our services\n**Yes** — we can help.\n- Network audits"]]]])]);
+
+        $this->postJson(route('chatbot.messages'), ['messages' => [['role' => 'user', 'content' => 'Can you help?']]])
+            ->assertOk()
+            ->assertJsonPath('reply', "Our services\nYes, we can help.\n• Network audits");
+
+        Http::assertSent(fn ($request) => str_contains($request['messages'][0]['content'], 'do not use Markdown'));
+    }
 }

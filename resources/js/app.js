@@ -50,6 +50,19 @@ document.querySelectorAll('[data-chatbot]').forEach((widget) => {
     const toggle = widget.querySelector('[data-chatbot-toggle]');
     const panel = widget.querySelector('#chatbot-panel');
     const form = widget.querySelector('[data-chatbot-form]');
+    if (!form) {
+        toggle.addEventListener('click', () => {
+            const open = toggle.getAttribute('aria-expanded') !== 'true';
+            toggle.setAttribute('aria-expanded', String(open));
+            panel.hidden = !open;
+        });
+        widget.querySelector('[data-chatbot-close]').addEventListener('click', () => {
+            panel.hidden = true;
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.focus();
+        });
+        return;
+    }
     const input = form.elements.message;
     const log = widget.querySelector('[data-chatbot-log]');
     const messages = [];

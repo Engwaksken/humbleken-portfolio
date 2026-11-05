@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Support\ImageCompressor;
+use App\Support\MailSettings;
 use App\Support\Settings as SettingsStore;
 use App\Support\Theme;
 use BackedEnum;
@@ -29,7 +30,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 use UnitEnum;
@@ -213,6 +216,60 @@ class Settings extends Page
                                         ->action(fn () => $this->testAiConnection()),
                                 ]),
                             ]),
+                        Tab::make('Email')
+                            ->icon(Heroicon::OutlinedEnvelope)
+                            ->schema([
+                                Toggle::make('mail_enabled')
+                                    ->label('Send email through this SMTP server')
+                                    ->helperText(fn (): string => MailSettings::describeCurrentDelivery().' Sign-up confirmations, password resets and notifications all use this setting.'),
+                                TextInput::make('mail_host')
+                                    ->label('SMTP server')
+                                    ->placeholder('e.g. smtp.gmail.com, smtp.office365.com, mail.yourdomain.com')
+                                    ->maxLength(255),
+                                Select::make('mail_encryption')
+                                    ->label('Encryption')
+                                    ->options(MailSettings::ENCRYPTIONS)
+                                    ->default('tls')
+                                    ->selectablePlaceholder(false)
+                                    ->live()
+                                    ->afterStateUpdated(fn (?string $state, callable $set) => $set('mail_port', $state === 'ssl' ? 465 : 587)),
+                                TextInput::make('mail_port')
+                                    ->label('Port')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->maxValue(65535)
+                                    ->default(587),
+                                TextInput::make('mail_username')
+                                    ->label('Username')
+                                    ->helperText('Usually your full email address.')
+                                    ->autocomplete('off')
+                                    ->maxLength(255),
+                                TextInput::make('mail_password')
+                                    ->label('Password')
+                                    ->password()
+                                    ->revealable()
+                                    ->autocomplete('new-password')
+                                    ->dehydrated()
+                                    ->helperText(SettingsStore::get('mail_password_ciphertext') ? 'A password is stored encrypted. Leave blank to keep it, or enter a new one to replace it.' : 'For Gmail or Microsoft 365 with two-step verification, use an app password. It is encrypted before storage.'),
+                                Toggle::make('mail_password_clear')
+                                    ->label('Remove stored password'),
+                                TextInput::make('mail_from_address')
+                                    ->label('Send emails from (address)')
+                                    ->email()
+                                    ->placeholder('e.g. no-reply@yourdomain.com')
+                                    ->helperText('Use an address your SMTP account is allowed to send from, or providers may reject or spam-filter the email.')
+                                    ->maxLength(255),
+                                TextInput::make('mail_from_name')
+                                    ->label('Send emails from (name)')
+                                    ->placeholder('Defaults to the brand name')
+                                    ->maxLength(255),
+                                Actions::make([
+                                    Action::make('sendTestEmail')
+                                        ->label('Send test email')
+                                        ->icon(Heroicon::OutlinedPaperAirplane)
+                                        ->action(fn () => $this->sendTestEmail()),
+                                ]),
+                            ]),
                         Tab::make('Maintenance')
                             ->icon(Heroicon::OutlinedWrenchScrewdriver)
                             ->schema([
@@ -233,6 +290,20 @@ class Settings extends Page
     public function save(): void
     {
         $state = $this->form->getState();
+
+        $mailPassword = (string) ($state['mail_password'] ?? '');
+        $clearMailPassword = (bool) ($state['mail_password_clear'] ?? false);
+        unset($state['mail_password'], $state['mail_password_clear']);
+
+        if (($state['mail_enabled'] ?? false) && (blank($state['mail_host'] ?? null) || blank($state['mail_from_address'] ?? null))) {
+            Notification::make()
+                ->danger()
+                ->title('Email settings are incomplete')
+                ->body('Enter the SMTP server and a "send emails from" address before enabling email delivery.')
+                ->send();
+
+            return;
+        }
 
         $apiKey = trim((string) ($state['ai_api_key'] ?? ''));
         $clearApiKey = (bool) ($state['ai_api_key_clear'] ?? false);
@@ -256,6 +327,12 @@ class Settings extends Page
         } elseif ($clearApiKey) {
             SettingsStore::forget('ai_api_key_ciphertext');
             $state['ai_chat_enabled'] = false;
+        }
+
+        if ($mailPassword !== '') {
+            SettingsStore::set('mail_password_ciphertext', Crypt::encryptString($mailPassword));
+        } elseif ($clearMailPassword) {
+            SettingsStore::forget('mail_password_ciphertext');
         }
 
         // A single FileUpload field can temporarily contain the persisted path and a
@@ -310,6 +387,78 @@ class Settings extends Page
             ->success()
             ->title('Settings saved')
             ->send();
+    }
+
+    /**
+     * Send a test message to the signed-in administrator using the values currently
+     * in the form, so settings can be checked before they are saved.
+     */
+    public function sendTestEmail(): void
+    {
+        $host = trim((string) ($this->data['mail_host'] ?? ''));
+        $from = trim((string) ($this->data['mail_from_address'] ?? ''));
+        $recipient = auth()->user()?->email;
+
+        if (blank($host) || blank($from) || blank($recipient)) {
+            Notification::make()
+                ->danger()
+                ->title('Email settings are incomplete')
+                ->body('Enter the SMTP server and a "send emails from" address first.')
+                ->send();
+
+            return;
+        }
+
+        $mailer = MailSettings::MAILER.'_test';
+        config(['mail.mailers.'.$mailer => MailSettings::mailerConfig([
+            'host' => $host,
+            'port' => $this->data['mail_port'] ?? null,
+            'encryption' => $this->data['mail_encryption'] ?? 'tls',
+            'username' => $this->data['mail_username'] ?? null,
+            'password' => ((string) ($this->data['mail_password'] ?? '')) ?: MailSettings::password(),
+        ])]);
+        // Discard any mailer built from earlier values in this request.
+        app('mail.manager')->purge($mailer);
+
+        $fromName = trim((string) ($this->data['mail_from_name'] ?? '')) ?: (SettingsStore::get('brand_name') ?: config('app.name'));
+        $body = "This is a test email from {$fromName}.\n\nIf you can read this, outgoing email is working. Remember to save the settings and switch on 'Send email through this SMTP server'.";
+
+        try {
+            Mail::mailer($mailer)->raw($body, fn ($message) => $message
+                ->to($recipient)
+                ->from($from, $fromName)
+                ->subject("Test email from {$fromName}"));
+
+            Notification::make()
+                ->success()
+                ->title('Test email sent')
+                ->body("Sent to {$recipient}. Check the inbox and the spam folder.")
+                ->send();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->danger()
+                ->title('The test email could not be sent')
+                ->body(static::describeMailError($exception))
+                ->persistent()
+                ->send();
+        }
+    }
+
+    private static function describeMailError(Throwable $exception): string
+    {
+        $message = $exception->getMessage();
+
+        $hint = match (true) {
+            str_contains($message, 'authenticate') || str_contains($message, '535') => 'The server rejected the username or password. For Gmail or Microsoft 365, create an app password and use it here.',
+            str_contains($message, 'Connection could not be established') || str_contains($message, 'timed out') => 'The server could not be reached. Check the SMTP server name, port and encryption, and that this host allows outgoing SMTP connections.',
+            str_contains($message, 'certificate') || str_contains($message, 'SSL') || str_contains($message, 'TLS') => 'A secure connection could not be made. Try the other encryption option with its matching port (STARTTLS 587 or SSL/TLS 465).',
+            str_contains($message, '550') || str_contains($message, '553') || str_contains($message, 'sender') => 'The server refused the sender address. Use an address your SMTP account is allowed to send from.',
+            default => 'Check the server, port, encryption, username and password.',
+        };
+
+        return $hint.' Server response: '.Str::limit($message, 220);
     }
 
     public function testAiConnection(): void
@@ -471,6 +620,11 @@ class Settings extends Page
         $data['theme_font'] = Theme::fontKey();
         $data['theme_font_size'] = Theme::sizeKey();
         $data['maintenance_enabled'] = (bool) ($data['maintenance_enabled'] ?? false);
+        $data['mail_enabled'] = (bool) ($data['mail_enabled'] ?? false);
+        $data['mail_encryption'] = array_key_exists($data['mail_encryption'] ?? '', MailSettings::ENCRYPTIONS) ? $data['mail_encryption'] : 'tls';
+        $data['mail_port'] = $data['mail_port'] ?? 587;
+        // Never send stored secrets back to the browser.
+        unset($data['mail_password_ciphertext'], $data['ai_api_key_ciphertext']);
 
         foreach (['logo', 'favicon'] as $key) {
             if (filled($data[$key] ?? null) && ! Storage::disk('public')->exists($data[$key])) {

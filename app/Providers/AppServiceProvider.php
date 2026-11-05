@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\MailSettings;
 use App\View\Composers\SiteComposer;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -16,7 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Apply admin SMTP settings the first time mail is used in a request or job,
+        // rather than on every boot, so a missing settings table never breaks start-up.
+        $this->app->resolving('mail.manager', fn () => MailSettings::apply());
     }
 
     /**

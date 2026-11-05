@@ -27,6 +27,18 @@
         <textarea id="{{ $id }}" name="{{ $name }}" rows="{{ $rows }}" placeholder="{{ $placeholderText }}" @required($required) @if ($required) aria-required="true" @endif
             @if ($error) aria-invalid="true" @endif @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif
             class="{{ $inputClass }}">{{ $current }}</textarea>
+    @elseif ($type === 'password')
+        {{-- Password with a show/hide toggle (wired up in resources/js/password-toggle.js). --}}
+        <div class="relative">
+            <input id="{{ $id }}" name="{{ $name }}" type="password" value="" placeholder="{{ $placeholderText }}" @required($required) @if ($required) aria-required="true" @endif
+                @if ($autocomplete) autocomplete="{{ $autocomplete }}" @endif
+                @if ($error) aria-invalid="true" @endif @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif
+                class="{{ $inputClass }} pr-12" spellcheck="false" autocapitalize="off">
+            <button type="button" class="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-xl text-muted transition hover:text-brand-dark"
+                aria-controls="{{ $id }}" aria-pressed="false" aria-label="Show {{ strtolower($label) }}" data-password-toggle data-label="{{ strtolower($label) }}">
+                <i class="fa-solid fa-eye" aria-hidden="true" data-password-icon></i>
+            </button>
+        </div>
     @else
         <input id="{{ $id }}" name="{{ $name }}" type="{{ $type }}" value="{{ $current }}" placeholder="{{ $placeholderText }}" @required($required) @if ($required) aria-required="true" @endif
             @if ($autocomplete) autocomplete="{{ $autocomplete }}" @endif

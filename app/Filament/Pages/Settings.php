@@ -28,6 +28,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
@@ -206,6 +207,11 @@ class Settings extends Page
                                 Toggle::make('ai_api_key_clear')
                                     ->label('Remove stored API key')
                                     ->helperText('This disables chatbot responses until a new API key is configured.'),
+                                Actions::make([
+                                    Action::make('testAiConnection')
+                                        ->label('Test API connection')
+                                        ->action(fn () => $this->testAiConnection()),
+                                ]),
                             ]),
                         Tab::make('Maintenance')
                             ->icon(Heroicon::OutlinedWrenchScrewdriver)
@@ -304,6 +310,70 @@ class Settings extends Page
             ->success()
             ->title('Settings saved')
             ->send();
+    }
+
+    public function testAiConnection(): void
+    {
+        $baseUrl = rtrim(trim((string) ($this->data['ai_api_base_url'] ?? '')), '/');
+        $model = trim((string) ($this->data['ai_api_model'] ?? ''));
+        $apiKey = trim((string) ($this->data['ai_api_key'] ?? '')) ?: \App\Support\AiChat::apiKey();
+
+        if (blank($baseUrl) || blank($model) || blank($apiKey)) {
+            Notification::make()
+                ->danger()
+                ->title('AI provider configuration is incomplete')
+                ->body('Enter a base URL and model, and provide an API key or save one first.')
+                ->send();
+
+            return;
+        }
+
+        $url = str_ends_with($baseUrl, '/v1')
+            ? $baseUrl.'/chat/completions'
+            : $baseUrl.'/v1/chat/completions';
+
+        try {
+            $response = Http::acceptJson()
+                ->withToken($apiKey)
+                ->timeout(15)
+                ->post($url, [
+                    'model' => $model,
+                    'messages' => [['role' => 'user', 'content' => 'Reply with OK.']],
+                    'max_tokens' => 10,
+                    'temperature' => 0,
+                ]);
+
+            if ($response->successful() && filled($response->json('choices.0.message.content'))) {
+                Notification::make()
+                    ->success()
+                    ->title('AI API connection successful')
+                    ->body("The provider responded successfully using model {$model}.")
+                    ->send();
+
+                return;
+            }
+
+            $detail = match ($response->status()) {
+                401, 403 => 'Check that the API key is valid and has permission to use this model.',
+                404 => 'Check the API base URL and model name.',
+                429 => 'The provider rate-limited the request or the account has no available quota.',
+                default => 'Check the provider URL, model name, and provider status.',
+            };
+
+            Notification::make()
+                ->danger()
+                ->title('AI API connection failed (HTTP '.$response->status().')')
+                ->body($detail)
+                ->send();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->danger()
+                ->title('Could not reach the AI provider')
+                ->body('Check the base URL and server network access, then try again.')
+                ->send();
+        }
     }
 
     public function content(Schema $schema): Schema

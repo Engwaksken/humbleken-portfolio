@@ -131,4 +131,39 @@ class ChatbotTest extends TestCase
         $this->assertSame('secret-test-key', Crypt::decryptString($encryptedKey));
         $this->assertTrue(AiChat::enabled());
     }
+
+    public function test_admin_can_test_unsaved_ai_provider_configuration(): void
+    {
+        Http::fake(['api.example.test/*' => Http::response([
+            'choices' => [['message' => ['content' => 'OK']]],
+        ])]);
+
+        Livewire::test(SettingsPage::class)
+            ->fillForm([
+                'ai_api_base_url' => 'https://api.example.test/v1',
+                'ai_api_model' => 'example-chat-model',
+                'ai_api_key' => 'temporary-test-key',
+            ])
+            ->call('testAiConnection')
+            ->assertNotified('AI API connection successful');
+
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.example.test/v1/chat/completions'
+            && $request->hasHeader('Authorization', 'Bearer temporary-test-key')
+            && $request['model'] === 'example-chat-model'
+            && $request['max_tokens'] === 10);
+    }
+
+    public function test_ai_connection_test_reports_provider_authentication_failure(): void
+    {
+        Http::fake(['api.example.test/*' => Http::response(['error' => ['message' => 'Unauthorized']], 401)]);
+
+        Livewire::test(SettingsPage::class)
+            ->fillForm([
+                'ai_api_base_url' => 'https://api.example.test',
+                'ai_api_model' => 'example-chat-model',
+                'ai_api_key' => 'invalid-test-key',
+            ])
+            ->call('testAiConnection')
+            ->assertNotified('AI API connection failed (HTTP 401)');
+    }
 }

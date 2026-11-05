@@ -1,0 +1,1 @@
+<x-error-page code="419" icon="fa-clock-rotate-left" title="Page expired" message="This page was open too long and your session expired for security. Go back, refresh the page, and submit the form again." />

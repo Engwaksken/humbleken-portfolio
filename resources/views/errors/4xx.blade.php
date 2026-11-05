@@ -1,0 +1,1 @@
+<x-error-page :code="$exception->getStatusCode()" icon="fa-circle-exclamation" title="This request could not be completed" message="Something about the request was not right. Go back and try again, or return to the home page." />

@@ -5,7 +5,8 @@ const root = document.documentElement;
 
 function loadAccessibilityPreferences() {
     try {
-        return JSON.parse(localStorage.getItem(accessibilityKey) || '{}');
+        const stored = JSON.parse(localStorage.getItem(accessibilityKey) || '{}');
+        return stored && typeof stored === 'object' ? stored : {};
     } catch {
         return {};
     }
@@ -23,16 +24,26 @@ function applyAccessibilityPreferences(preferences) {
 let accessibilityPreferences = loadAccessibilityPreferences();
 applyAccessibilityPreferences(accessibilityPreferences);
 
-document.querySelector('[data-accessibility-tools]')?.addEventListener('click', (event) => {
+const accessibilityTools = document.querySelector('[data-accessibility-tools]');
+accessibilityTools?.addEventListener('click', (event) => {
     const toggle = event.target.closest('[data-accessibility-toggle]');
+    const close = event.target.closest('[data-accessibility-close]');
     const action = event.target.closest('[data-accessibility-action]')?.dataset.accessibilityAction;
-    const panel = document.querySelector('#accessibility-panel');
+    const panel = accessibilityTools.querySelector('#accessibility-panel');
+    const status = accessibilityTools.querySelector('[data-accessibility-status]');
 
     if (toggle) {
         const open = toggle.getAttribute('aria-expanded') !== 'true';
         toggle.setAttribute('aria-expanded', String(open));
         panel.hidden = !open;
-        if (open) panel.querySelector('button')?.focus();
+        if (open) panel.querySelector('[data-accessibility-action]')?.focus();
+        return;
+    }
+
+    if (close) {
+        panel.hidden = true;
+        accessibilityTools.querySelector('[data-accessibility-toggle]')?.setAttribute('aria-expanded', 'false');
+        accessibilityTools.querySelector('[data-accessibility-toggle]')?.focus();
         return;
     }
 
@@ -43,7 +54,28 @@ document.querySelector('[data-accessibility-tools]')?.addEventListener('click', 
     if (action === 'underline') accessibilityPreferences.underlinedLinks = !accessibilityPreferences.underlinedLinks;
     if (action === 'reset') accessibilityPreferences = {};
     applyAccessibilityPreferences(accessibilityPreferences);
-    localStorage.setItem(accessibilityKey, JSON.stringify(accessibilityPreferences));
+    try {
+        localStorage.setItem(accessibilityKey, JSON.stringify(accessibilityPreferences));
+    } catch {
+        // Preferences still apply for this page when storage is unavailable.
+    }
+    const messages = {
+        'text-larger': `Text size increased to ${100 + accessibilityPreferences.textSize * 10} percent.`,
+        'text-reset': 'Text size reset.',
+        contrast: accessibilityPreferences.highContrast ? 'High contrast enabled.' : 'High contrast disabled.',
+        underline: accessibilityPreferences.underlinedLinks ? 'Link underlining enabled.' : 'Link underlining disabled.',
+        reset: 'Accessibility preferences reset.',
+    };
+    if (status) status.textContent = messages[action] || 'Accessibility preference updated.';
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !accessibilityTools) return;
+    const panel = accessibilityTools.querySelector('#accessibility-panel');
+    if (!panel || panel.hidden) return;
+    panel.hidden = true;
+    accessibilityTools.querySelector('[data-accessibility-toggle]')?.setAttribute('aria-expanded', 'false');
+    accessibilityTools.querySelector('[data-accessibility-toggle]')?.focus();
 });
 
 document.querySelectorAll('[data-chatbot]').forEach((widget) => {

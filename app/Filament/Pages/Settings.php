@@ -186,13 +186,13 @@ class Settings extends Page
                             ->schema([
                                 Toggle::make('ai_chat_enabled')
                                     ->label('Enable public AI chatbot')
-                                    ->helperText('The chatbot will answer visitor questions using published website content. Test the API settings before enabling it.'),
+                                    ->helperText('Configure the compatible provider URL, model, and API key below, save the settings, then enable the chatbot. The assistant answers using published website content.'),
                                 TextInput::make('ai_api_base_url')
                                     ->label('OpenAI-compatible API base URL')
                                     ->url()
                                     ->placeholder('https://api.openai.com')
                                     ->maxLength(500)
-                                    ->helperText('Use the provider API base URL (without /chat/completions). The platform sends requests to /v1/chat/completions.'),
+                                    ->helperText('Enter the provider base URL, for example https://api.openai.com. The platform appends /v1/chat/completions; do not include that path.'),
                                 TextInput::make('ai_api_model')
                                     ->label('Model name')
                                     ->placeholder('e.g. gpt-4o-mini')
@@ -202,7 +202,7 @@ class Settings extends Page
                                     ->password()
                                     ->revealable()
                                     ->dehydrated()
-                                    ->helperText(SettingsStore::get('ai_api_key_ciphertext') ? 'A key is stored encrypted. Leave blank to keep it, or enter a new key to replace it.' : 'The key is encrypted before it is stored. It is never sent to visitors.'),
+                                    ->helperText(SettingsStore::get('ai_api_key_ciphertext') ? 'A key is stored encrypted. Leave blank to keep it, or enter a new key to replace it.' : 'Enter the API key from your provider. It is encrypted before storage and never sent to visitors.'),
                                 Toggle::make('ai_api_key_clear')
                                     ->label('Remove stored API key')
                                     ->helperText('This disables chatbot responses until a new API key is configured.'),

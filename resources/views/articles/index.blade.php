@@ -18,7 +18,7 @@
             <div class="grid flex-1 gap-2">
                 <label for="article-search" class="text-sm font-semibold">Search articles</label>
                 <input id="article-search" name="q" type="search" value="{{ $search }}" maxlength="100"
-                    class="rounded border border-[#14263d]/25 bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
+                    placeholder="Search by keyword" class="rounded border border-[#14263d]/25 bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
             </div>
             <button type="submit" class="rounded bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Search</button>
         </form>

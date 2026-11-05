@@ -38,7 +38,7 @@
             <form method="POST" action="{{ route('account.tickets.reply', $ticket) }}" enctype="multipart/form-data" class="mt-10 grid gap-5 bg-white p-6" novalidate>
                 @csrf
                 <x-form.errors />
-                <x-form.field name="body" label="Your reply" :rows="5" required />
+                <x-form.field name="body" label="Your reply" placeholder="Write your response" :rows="5" required />
                 <div class="grid gap-2"><label for="reply-attachments" class="text-sm font-semibold">Attachments (optional, up to 5 files; 10 MB each)</label><input id="reply-attachments" name="attachments[]" type="file" multiple class="rounded border border-[#14263d]/25 px-3 py-2">@error('attachments.*')<p class="text-sm text-[#b42318]">{{ $message }}</p>@enderror</div>
                 <x-button>Send reply</x-button>
             </form>

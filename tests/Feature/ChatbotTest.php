@@ -150,7 +150,7 @@ class ChatbotTest extends TestCase
         Http::assertSent(fn ($request) => $request->url() === 'https://api.example.test/v1/chat/completions'
             && $request->hasHeader('Authorization', 'Bearer temporary-test-key')
             && $request['model'] === 'example-chat-model'
-            && $request['max_tokens'] === 10);
+            && $request['max_completion_tokens'] === 1024);
     }
 
     public function test_ai_connection_test_reports_provider_authentication_failure(): void

@@ -339,7 +339,7 @@ class Settings extends Page
                 ->post($url, [
                     'model' => $model,
                     'messages' => [['role' => 'user', 'content' => 'Reply with OK.']],
-                    'max_tokens' => 10,
+                    'max_completion_tokens' => 1024,
                     'temperature' => 0,
                 ]);
 
@@ -359,6 +359,21 @@ class Settings extends Page
                 429 => 'The provider rate-limited the request or the account has no available quota.',
                 default => 'Check the provider URL, model name, and provider status.',
             };
+
+            if ($response->successful()) {
+                $finishReason = $response->json('choices.0.finish_reason');
+                $emptyResponseDetail = $finishReason === 'length'
+                    ? 'The provider accepted the request, but the model used its token budget without returning text. Try a larger completion budget or a non-reasoning model.'
+                    : 'The provider accepted the request but returned no text. Check that this model supports chat completions and returns message content.';
+
+                Notification::make()
+                    ->warning()
+                    ->title('AI provider reached, but no text was returned')
+                    ->body($emptyResponseDetail)
+                    ->send();
+
+                return;
+            }
 
             Notification::make()
                 ->danger()

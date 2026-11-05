@@ -41,7 +41,7 @@ class AiChat
                     ...$messages,
                 ],
                 'temperature' => 0.4,
-                'max_tokens' => 700,
+                'max_completion_tokens' => 2048,
             ]);
 
             $response->throw();

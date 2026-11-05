@@ -6,8 +6,8 @@
             <div class="lg:col-span-8">
                 @if (session('booking_sent'))
                     <div role="status" class="card flex items-start gap-4 border-brand/40 p-6 sm:p-8">
-                        <span class="grid size-11 shrink-0 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current" stroke-width="2.5"><path d="M5 12l4 4 10-10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                        <p class="pt-2 font-medium">Thank you. Your appointment request has been received.</p>
+                        <i class="fa-solid fa-circle-check pt-0.5 text-2xl text-brand" aria-hidden="true"></i>
+                        <p class="font-medium">Thank you. Your appointment request has been received.</p>
                     </div>
                 @else
                     <form method="POST" action="{{ route('booking-requests.store') }}" class="card grid gap-5 p-6 sm:grid-cols-2 sm:p-8" novalidate>
@@ -41,7 +41,7 @@
                             <textarea id="booking-message" name="message" rows="4" placeholder="Tell us what you would like to discuss" class="input">{{ old('message') }}</textarea>
                         </div>
                         <div class="hidden" aria-hidden="true"><label for="booking-website">Leave this field empty</label><input id="booking-website" name="website" tabindex="-1" autocomplete="off"></div>
-                        <div class="sm:col-span-2"><button type="submit" class="btn-primary w-full sm:w-auto">Request appointment <span aria-hidden="true">→</span></button></div>
+                        <div class="sm:col-span-2"><button type="submit" class="btn-primary w-full sm:w-auto">Request appointment <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button></div>
                     </form>
                 @endif
             </div>
@@ -51,8 +51,8 @@
                     <ol class="mt-5 space-y-5">
                         @foreach (['We review your request and preferred time.', 'We contact you to confirm availability.', 'We meet to discuss your requirements.'] as $i => $step)
                             <li class="flex gap-3">
-                                <span class="grid size-8 shrink-0 place-items-center rounded-full bg-brand-tint text-xs font-bold text-brand-dark" aria-hidden="true">{{ $i + 1 }}</span>
-                                <span class="pt-1 text-sm leading-6">{{ $step }}</span>
+                                <span class="w-5 shrink-0 text-sm font-bold text-brand" aria-hidden="true">{{ $i + 1 }}.</span>
+                                <span class="text-sm leading-6">{{ $step }}</span>
                             </li>
                         @endforeach
                     </ol>

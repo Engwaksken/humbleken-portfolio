@@ -2,7 +2,7 @@ import { lockScroll, storage, trapFocus } from './dialog';
 
 const HISTORY_KEY = 'site-chat-history';
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const BOT_ICON = '<svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current" stroke-width="1.8"><rect x="4" y="7" width="16" height="12" rx="4"/><path d="M12 3v4M9 12.5h.01M15 12.5h.01M9.5 16h5" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/></svg>';
+const AVATAR_CLASS = 'grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-white';
 
 const timeFormat = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
 
@@ -57,6 +57,25 @@ function setUpWidget(widget) {
     const log = widget.querySelector('[data-chatbot-log]');
     const welcome = log.firstElementChild;
     const suggestions = widget.querySelector('[data-chatbot-suggestions]');
+
+    /** The assistant's avatar: the site favicon/logo when set, otherwise a robot icon. */
+    const avatar = () => {
+        const wrap = document.createElement('span');
+        wrap.className = AVATAR_CLASS;
+        wrap.setAttribute('aria-hidden', 'true');
+        if (widget.dataset.avatar) {
+            const img = document.createElement('img');
+            img.src = widget.dataset.avatar;
+            img.alt = '';
+            img.className = 'size-full object-cover';
+            wrap.append(img);
+        } else {
+            const icon = document.createElement('i');
+            icon.className = 'fa-solid fa-robot text-sm text-secondary';
+            wrap.append(icon);
+        }
+        return wrap;
+    };
     let messages = history.get(HISTORY_KEY, []).filter((m) => m && typeof m.content === 'string' && ['user', 'assistant'].includes(m.role));
     let sending = false;
 
@@ -74,13 +93,7 @@ function setUpWidget(widget) {
         const row = document.createElement('div');
         row.className = `flex items-end gap-2.5 animate-fade-up ${role === 'user' ? 'flex-row-reverse' : ''}`;
 
-        if (role !== 'user') {
-            const avatar = document.createElement('span');
-            avatar.className = 'grid size-8 shrink-0 place-items-center rounded-xl bg-ink text-white';
-            avatar.setAttribute('aria-hidden', 'true');
-            avatar.innerHTML = BOT_ICON;
-            row.append(avatar);
-        }
+        if (role !== 'user') row.append(avatar());
 
         const wrap = document.createElement('div');
         wrap.className = `flex max-w-[85%] flex-col gap-1 ${role === 'user' ? 'items-end' : 'items-start'}`;
@@ -101,7 +114,10 @@ function setUpWidget(widget) {
         if (attachmentName) {
             const tag = document.createElement('p');
             tag.className = 'mt-2 inline-flex max-w-full items-center gap-1.5 rounded-lg bg-white/15 px-2 py-1 text-xs';
-            tag.textContent = `📎 ${attachmentName}`;
+            const clip = document.createElement('i');
+            clip.className = 'fa-solid fa-paperclip';
+            clip.setAttribute('aria-hidden', 'true');
+            tag.append(clip, document.createTextNode(attachmentName));
             body.append(tag);
         }
 
@@ -120,11 +136,11 @@ function setUpWidget(widget) {
     function typing() {
         const row = document.createElement('div');
         row.className = 'flex items-end gap-2.5';
-        row.innerHTML = `<span class="grid size-8 shrink-0 place-items-center rounded-xl bg-ink text-white" aria-hidden="true">${BOT_ICON}</span>`
-            + '<div class="flex items-center gap-1 rounded-2xl rounded-bl-md border border-line bg-white px-4 py-3.5 shadow-sm">'
+        row.append(avatar());
+        row.insertAdjacentHTML('beforeend', '<div class="flex items-center gap-1 rounded-2xl rounded-bl-md border border-line bg-white px-4 py-3.5 shadow-sm">'
             + '<span class="sr-only">Assistant is typing</span>'
             + [0, 150, 300].map((delay) => `<span aria-hidden="true" class="size-2 rounded-full bg-muted animate-typing" style="animation-delay:${delay}ms"></span>`).join('')
-            + '</div>';
+            + '</div>');
         log.append(row);
         scrollToEnd();
         return row;

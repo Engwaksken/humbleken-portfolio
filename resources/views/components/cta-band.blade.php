@@ -1,9 +1,8 @@
 @props(['title' => 'Have a technical challenge in mind?', 'text' => 'Tell us about the issue or objective and we will help you find a practical way forward.'])
 <section {{ $attributes->class('pb-16 sm:pb-24') }} aria-labelledby="cta-title">
     <div class="container-site">
-        <div class="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,var(--color-brand-dark),var(--color-secondary))] px-6 py-12 text-white sm:px-12 sm:py-16">
-            <div aria-hidden="true" class="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-white/10 blur-2xl"></div>
-            <div class="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div class="rounded-3xl bg-brand-dark px-6 py-12 text-white sm:px-12 sm:py-16">
+            <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                 <div class="max-w-2xl">
                     <h2 id="cta-title" class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ $title }}</h2>
                     <p class="mt-3 leading-7 text-white/80">{{ $text }}</p>

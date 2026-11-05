@@ -16,7 +16,7 @@
             @endif
             <label for="article-search" class="sr-only">Search articles</label>
             <div class="relative flex-1">
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 fill-none stroke-muted" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+                <i class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted" aria-hidden="true"></i>
                 <input id="article-search" name="q" type="search" value="{{ $search }}" maxlength="100" placeholder="Search by keyword" class="input !rounded-full pl-11">
             </div>
             <button type="submit" class="btn-primary">Search</button>
@@ -69,7 +69,7 @@
                         @if ($article->excerpt)
                             <p class="mt-3 line-clamp-3 leading-7 text-muted">{{ $article->excerpt }}</p>
                         @endif
-                        <span class="link-arrow mt-auto pt-6" aria-hidden="true">Read article →</span>
+                        <span class="link-arrow mt-auto pt-6" aria-hidden="true">Read article <i class="fa-solid fa-arrow-right text-xs"></i></span>
                     </article>
                 @endforeach
             </div>

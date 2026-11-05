@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import '@fortawesome/fontawesome-free/css/fontawesome.min.css' layer(base);
+@import '@fortawesome/fontawesome-free/css/solid.min.css' layer(base);
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -81,11 +83,7 @@
         @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
     }
     .eyebrow {
-        @apply inline-flex items-center gap-2 text-xs font-bold tracking-[.18em] text-brand uppercase;
-    }
-    .eyebrow::before {
-        content: '';
-        @apply h-px w-6 bg-current;
+        @apply text-xs font-bold tracking-[.18em] text-brand uppercase;
     }
     .btn-primary {
         @apply btn bg-brand text-white shadow-sm hover:bg-brand-dark;
@@ -115,7 +113,7 @@
         @apply text-sm font-semibold text-ink;
     }
     .page-hero {
-        @apply border-b border-line bg-[radial-gradient(ellipse_at_top_right,var(--color-brand-tint),transparent_60%)] bg-white;
+        @apply border-b border-line bg-white;
     }
     /* Pressed state for toggle buttons in the accessibility panel. */
     .a11y-option[aria-pressed='true'] {
@@ -215,7 +213,7 @@ html.a11y-letter-spacing body p { margin-bottom: 2em; }
 
 /* Dyslexia-friendly / highly legible font. */
 html.a11y-readable-font body,
-html.a11y-readable-font body *:not(svg):not(path) {
+html.a11y-readable-font body *:not(svg):not(path):not(.fa-solid):not(.fas) {
     font-family: 'Atkinson Hyperlegible', Verdana, Tahoma, sans-serif !important;
 }
 

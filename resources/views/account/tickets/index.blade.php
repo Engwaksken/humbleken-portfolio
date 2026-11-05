@@ -1,7 +1,7 @@
 <x-layouts.site :title="'Your support tickets — '.$brandName">
     <div class="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <a href="{{ route('account.dashboard') }}" class="text-sm font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
-            <span aria-hidden="true">←</span> Your account
+            <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> Your account
         </a>
         <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <h1 class="text-3xl font-semibold tracking-tight">Support tickets</h1>

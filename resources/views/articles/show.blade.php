@@ -6,7 +6,7 @@
 
     <x-page-hero :title="$article->title" :intro="$article->excerpt" title-id="article-title" narrow>
         <x-slot:before>
-            <a href="{{ route('articles.index') }}" class="link-arrow mb-8 flex w-fit"><span aria-hidden="true">←</span> All articles</a>
+            <a href="{{ route('articles.index') }}" class="link-arrow mb-8 flex w-fit"><i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> All articles</a>
         </x-slot:before>
         <p class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
             @if ($article->category)

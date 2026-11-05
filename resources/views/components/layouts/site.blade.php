@@ -80,18 +80,18 @@
             </div>
 
             <button type="button" class="grid size-11 place-items-center rounded-full border border-line bg-white text-ink lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu" data-menu-toggle>
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5 fill-none stroke-current" stroke-width="2" data-menu-icon-open><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="hidden size-5 fill-none stroke-current" stroke-width="2" data-menu-icon-close><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>
+                <i class="fa-solid fa-bars text-lg" aria-hidden="true" data-menu-icon-open></i>
+                <i class="fa-solid fa-xmark hidden text-lg" aria-hidden="true" data-menu-icon-close></i>
             </button>
         </div>
 
         <div id="mobile-menu" hidden class="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-white lg:hidden">
             <nav aria-label="Mobile navigation" class="container-site grid gap-1 py-4">
                 @foreach ($navItems as $item)
-                    <a class="{{ $mobileLink }}" href="{{ route($item['route']) }}" @if (request()->routeIs($item['active'])) aria-current="page" @endif>{{ $item['label'] }}<span aria-hidden="true" class="text-muted">→</span></a>
+                    <a class="{{ $mobileLink }}" href="{{ route($item['route']) }}" @if (request()->routeIs($item['active'])) aria-current="page" @endif>{{ $item['label'] }}<i class="fa-solid fa-chevron-right text-xs text-muted" aria-hidden="true"></i></a>
                 @endforeach
                 @auth
-                    <a class="{{ $mobileLink }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account<span aria-hidden="true" class="text-muted">→</span></a>
+                    <a class="{{ $mobileLink }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account<i class="fa-solid fa-chevron-right text-xs text-muted" aria-hidden="true"></i></a>
                 @endauth
                 <div class="mt-3 grid gap-2 border-t border-line pt-4 sm:grid-cols-2">
                     <a class="btn-primary w-full" href="{{ route('contact') }}">Contact us</a>
@@ -120,7 +120,7 @@
                     {{ $brandName }}
                 </a>
                 <p class="mt-4 max-w-md leading-7">{{ $tagline }}. Practical technical consulting and engineering solutions to help your business move forward.</p>
-                <a href="{{ route('booking') }}" class="btn-light mt-6">Book a consultation <span aria-hidden="true">→</span></a>
+                <a href="{{ route('booking') }}" class="btn-light mt-6">Book a consultation <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
             </div>
             <div class="lg:col-span-3 lg:col-start-7">
                 <h2 class="text-xs font-bold tracking-[.18em] text-white uppercase">Explore</h2>
@@ -147,12 +147,13 @@
         <div class="border-t border-white/10">
             <div class="container-site flex flex-col gap-3 py-6 pb-24 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
                 <p>© {{ now()->year }} {{ $brandName }}. All rights reserved.</p>
-                <a class="{{ $footerLink }} inline-flex w-fit items-center gap-2" href="{{ route('contact') }}"><svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 fill-none stroke-current" stroke-width="2"><path d="M4 6h16v12H4zM4 7l8 6 8-6" stroke-linecap="round" stroke-linejoin="round"/></svg>Get in touch</a>
+                <a class="{{ $footerLink }} inline-flex w-fit items-center gap-2" href="{{ route('contact') }}"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Get in touch</a>
             </div>
         </div>
     </footer>
 
     <x-accessibility-tools />
-    <x-chatbot-widget />
+    {{-- The assistant uses the site's favicon (square) or, failing that, the logo as its avatar. --}}
+    <x-chatbot-widget :avatar="$faviconUrl ?: $logoUrl" />
 </body>
 </html>

@@ -1,10 +1,10 @@
 <article class="card-hover group relative flex flex-col overflow-hidden">
-    <div class="aspect-[16/10] overflow-hidden bg-[linear-gradient(135deg,var(--color-brand-tint),var(--color-secondary-tint))]">
+    <div class="aspect-[16/10] overflow-hidden border-b border-line bg-canvas">
         @if ($project->sampleImageUrl())
             <img src="{{ $project->sampleImageUrl() }}" alt="" loading="lazy" decoding="async" class="size-full object-cover transition duration-500 group-hover:scale-[1.03]">
         @else
             <div class="grid size-full place-items-center" aria-hidden="true">
-                <span class="text-5xl font-bold tracking-tight text-brand/25">{{ mb_strtoupper(mb_substr($project->title, 0, 2)) }}</span>
+                <i class="fa-solid fa-folder-open text-4xl text-brand/40"></i>
             </div>
         @endif
     </div>
@@ -26,6 +26,6 @@
                 @endif
             </ul>
         @endif
-        <span class="link-arrow mt-5" aria-hidden="true">View case study →</span>
+        <span class="link-arrow mt-5" aria-hidden="true">View case study <i class="fa-solid fa-arrow-right text-xs"></i></span>
     </div>
 </article>

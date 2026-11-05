@@ -4,14 +4,23 @@
     'ogType' => 'website',
 ])
 @php
-    $linkClass = 'transition hover:text-brand focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand';
+    $navItems = array_values(array_filter([
+        ['label' => 'Services', 'route' => 'services.index', 'active' => 'services.*'],
+        $hasPublishedProjects ? ['label' => 'Projects', 'route' => 'projects.index', 'active' => 'projects.*'] : null,
+        $hasPublishedArticles ? ['label' => 'Articles', 'route' => 'articles.index', 'active' => 'articles.*'] : null,
+        ['label' => 'Approach', 'route' => 'approach', 'active' => 'approach'],
+        ['label' => 'Book', 'route' => 'booking', 'active' => 'booking'],
+    ]));
+    $navLink = 'relative rounded-full px-3.5 py-2 text-sm font-medium text-ink/80 transition hover:bg-brand-tint hover:text-brand-dark aria-[current=page]:bg-brand-tint aria-[current=page]:text-brand-dark';
+    $mobileLink = 'flex min-h-12 items-center justify-between rounded-xl px-4 text-base font-medium text-ink hover:bg-brand-tint aria-[current=page]:bg-brand-tint aria-[current=page]:text-brand-dark';
+    $footerLink = 'text-white/75 transition hover:text-white';
 @endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f4f7fb">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
     <title>{{ $title ?? $brandName }}</title>
     <meta name="description" content="{{ $description ?? $tagline }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -31,84 +40,115 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{ \App\Support\Theme::headTags() }}
 </head>
-<body class="bg-[#f4f7fb] text-[#14263d] antialiased">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-[#14263d] focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Skip to content</a>
+<body class="flex min-h-screen flex-col bg-canvas font-sans text-ink antialiased">
+    <a href="#main-content" data-a11y-exempt class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:font-semibold focus:text-white focus:shadow-lg">Skip to content</a>
 
     @if (\App\Http\Middleware\PublicMaintenanceMode::isEnabled())
-        <p role="status" class="bg-[#7a4100] px-6 py-2 text-center text-sm font-medium text-white">
+        <p role="status" class="bg-[#7a4100] px-4 py-2 text-center text-sm font-medium text-white">
             Maintenance mode is on. Visitors see the "back soon" page; you can see the site because you are signed in as an administrator.
         </p>
     @endif
 
-    <header class="border-b border-[#14263d]/10 bg-white">
-        <div class="mx-auto flex w-full max-w-screen-2xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-10 2xl:px-14">
-            <a href="{{ route('home') }}" class="w-fit text-base font-bold tracking-tight text-[#14263d] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand" aria-label="{{ $brandName }} home">
+    <header class="sticky top-0 z-40 border-b border-transparent bg-white/85 backdrop-blur-lg transition-[box-shadow,border-color] supports-[backdrop-filter]:bg-white/75 data-[scrolled=true]:border-line data-[scrolled=true]:shadow-[0_6px_24px_-12px_rgb(20_38_61/0.25)]" data-site-header>
+        <div class="container-site flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
+            <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2.5 text-lg font-bold tracking-tight text-ink" aria-label="{{ $brandName }} home">
                 @if ($logoUrl)
-                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" class="h-10 w-auto max-w-[12rem] object-contain">
+                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" class="h-9 w-auto max-w-[10rem] object-contain sm:h-10 sm:max-w-[12rem]">
                 @else
-                    {{ $brandLead }}@if ($brandRemainder !== '') <span class="text-brand">{{ $brandRemainder }}</span>@endif
+                    <span aria-hidden="true" class="grid size-9 place-items-center rounded-xl bg-ink text-sm font-bold text-white">{{ mb_strtoupper(mb_substr($brandName, 0, 1)) }}</span>
+                    <span>{{ $brandLead }}@if ($brandRemainder !== '') <span class="text-brand">{{ $brandRemainder }}</span>@endif</span>
                 @endif
             </a>
-            <nav aria-label="Main navigation" class="flex flex-wrap items-center gap-x-4 gap-y-3 text-sm font-medium sm:gap-x-6 lg:justify-end 2xl:gap-x-8">
-                <a class="{{ $linkClass }}" href="{{ route('services.index') }}" @if (request()->routeIs('services.*')) aria-current="page" @endif>Services</a>
-                @if ($hasPublishedProjects)
-                    <a class="{{ $linkClass }}" href="{{ route('projects.index') }}" @if (request()->routeIs('projects.*')) aria-current="page" @endif>Projects</a>
-                @endif
-                @if ($hasPublishedArticles)
-                    <a class="{{ $linkClass }}" href="{{ route('articles.index') }}" @if (request()->routeIs('articles.*')) aria-current="page" @endif>Articles</a>
-                @endif
-                <a class="{{ $linkClass }}" href="{{ route('approach') }}" @if (request()->routeIs('approach')) aria-current="page" @endif>Approach</a>
-                <a class="{{ $linkClass }}" href="{{ route('booking') }}" @if (request()->routeIs('booking')) aria-current="page" @endif>Book</a>
-                <a class="font-semibold text-brand underline decoration-brand decoration-2 underline-offset-4 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand" href="{{ route('contact') }}" @if (request()->routeIs('contact')) aria-current="page" @endif>Contact</a>
+
+            <nav aria-label="Main navigation" class="hidden items-center gap-1 lg:flex">
+                @foreach ($navItems as $item)
+                    <a class="{{ $navLink }}" href="{{ route($item['route']) }}" @if (request()->routeIs($item['active'])) aria-current="page" @endif>{{ $item['label'] }}</a>
+                @endforeach
+            </nav>
+
+            <div class="hidden items-center gap-2 lg:flex">
                 @auth
-                    <a class="{{ $linkClass }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account</a>
+                    <a class="{{ $navLink }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="{{ $linkClass }}">Sign out</button>
+                        <button type="submit" class="{{ $navLink }}">Sign out</button>
                     </form>
                 @else
-                    <a class="{{ $linkClass }}" href="{{ route('login') }}">Sign in</a>
+                    <a class="{{ $navLink }}" href="{{ route('login') }}">Sign in</a>
                 @endauth
+                <a class="btn-primary !px-5 !py-2.5" href="{{ route('contact') }}" @if (request()->routeIs('contact')) aria-current="page" @endif>Contact</a>
+            </div>
+
+            <button type="button" class="grid size-11 place-items-center rounded-full border border-line bg-white text-ink lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu" data-menu-toggle>
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5 fill-none stroke-current" stroke-width="2" data-menu-icon-open><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="hidden size-5 fill-none stroke-current" stroke-width="2" data-menu-icon-close><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+
+        <div id="mobile-menu" hidden class="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-white lg:hidden">
+            <nav aria-label="Mobile navigation" class="container-site grid gap-1 py-4">
+                @foreach ($navItems as $item)
+                    <a class="{{ $mobileLink }}" href="{{ route($item['route']) }}" @if (request()->routeIs($item['active'])) aria-current="page" @endif>{{ $item['label'] }}<span aria-hidden="true" class="text-muted">→</span></a>
+                @endforeach
+                @auth
+                    <a class="{{ $mobileLink }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account<span aria-hidden="true" class="text-muted">→</span></a>
+                @endauth
+                <div class="mt-3 grid gap-2 border-t border-line pt-4 sm:grid-cols-2">
+                    <a class="btn-primary w-full" href="{{ route('contact') }}">Contact us</a>
+                    @auth
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn-ghost w-full">Sign out</button>
+                        </form>
+                    @else
+                        <a class="btn-ghost w-full" href="{{ route('login') }}">Sign in</a>
+                    @endauth
+                </div>
             </nav>
         </div>
     </header>
 
-    <main id="main-content" tabindex="-1">
+    <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
         {{ $slot }}
     </main>
 
-    <footer class="border-t border-[#14263d]/10 bg-white px-4 py-10 text-sm text-[#506176] sm:px-6 lg:px-10" aria-label="Site footer">
-        <div class="mx-auto grid w-full max-w-screen-2xl gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
-            <div class="sm:col-span-2 lg:col-span-2">
-                <a href="{{ route('home') }}" class="inline-flex items-center gap-2 font-bold text-[#14263d] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand" aria-label="{{ $brandName }} home">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-current" stroke-width="1.8"><path d="M4 12a8 8 0 1 1 2.34 5.66M4 5v5h5M12 8v4l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <footer class="bg-secondary text-sm text-white/75" aria-label="Site footer">
+        <div class="container-site grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-12 lg:gap-12">
+            <div class="sm:col-span-2 lg:col-span-5">
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-2.5 text-lg font-bold text-white" aria-label="{{ $brandName }} home">
+                    <span aria-hidden="true" class="grid size-9 place-items-center rounded-xl bg-white text-sm font-bold text-secondary">{{ mb_strtoupper(mb_substr($brandName, 0, 1)) }}</span>
                     {{ $brandName }}
                 </a>
-                <p class="mt-3 max-w-xl leading-7">Practical technical consulting and engineering solutions to help your business move forward.</p>
+                <p class="mt-4 max-w-md leading-7">{{ $tagline }}. Practical technical consulting and engineering solutions to help your business move forward.</p>
+                <a href="{{ route('booking') }}" class="btn-light mt-6">Book a consultation <span aria-hidden="true">→</span></a>
             </div>
-            <div>
-                <h2 class="font-semibold text-[#14263d]">Explore</h2>
-                <ul class="mt-3 space-y-2">
-                    <li><a class="{{ $linkClass }}" href="{{ route('services.index') }}">Services</a></li>
-                    <li><a class="{{ $linkClass }}" href="{{ route('approach') }}">Our approach</a></li>
-                    <li><a class="{{ $linkClass }}" href="{{ route('booking') }}">Book a consultation</a></li>
-                    <li><a class="{{ $linkClass }}" href="{{ route('contact') }}">Contact</a></li>
+            <div class="lg:col-span-3 lg:col-start-7">
+                <h2 class="text-xs font-bold tracking-[.18em] text-white uppercase">Explore</h2>
+                <ul class="mt-4 space-y-3">
+                    <li><a class="{{ $footerLink }}" href="{{ route('services.index') }}">Services</a></li>
+                    @if ($hasPublishedProjects)<li><a class="{{ $footerLink }}" href="{{ route('projects.index') }}">Projects</a></li>@endif
+                    @if ($hasPublishedArticles)<li><a class="{{ $footerLink }}" href="{{ route('articles.index') }}">Articles</a></li>@endif
+                    <li><a class="{{ $footerLink }}" href="{{ route('approach') }}">Our approach</a></li>
                 </ul>
             </div>
-            <div>
-                <h2 class="font-semibold text-[#14263d]">Your account</h2>
-                <ul class="mt-3 space-y-2">
+            <div class="lg:col-span-3">
+                <h2 class="text-xs font-bold tracking-[.18em] text-white uppercase">Work with us</h2>
+                <ul class="mt-4 space-y-3">
+                    <li><a class="{{ $footerLink }}" href="{{ route('booking') }}">Book a consultation</a></li>
+                    <li><a class="{{ $footerLink }}" href="{{ route('contact') }}">Contact</a></li>
                     @auth
-                        <li><a class="{{ $linkClass }}" href="{{ route('account.dashboard') }}">Account dashboard</a></li>
+                        <li><a class="{{ $footerLink }}" href="{{ route('account.dashboard') }}">Account dashboard</a></li>
                     @else
-                        <li><a class="{{ $linkClass }}" href="{{ route('login') }}">Sign in</a></li>
+                        <li><a class="{{ $footerLink }}" href="{{ route('login') }}">Sign in</a></li>
                     @endauth
                 </ul>
             </div>
         </div>
-        <div class="mx-auto mt-8 flex w-full max-w-screen-2xl flex-col gap-2 border-t border-[#14263d]/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-            <p>© {{ now()->year }} {{ $brandName }}. All rights reserved.</p>
-            <a class="{{ $linkClass }} inline-flex w-fit items-center gap-2" href="{{ route('contact') }}"><svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current" stroke-width="2"><path d="M4 6h16v12H4zM4 7l8 6 8-6" stroke-linecap="round" stroke-linejoin="round"/></svg>Get in touch</a>
+        <div class="border-t border-white/10">
+            <div class="container-site flex flex-col gap-3 py-6 pb-24 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+                <p>© {{ now()->year }} {{ $brandName }}. All rights reserved.</p>
+                <a class="{{ $footerLink }} inline-flex w-fit items-center gap-2" href="{{ route('contact') }}"><svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 fill-none stroke-current" stroke-width="2"><path d="M4 6h16v12H4zM4 7l8 6 8-6" stroke-linecap="round" stroke-linejoin="round"/></svg>Get in touch</a>
+            </div>
         </div>
     </footer>
 

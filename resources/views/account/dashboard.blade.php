@@ -1,8 +1,8 @@
 @php
-    $linkClass = 'text-brand underline underline-offset-2 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
+    $linkClass = 'font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 @endphp
 <x-layouts.site :title="'Your account — '.$brandName">
-    <div class="mx-auto max-w-4xl px-6 py-16 lg:py-20">
+    <div class="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <h1 class="text-3xl font-semibold tracking-tight">Hello, {{ auth()->user()->name }}</h1>
 
         @if (auth()->user()->is_admin)
@@ -20,15 +20,15 @@
                 <div>
                     <h2 id="tickets-title" class="text-2xl font-semibold">Support tickets</h2>
                     @if ($awaitingYou > 0)
-                        <p class="mt-1 text-sm text-[#506176]">{{ trans_choice('{1} 1 ticket is|[2,*] :count tickets are', $awaitingYou) }} waiting for your reply.</p>
+                        <p class="mt-1 text-sm text-muted">{{ trans_choice('{1} 1 ticket is|[2,*] :count tickets are', $awaitingYou) }} waiting for your reply.</p>
                     @endif
                 </div>
-                <a href="{{ route('account.tickets.create') }}" class="w-fit rounded bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Open a ticket</a>
+                <a href="{{ route('account.tickets.create') }}" class="btn-primary w-full sm:w-fit">Open a ticket</a>
             </div>
 
             <div class="mt-6">
                 @if ($recentTickets->isEmpty())
-                    <p class="border-l-2 border-brand py-2 pl-4 text-[#506176]">You have no support tickets yet.</p>
+                    <p class="border-l-2 border-brand py-2 pl-4 text-muted">You have no support tickets yet.</p>
                 @else
                     @include('account.partials.ticket-list', ['tickets' => $recentTickets])
                     <p class="mt-4 text-sm"><a href="{{ route('account.tickets.index') }}" class="{{ $linkClass }}">All tickets</a></p>
@@ -38,7 +38,7 @@
 
         <section aria-labelledby="password-title" class="mt-16 max-w-md">
             <h2 id="password-title" class="text-2xl font-semibold">Change password</h2>
-            <form method="POST" action="{{ route('user-password.update') }}" class="mt-6 grid gap-5 bg-white p-6" novalidate>
+            <form method="POST" action="{{ route('user-password.update') }}" class="mt-6 grid gap-5 card p-6 sm:p-8" novalidate>
                 @csrf
                 @method('PUT')
                 <x-form.errors bag="updatePassword" />

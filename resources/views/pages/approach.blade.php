@@ -1,3 +1,16 @@
 <x-layouts.site :title="$pageTitle.' — '.$brandName" :description="$pageIntro">
-    <section class="bg-[#14263d] text-white"><div class="mx-auto max-w-6xl px-6 py-20 lg:px-8"><p class="text-sm font-semibold uppercase tracking-wider text-[#70d0d0]">Approach</p><h1 class="mt-5 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">{{ $pageTitle }}</h1><p class="mt-6 max-w-3xl text-lg leading-8 text-white/80">{{ $pageIntro }}</p><ol class="mt-12 divide-y divide-white/20">@foreach (array_filter(preg_split('/\r\n|\r|\n/', $approachSteps)) as $index => $step)<li class="grid gap-3 py-6 sm:grid-cols-[5rem_1fr]"><span class="text-sm font-bold text-[#70d0d0]">0{{ $index + 1 }}</span><p class="text-lg leading-8 text-white/80">{{ $step }}</p></li>@endforeach</ol><a class="mt-8 inline-flex rounded bg-white px-5 py-3 font-semibold text-[#14263d]" href="{{ route('booking') }}">Request a consultation</a></div></section>
+    <x-page-hero eyebrow="Approach" :title="$pageTitle" :intro="$pageIntro" />
+
+    <section aria-label="Steps" class="container-site py-14 sm:py-20">
+        <ol class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            @foreach (array_values(array_filter(preg_split('/\r\n|\r|\n/', $approachSteps))) as $index => $step)
+                <li class="card relative overflow-hidden p-7">
+                    <span aria-hidden="true" class="absolute -top-3 -right-1 text-8xl font-bold text-brand-tint">{{ $index + 1 }}</span>
+                    <span class="relative inline-flex items-center gap-2 rounded-full bg-brand px-3 py-1 text-xs font-bold text-white">Step {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                    <p class="relative mt-5 text-lg leading-8">{{ $step }}</p>
+                </li>
+            @endforeach
+        </ol>
+        <a class="btn-primary mt-10" href="{{ route('booking') }}">Request a consultation</a>
+    </section>
 </x-layouts.site>

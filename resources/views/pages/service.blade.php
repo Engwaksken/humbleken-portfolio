@@ -1,3 +1,43 @@
 <x-layouts.site :title="$service->name.' — '.$brandName" :description="$service->summary ?: $service->description">
-    <article class="mx-auto max-w-4xl px-6 py-16 lg:px-8">@if($service->category)<p class="text-sm font-semibold uppercase tracking-wider text-brand">{{ $service->category->name }}</p>@endif<h1 class="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">{{ $service->name }}</h1>@if($service->summary)<p class="mt-5 text-xl leading-8 text-[#506176]">{{ $service->summary }}</p>@endif<div class="prose mt-8 max-w-none whitespace-pre-line leading-8 text-[#506176]">{{ $service->description }}</div><dl class="mt-8 grid gap-4 sm:grid-cols-2">@if($service->delivery_method)<div><dt class="font-semibold">Delivery</dt><dd class="mt-1 text-[#506176]">{{ $service->delivery_method }}</dd></div>@endif @if($service->estimated_duration)<div><dt class="font-semibold">Estimated duration</dt><dd class="mt-1 text-[#506176]">{{ $service->estimated_duration }}</dd></div>@endif @if($service->indicative_price)<div><dt class="font-semibold">Indicative price</dt><dd class="mt-1 text-[#506176]">{{ $service->indicative_price }}</dd></div>@endif</dl>@if($service->sampleImageUrl())<img class="mt-10 max-h-[32rem] w-full rounded object-cover" src="{{ $service->sampleImageUrl() }}" alt="Sample image for {{ $service->name }}" loading="lazy">@endif @if($service->sampleVideoEmbedUrl())<div class="mt-8 aspect-video overflow-hidden rounded bg-[#14263d]"><iframe src="{{ $service->sampleVideoEmbedUrl() }}" title="Video sample for {{ $service->name }}" loading="lazy" allowfullscreen class="h-full w-full"></iframe></div>@endif<a class="mt-10 inline-flex rounded bg-brand px-5 py-3 font-semibold text-white" href="{{ route('booking', ['service' => $service->id]) }}">Request this service</a></article>
+    <x-page-hero :eyebrow="$service->category?->name ?? 'Service'" :title="$service->name" :intro="$service->summary">
+        <x-slot:before>
+            <a href="{{ route('services.index') }}" class="link-arrow mb-8 flex w-fit"><span aria-hidden="true">←</span> All services</a>
+        </x-slot:before>
+    </x-page-hero>
+
+    <article class="container-site py-12 sm:py-16">
+        <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div class="min-w-0 lg:col-span-8">
+                <h2 class="text-2xl font-semibold tracking-tight">Overview</h2>
+                <div class="mt-4 text-[1.0625rem] leading-8 whitespace-pre-line text-muted">{{ $service->description }}</div>
+                @if ($service->sampleImageUrl())
+                    <img class="mt-10 max-h-[32rem] w-full rounded-2xl border border-line object-cover" src="{{ $service->sampleImageUrl() }}" alt="Sample image for {{ $service->name }}" loading="lazy">
+                @endif
+                @if ($service->sampleVideoEmbedUrl())
+                    <div class="mt-8 aspect-video overflow-hidden rounded-2xl bg-ink"><iframe src="{{ $service->sampleVideoEmbedUrl() }}" title="Video sample for {{ $service->name }}" loading="lazy" allowfullscreen class="h-full w-full"></iframe></div>
+                @endif
+            </div>
+            <aside class="lg:col-span-4" aria-label="Service details">
+                <div class="space-y-5 lg:sticky lg:top-28">
+                    @if ($service->delivery_method || $service->estimated_duration || $service->indicative_price)
+                        <dl class="card divide-y divide-line">
+                            @foreach ([['Delivery', $service->delivery_method], ['Estimated duration', $service->estimated_duration], ['Indicative price', $service->indicative_price]] as [$term, $value])
+                                @if ($value)
+                                    <div class="p-5">
+                                        <dt class="text-xs font-bold tracking-[.14em] text-muted uppercase">{{ $term }}</dt>
+                                        <dd class="mt-1.5 font-semibold">{{ $value }}</dd>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </dl>
+                    @endif
+                    <div class="rounded-2xl bg-secondary p-6 text-white">
+                        <p class="font-semibold">Interested in this service?</p>
+                        <p class="mt-2 text-sm leading-6 text-white/75">Request a consultation and we will confirm availability.</p>
+                        <a class="btn-light mt-5 w-full" href="{{ route('booking', ['service' => $service->id]) }}">Request this service</a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </article>
 </x-layouts.site>

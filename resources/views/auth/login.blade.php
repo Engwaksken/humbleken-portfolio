@@ -11,8 +11,8 @@
             <x-button>Sign in</x-button>
         </form>
         <x-slot:footer>
-            <p><a href="{{ route('password.request') }}" class="text-brand underline underline-offset-2 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Forgot your password?</a></p>
-            <p class="mt-2">New here? <a href="{{ route('register') }}" class="text-brand underline underline-offset-2 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Create an account</a></p>
+            <p><a href="{{ route('password.request') }}" class="font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Forgot your password?</a></p>
+            <p class="mt-2">New here? <a href="{{ route('register') }}" class="font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Create an account</a></p>
         </x-slot:footer>
     </x-auth-card>
 </x-layouts.site>

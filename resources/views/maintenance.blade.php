@@ -11,11 +11,11 @@
     @vite(['resources/css/app.css'])
     {{ $themeTags }}
 </head>
-<body class="grid min-h-dvh place-items-center bg-[#f4f7fb] px-6 text-[#14263d] antialiased">
+<body class="grid min-h-dvh place-items-center bg-[#f4f7fb] px-6 text-ink antialiased">
     <main class="max-w-lg border-l-4 border-brand bg-white p-8">
         <p class="text-sm font-semibold uppercase tracking-[.16em] text-brand">{{ $brandName }}</p>
         <h1 class="mt-4 text-3xl font-semibold tracking-tight">We'll be back soon</h1>
-        <p class="mt-4 leading-7 whitespace-pre-line text-[#506176]">{{ $message }}</p>
+        <p class="mt-4 leading-7 whitespace-pre-line text-muted">{{ $message }}</p>
     </main>
 </body>
 </html>

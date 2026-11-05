@@ -10,7 +10,7 @@
             <x-button>Create account</x-button>
         </form>
         <x-slot:footer>
-            <p>Already have an account? <a href="{{ route('login') }}" class="text-brand underline underline-offset-2 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Sign in</a></p>
+            <p>Already have an account? <a href="{{ route('login') }}" class="font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Sign in</a></p>
         </x-slot:footer>
     </x-auth-card>
 </x-layouts.site>

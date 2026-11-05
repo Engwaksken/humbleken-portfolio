@@ -1,11 +1,46 @@
 <x-layouts.site :title="$pageTitle.' — '.$brandName" :description="$pageIntro">
-    <section class="mx-auto max-w-6xl px-6 py-16 lg:px-8"><p class="text-sm font-semibold uppercase tracking-wider text-brand">Services</p><h1 class="mt-4 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">{{ $pageTitle }}</h1><p class="mt-5 max-w-3xl text-lg leading-8 text-[#506176]">{{ $pageIntro }}</p>
+    <x-page-hero eyebrow="Services" :title="$pageTitle" :intro="$pageIntro">
+        <a class="btn-primary mt-8" href="{{ route('booking') }}">Request a consultation</a>
+    </x-page-hero>
+
+    <div class="container-site space-y-16 py-14 sm:py-20">
         @forelse ($categories as $category)
-            @if ($servicesByCategory->has($category->id))<section class="mt-14"><h2 class="border-b border-[#14263d]/15 pb-4 text-2xl font-semibold">{{ $category->name }}</h2><div class="divide-y divide-[#14263d]/10">@foreach ($servicesByCategory[$category->id] as $service) @include('pages.partials.service-card') @endforeach</div></section>@endif
+            @if ($servicesByCategory->has($category->id))
+                <section aria-labelledby="category-{{ $category->id }}">
+                    <h2 id="category-{{ $category->id }}" class="flex items-center gap-4 text-2xl font-semibold tracking-tight">
+                        {{ $category->name }}
+                        <span class="h-px flex-1 bg-line" aria-hidden="true"></span>
+                    </h2>
+                    <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                        @foreach ($servicesByCategory[$category->id] as $service)
+                            @include('pages.partials.service-card')
+                        @endforeach
+                    </div>
+                </section>
+            @endif
         @empty
-            @if ($services->isNotEmpty())<div class="mt-12 divide-y divide-[#14263d]/10">@foreach ($services as $service) @include('pages.partials.service-card') @endforeach</div>@else<p class="mt-10 text-[#506176]">Services are being updated. Please contact us to discuss your requirements.</p>@endif
+            @if ($services->isNotEmpty())
+                <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($services as $service)
+                        @include('pages.partials.service-card')
+                    @endforeach
+                </div>
+            @else
+                <p class="card p-8 text-center text-muted">Services are being updated. Please contact us to discuss your requirements.</p>
+            @endif
         @endforelse
-        @if ($services->isNotEmpty() && $categories->isNotEmpty()) @foreach ($services->whereNull('service_category_id') as $service) @include('pages.partials.service-card') @endforeach @endif
-        <a class="mt-12 inline-flex rounded bg-brand px-5 py-3 font-semibold text-white" href="{{ route('booking') }}">Request a consultation</a>
-    </section>
+
+        @if ($services->isNotEmpty() && $categories->isNotEmpty() && $services->whereNull('service_category_id')->isNotEmpty())
+            <section aria-labelledby="category-other">
+                <h2 id="category-other" class="flex items-center gap-4 text-2xl font-semibold tracking-tight">Other services <span class="h-px flex-1 bg-line" aria-hidden="true"></span></h2>
+                <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($services->whereNull('service_category_id') as $service)
+                        @include('pages.partials.service-card')
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    </div>
+
+    <x-cta-band />
 </x-layouts.site>

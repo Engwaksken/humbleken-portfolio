@@ -1,41 +1,48 @@
 <x-layouts.site :title="$project->title.' — '.$brandName" :description="$project->summary">
-    <article aria-labelledby="project-title" class="mx-auto max-w-3xl px-6 py-20 lg:py-24">
-        <a href="{{ route('projects.index') }}" class="text-sm font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
-            <span aria-hidden="true">←</span> All projects
-        </a>
+    <x-page-hero eyebrow="Case study" :title="$project->title" :intro="$project->summary" title-id="project-title">
+        <x-slot:before>
+            <a href="{{ route('projects.index') }}" class="link-arrow mb-8 flex w-fit"><span aria-hidden="true">←</span> All projects</a>
+        </x-slot:before>
+    </x-page-hero>
 
-        <h1 id="project-title" class="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">{{ $project->title }}</h1>
+    <article aria-labelledby="project-title" class="container-site py-12 sm:py-16">
+        <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div class="min-w-0 lg:col-span-8">
+                @if ($project->sampleImageUrl())
+                    <img src="{{ $project->sampleImageUrl() }}" alt="Sample image for {{ $project->title }}" loading="lazy" decoding="async" class="w-full rounded-2xl border border-line object-cover">
+                @endif
+                @if ($project->sampleVideoEmbedUrl())
+                    <div class="mt-8 aspect-video overflow-hidden rounded-2xl bg-ink first:mt-0">
+                        <iframe src="{{ $project->sampleVideoEmbedUrl() }}" title="Video sample for {{ $project->title }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen class="h-full w-full"></iframe>
+                    </div>
+                @endif
 
-        @if ($project->summary)
-            <p class="mt-5 text-lg leading-8 text-[#506176]">{{ $project->summary }}</p>
-        @endif
-
-        @if ($project->sampleImageUrl())
-            <img src="{{ $project->sampleImageUrl() }}" alt="Sample image for {{ $project->title }}" loading="lazy" decoding="async" class="mt-8 w-full rounded-lg object-cover">
-        @endif
-        @if ($project->sampleVideoEmbedUrl())
-            <div class="mt-8 aspect-video overflow-hidden rounded-lg bg-[#14263d]">
-                <iframe src="{{ $project->sampleVideoEmbedUrl() }}" title="Video sample for {{ $project->title }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen class="h-full w-full"></iframe>
+                @if ($project->body)
+                    <div class="markdown-body mt-10 first:mt-0">
+                        {{ $project->bodyHtml() }}
+                    </div>
+                @endif
             </div>
-        @endif
 
-        @if (! empty($project->technologies))
-            <ul class="mt-6 flex flex-wrap gap-2" aria-label="Technologies">
-                @foreach ($project->technologies as $technology)
-                    <li class="rounded bg-brand-tint px-2 py-1 text-xs font-medium">{{ $technology }}</li>
-                @endforeach
-            </ul>
-        @endif
-
-        @if ($project->body)
-            <div class="markdown-body mt-10 border-t border-[#14263d]/10 pt-10">
-                {{ $project->bodyHtml() }}
-            </div>
-        @endif
-
-        <div class="mt-14 border-l-2 border-brand pl-4">
-            <p class="font-semibold">Working on something similar?</p>
-            <a href="{{ route('contact') }}" class="mt-2 inline-block text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Send an enquiry</a>
+            <aside class="lg:col-span-4" aria-label="Project details">
+                <div class="space-y-5 lg:sticky lg:top-28">
+                    @if (! empty($project->technologies))
+                        <div class="card p-6">
+                            <h2 class="text-xs font-bold tracking-[.14em] text-muted uppercase">Technologies</h2>
+                            <ul class="mt-4 flex flex-wrap gap-2" aria-label="Technologies">
+                                @foreach ($project->technologies as $technology)
+                                    <li class="chip">{{ $technology }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div class="rounded-2xl bg-secondary p-6 text-white">
+                        <p class="font-semibold">Working on something similar?</p>
+                        <p class="mt-2 text-sm leading-6 text-white/75">Share your requirements and we will suggest a practical approach.</p>
+                        <a href="{{ route('contact') }}" class="btn-light mt-5 w-full">Send an enquiry</a>
+                    </div>
+                </div>
+            </aside>
         </div>
     </article>
 </x-layouts.site>

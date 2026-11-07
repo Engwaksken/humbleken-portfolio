@@ -18,7 +18,7 @@
         </p>
     </x-page-hero>
 
-    <article aria-labelledby="article-title" class="container-site py-12 sm:py-16">
+    <article aria-labelledby="article-title" class="container-site section">
         <div class="mx-auto max-w-3xl">
             @if ($article->body)
                 <div class="markdown-body">
@@ -27,7 +27,7 @@
             @endif
 
             @if ($article->tags->isNotEmpty())
-                <ul class="mt-12 flex flex-wrap gap-2 border-t border-line pt-8" aria-label="Tags">
+                <ul class="mt-10 flex flex-wrap gap-2 border-t border-line pt-6" aria-label="Tags">
                     @foreach ($article->tags as $tag)
                         <li>
                             <a href="{{ route('articles.index', ['tag' => $tag->slug]) }}" class="chip bg-secondary-tint text-ink hover:bg-brand hover:text-white">#{{ $tag->name }}</a>
@@ -36,7 +36,7 @@
                 </ul>
             @endif
 
-            <div class="mt-12 flex flex-col gap-5 rounded-2xl bg-secondary p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div class="mt-10 flex flex-col gap-5 rounded-2xl bg-secondary p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
                 <div>
                     <p class="font-semibold">Need help applying this?</p>
                     <p class="mt-1 text-sm text-white/75">Talk to us about your own systems.</p>

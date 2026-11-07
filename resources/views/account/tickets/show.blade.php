@@ -1,5 +1,5 @@
 <x-layouts.site :title="'Ticket #'.$ticket->id.' — '.$brandName">
-    <div class="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+    <div class="mx-auto w-full max-w-3xl section px-4 sm:px-6">
         <a href="{{ route('account.tickets.index') }}" class="text-sm font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
             <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> Support tickets
         </a>
@@ -13,7 +13,7 @@
             <p role="status" class="mt-6 border-l-2 border-brand bg-white px-4 py-3 text-sm font-medium">{{ session('status') }}</p>
         @endif
 
-        <ol class="mt-10 grid gap-4" aria-label="Conversation">
+        <ol class="mt-8 grid gap-4" aria-label="Conversation">
             @foreach ($replies as $reply)
                 <li class="p-5 {{ $reply->isFromStaff() ? 'border-l-4 border-brand bg-brand-tint' : 'bg-white' }}">
                     <p class="text-sm text-muted">
@@ -33,9 +33,9 @@
         </ol>
 
         @if ($ticket->isClosed())
-            <p class="mt-10 border-l-2 border-brand py-2 pl-4 text-muted">This ticket is closed. If you need more help, please <a href="{{ route('account.tickets.create') }}" class="font-semibold text-brand focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">open a new ticket</a>.</p>
+            <p class="mt-8 border-l-2 border-brand py-2 pl-4 text-muted">This ticket is closed. If you need more help, please <a href="{{ route('account.tickets.create') }}" class="font-semibold text-brand focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">open a new ticket</a>.</p>
         @else
-            <form method="POST" action="{{ route('account.tickets.reply', $ticket) }}" enctype="multipart/form-data" class="mt-10 grid gap-5 card p-6 sm:p-8" novalidate>
+            <form method="POST" action="{{ route('account.tickets.reply', $ticket) }}" enctype="multipart/form-data" class="mt-8 grid gap-5 card p-6 sm:p-8" novalidate>
                 @csrf
                 <x-form.errors />
                 <x-form.field name="body" label="Your reply" placeholder="Write your response" :rows="5" required />

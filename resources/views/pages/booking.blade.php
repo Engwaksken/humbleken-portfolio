@@ -1,8 +1,8 @@
 <x-layouts.site :title="$pageTitle.' — '.$brandName" :description="$pageIntro">
     <x-page-hero eyebrow="Appointment request" :title="$pageTitle" :intro="$pageIntro" />
 
-    <section class="container-site py-12 sm:py-16">
-        <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+    <section class="container-site section">
+        <div class="grid gap-layout lg:grid-cols-12">
             <div class="lg:col-span-8">
                 @if (session('booking_sent'))
                     <div role="status" class="card flex items-start gap-4 border-brand/40 p-6 sm:p-8">
@@ -46,7 +46,7 @@
                 @endif
             </div>
             <aside class="lg:col-span-4" aria-label="What happens next">
-                <div class="card p-6 lg:sticky lg:top-28">
+                <div class="card p-6 lg:sticky lg:top-24">
                     <h2 class="text-xs font-bold tracking-[.14em] text-muted uppercase">What happens next</h2>
                     <ol class="mt-5 space-y-5">
                         @foreach (['We review your request and preferred time.', 'We contact you to confirm availability.', 'We meet to discuss your requirements.'] as $i => $step)

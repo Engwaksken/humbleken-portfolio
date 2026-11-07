@@ -2,7 +2,7 @@
     <x-page-hero eyebrow="Projects" title="Selected work and case studies." title-id="projects-title"
         intro="A selection of engagements showing the problem, the approach taken, and the outcome delivered." />
 
-    <section aria-labelledby="projects-title" class="container-site py-14 sm:py-20">
+    <section aria-labelledby="projects-title" class="container-site section">
         @if ($projects->isEmpty())
             <p class="card p-8 text-center text-muted">Projects are being added.</p>
         @else
@@ -12,7 +12,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-12">
+            <div class="mt-8 sm:mt-10">
                 {{ $projects->links() }}
             </div>
         @endif

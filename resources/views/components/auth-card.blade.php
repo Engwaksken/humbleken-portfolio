@@ -1,5 +1,5 @@
 @props(['heading', 'intro' => null])
-<section aria-labelledby="auth-title" class="px-4 py-14 sm:py-20">
+<section aria-labelledby="auth-title" class="section px-4">
     <div class="mx-auto w-full max-w-md">
         <div class="card p-6 shadow-[0_24px_60px_-24px_rgb(20_38_61/0.3)] sm:p-9">
             <i class="fa-solid fa-lock text-2xl text-brand" aria-hidden="true"></i>

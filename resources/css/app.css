@@ -82,6 +82,30 @@
     .container-site {
         @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
     }
+    /*
+     * Standard vertical rhythm: 40px on phones, 48px on tablets, 64px on desktops.
+     * Every page section uses these so spacing stays consistent across the site.
+     */
+    .section {
+        @apply py-10 sm:py-12 lg:py-16;
+    }
+    .section-top {
+        @apply pt-10 sm:pt-12 lg:pt-16;
+    }
+    .section-bottom {
+        @apply pb-10 sm:pb-12 lg:pb-16;
+    }
+    /* Gap between a section heading and the content beneath it. */
+    .section-body {
+        @apply mt-6 sm:mt-8;
+    }
+    /* Gap between stacked groups inside one section, and between grid columns. */
+    .stack-lg {
+        @apply space-y-10 sm:space-y-12;
+    }
+    .gap-layout {
+        @apply gap-8 lg:gap-12;
+    }
     .eyebrow {
         @apply text-xs font-bold tracking-[.18em] text-brand uppercase;
     }
@@ -130,7 +154,7 @@
         @apply text-[1.0625rem] leading-8 text-ink;
     }
     .markdown-body :where(p) { @apply mt-5; }
-    .markdown-body :where(h2) { @apply mt-12 text-2xl font-semibold tracking-tight; }
+    .markdown-body :where(h2) { @apply mt-10 text-2xl font-semibold tracking-tight; }
     .markdown-body :where(h3) { @apply mt-8 text-xl font-semibold; }
     .markdown-body :where(ul) { @apply mt-4 list-disc pl-6; }
     .markdown-body :where(ol) { @apply mt-4 list-decimal pl-6; }

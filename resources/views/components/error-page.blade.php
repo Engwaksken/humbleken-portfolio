@@ -68,7 +68,7 @@
             </div>
         </header>
 
-        <main id="main-content" class="flex flex-1 items-center py-16 sm:py-24">
+        <main id="main-content" class="flex flex-1 items-center section">
             <div class="container-site">
                 <div class="mx-auto max-w-xl text-center">
                     <i class="fa-solid {{ $icon }} text-5xl text-brand" aria-hidden="true"></i>

@@ -2,7 +2,7 @@
     $linkClass = 'font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 @endphp
 <x-layouts.site :title="'Your account — '.$brandName">
-    <div class="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+    <div class="mx-auto w-full max-w-4xl section px-4 sm:px-6">
         <h1 class="text-3xl font-semibold tracking-tight">Hello, {{ auth()->user()->name }}</h1>
 
         @if (auth()->user()->is_admin)
@@ -15,7 +15,7 @@
             <p role="status" class="mt-6 border-l-2 border-brand bg-white px-4 py-3 text-sm font-medium">Your password has been changed.</p>
         @endif
 
-        <section aria-labelledby="tickets-title" class="mt-12">
+        <section aria-labelledby="tickets-title" class="mt-8 sm:mt-10">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <h2 id="tickets-title" class="text-2xl font-semibold">Support tickets</h2>
@@ -36,7 +36,7 @@
             </div>
         </section>
 
-        <section aria-labelledby="password-title" class="mt-16 max-w-md">
+        <section aria-labelledby="password-title" class="mt-10 max-w-md sm:mt-12">
             <h2 id="password-title" class="text-2xl font-semibold">Change password</h2>
             <form method="POST" action="{{ route('user-password.update') }}" class="mt-6 grid gap-5 card p-6 sm:p-8" novalidate>
                 @csrf

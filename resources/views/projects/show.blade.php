@@ -5,8 +5,8 @@
         </x-slot:before>
     </x-page-hero>
 
-    <article aria-labelledby="project-title" class="container-site py-12 sm:py-16">
-        <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
+    <article aria-labelledby="project-title" class="container-site section">
+        <div class="grid gap-layout lg:grid-cols-12">
             <div class="min-w-0 lg:col-span-8">
                 @if ($project->sampleImageUrl())
                     <img src="{{ $project->sampleImageUrl() }}" alt="Sample image for {{ $project->title }}" loading="lazy" decoding="async" class="w-full rounded-2xl border border-line object-cover">
@@ -18,14 +18,14 @@
                 @endif
 
                 @if ($project->body)
-                    <div class="markdown-body mt-10 first:mt-0">
+                    <div class="markdown-body mt-8 first:mt-0">
                         {{ $project->bodyHtml() }}
                     </div>
                 @endif
             </div>
 
             <aside class="lg:col-span-4" aria-label="Project details">
-                <div class="space-y-5 lg:sticky lg:top-28">
+                <div class="space-y-5 lg:sticky lg:top-24">
                     @if (! empty($project->technologies))
                         <div class="card p-6">
                             <h2 class="text-xs font-bold tracking-[.14em] text-muted uppercase">Technologies</h2>

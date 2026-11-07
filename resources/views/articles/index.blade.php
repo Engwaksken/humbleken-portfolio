@@ -7,7 +7,7 @@
 <x-layouts.site :title="'Articles — '.$brandName" description="Practical articles on IT systems, troubleshooting and technology decisions.">
     <x-page-hero eyebrow="Articles" title="Notes on systems and decisions." title-id="articles-title"
         intro="Practical articles on IT systems, troubleshooting and technology decisions.">
-        <form method="GET" action="{{ route('articles.index') }}" role="search" class="mt-8 flex max-w-xl flex-col gap-3 sm:flex-row">
+        <form method="GET" action="{{ route('articles.index') }}" role="search" class="mt-6 flex max-w-xl flex-col gap-3 sm:flex-row">
             @if ($activeCategory)
                 <input type="hidden" name="category" value="{{ $activeCategory->slug }}">
             @endif
@@ -23,7 +23,7 @@
         </form>
     </x-page-hero>
 
-    <section aria-labelledby="articles-title" class="container-site py-12 sm:py-16">
+    <section aria-labelledby="articles-title" class="container-site section">
         @if ($categories->isNotEmpty())
             <nav aria-label="Article categories" class="-mx-4 overflow-x-auto px-4 pb-2">
                 <ul class="flex w-max gap-2 sm:w-auto sm:flex-wrap">
@@ -52,11 +52,11 @@
         @endif
 
         @if ($articles->isEmpty())
-            <p class="card mt-8 p-8 text-center text-muted">
+            <p class="card section-body p-6 text-center sm:p-8 text-muted">
                 {{ $filtered ? 'Try a different search term or category.' : 'Articles are being added.' }}
             </p>
         @else
-            <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div class="section-body grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($articles as $article)
                     <article class="card-hover group relative flex flex-col p-6 sm:p-7">
                         <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-muted">
@@ -74,7 +74,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-12">
+            <div class="mt-8 sm:mt-10">
                 {{ $articles->links() }}
             </div>
         @endif

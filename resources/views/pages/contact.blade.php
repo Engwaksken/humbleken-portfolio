@@ -5,10 +5,10 @@
 <x-layouts.site :title="$pageTitle.' — '.$brandName" :description="$pageIntro">
     <x-page-hero eyebrow="Contact" :title="$pageTitle" :intro="$pageIntro" />
 
-    <section class="container-site py-12 sm:py-16">
-        <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+    <section class="container-site section">
+        <div class="grid gap-layout lg:grid-cols-12">
             <aside class="lg:col-span-4" aria-label="Contact details">
-                <div class="card space-y-1 p-6 lg:sticky lg:top-28">
+                <div class="card space-y-1 p-6 lg:sticky lg:top-24">
                     <h2 class="mb-4 text-xs font-bold tracking-[.14em] text-muted uppercase">Get in touch</h2>
                     @if ($contactEmail)
                         <a href="mailto:{{ $contactEmail }}" class="{{ $contactRow }}"><span class="{{ $iconBox }}" aria-hidden="true"><i class="fa-solid fa-envelope"></i></span><span class="min-w-0"><span class="block text-xs text-muted">Email</span><span class="block font-semibold break-all text-brand-dark">{{ $contactEmail }}</span></span></a>

@@ -1,7 +1,7 @@
 <x-layouts.site :title="$pageTitle.' — '.$brandName" :description="$pageIntro">
     <x-page-hero eyebrow="Approach" :title="$pageTitle" :intro="$pageIntro" />
 
-    <section aria-label="Steps" class="container-site py-14 sm:py-20">
+    <section aria-label="Steps" class="container-site section">
         <ol class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             @foreach (array_values(array_filter(preg_split('/\r\n|\r|\n/', $approachSteps))) as $index => $step)
                 <li class="card p-7">
@@ -10,6 +10,6 @@
                 </li>
             @endforeach
         </ol>
-        <a class="btn-primary mt-10" href="{{ route('booking') }}">Request a consultation</a>
+        <a class="btn-primary mt-8" href="{{ route('booking') }}">Request a consultation</a>
     </section>
 </x-layouts.site>

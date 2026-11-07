@@ -113,14 +113,14 @@
     </main>
 
     <footer class="bg-secondary text-sm text-white/75" aria-label="Site footer">
-        <div class="container-site grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-12 lg:gap-12">
+        <div class="container-site grid gap-8 py-10 sm:grid-cols-2 sm:py-12 lg:grid-cols-12 lg:gap-10">
             <div class="sm:col-span-2 lg:col-span-5">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2.5 text-lg font-bold text-white" aria-label="{{ $brandName }} home">
                     <span aria-hidden="true" class="grid size-9 place-items-center rounded-xl bg-white text-sm font-bold text-secondary">{{ mb_strtoupper(mb_substr($brandName, 0, 1)) }}</span>
                     {{ $brandName }}
                 </a>
                 <p class="mt-4 max-w-md leading-7">{{ $tagline }}. Practical technical consulting and engineering solutions to help your business move forward.</p>
-                <a href="{{ route('booking') }}" class="btn-light mt-6">Book a consultation <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
+                <a href="{{ route('booking') }}" class="btn-light mt-5">Book a consultation <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
             </div>
             <div class="lg:col-span-3 lg:col-start-7">
                 <h2 class="text-xs font-bold tracking-[.18em] text-white uppercase">Explore</h2>
@@ -145,7 +145,7 @@
             </div>
         </div>
         <div class="border-t border-white/10">
-            <div class="container-site flex flex-col gap-3 py-6 pb-24 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+            <div class="container-site flex flex-col gap-3 py-5 pb-24 sm:flex-row sm:items-center sm:justify-between sm:pb-5">
                 <p>© {{ now()->year }} {{ $brandName }}. All rights reserved.</p>
                 <a class="{{ $footerLink }} inline-flex w-fit items-center gap-2" href="{{ route('contact') }}"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Get in touch</a>
             </div>

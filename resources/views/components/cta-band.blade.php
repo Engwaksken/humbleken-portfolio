@@ -1,8 +1,8 @@
 @props(['title' => 'Have a technical challenge in mind?', 'text' => 'Tell us about the issue or objective and we will help you find a practical way forward.'])
-<section {{ $attributes->class('pb-16 sm:pb-24') }} aria-labelledby="cta-title">
+<section {{ $attributes->class('section-bottom') }} aria-labelledby="cta-title">
     <div class="container-site">
-        <div class="rounded-3xl bg-brand-dark px-6 py-12 text-white sm:px-12 sm:py-16">
-            <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div class="rounded-2xl bg-brand-dark px-5 py-8 text-white sm:rounded-3xl sm:px-8 sm:py-10 lg:px-12 lg:py-12">
+            <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div class="max-w-2xl">
                     <h2 id="cta-title" class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ $title }}</h2>
                     <p class="mt-3 leading-7 text-white/80">{{ $text }}</p>

@@ -1,12 +1,12 @@
 <x-layouts.site :title="$brandName.' — '.$tagline">
     {{-- Hero --}}
     <section class="border-b border-line bg-white">
-        <div class="container-site grid gap-12 py-16 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-16 lg:py-28">
+        <div class="container-site section grid gap-layout lg:grid-cols-12 lg:items-center">
             <div class="lg:col-span-7">
                 <p class="eyebrow">{{ $tagline }}</p>
-                <h1 class="mt-6 text-[clamp(2.25rem,6vw,4.25rem)] leading-[1.05] font-semibold tracking-tight text-balance">{{ $homeTitle }}</h1>
-                <p class="mt-6 max-w-2xl text-lg leading-8 text-muted text-pretty">{{ $homeIntro }}</p>
-                <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+                <h1 class="mt-4 text-[clamp(2.25rem,6vw,4.25rem)] leading-[1.05] font-semibold tracking-tight text-balance">{{ $homeTitle }}</h1>
+                <p class="mt-4 max-w-2xl text-lg leading-8 text-muted text-pretty">{{ $homeIntro }}</p>
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ route('services.index') }}" class="btn-primary">Explore services <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
                     <a href="{{ route('booking') }}" class="btn-ghost">Book a consultation</a>
                 </div>
@@ -15,7 +15,7 @@
                 <div class="card p-6 sm:p-8">
                     <p class="eyebrow">Start with the challenge</p>
                     <p class="mt-4 text-xl leading-snug font-medium sm:text-2xl">Describe the issue or objective. We can clarify the requirements and identify a suitable path forward.</p>
-                    <ol class="mt-7 space-y-4 border-t border-line pt-6 text-sm">
+                    <ol class="mt-5 space-y-3 border-t border-line pt-5 text-sm">
                         @foreach (['Share the problem or goal', 'Get a clear, jargon-free assessment', 'Move forward with a practical plan'] as $i => $step)
                             <li class="flex items-center gap-3">
                                 <span class="w-5 shrink-0 text-sm font-bold text-brand">{{ $i + 1 }}.</span>
@@ -23,7 +23,7 @@
                             </li>
                         @endforeach
                     </ol>
-                    <a href="{{ route('contact') }}" class="link-arrow mt-7">Send an enquiry <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
+                    <a href="{{ route('contact') }}" class="link-arrow mt-5">Send an enquiry <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
                 </div>
             </aside>
         </div>
@@ -31,7 +31,7 @@
 
     {{-- Services --}}
     @if ($featuredServices->isNotEmpty())
-        <section aria-labelledby="home-services" class="py-16 sm:py-24">
+        <section aria-labelledby="home-services" class="section">
             <div class="container-site">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
@@ -40,7 +40,7 @@
                     </div>
                     <a href="{{ route('services.index') }}" class="link-arrow">All services <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
                 </div>
-                <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                <div class="section-body grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($featuredServices as $service)
                         <a href="{{ route('services.show', $service->slug) }}" class="card-hover group flex flex-col p-6 sm:p-7">
                             <span class="text-sm font-bold tracking-widest text-brand" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
@@ -55,8 +55,8 @@
     @endif
 
     {{-- Why us --}}
-    <section aria-labelledby="home-why" class="bg-secondary py-16 text-white sm:py-24">
-        <div class="container-site grid gap-12 lg:grid-cols-12">
+    <section aria-labelledby="home-why" class="section bg-secondary text-white">
+        <div class="container-site grid gap-layout lg:grid-cols-12">
             <div class="lg:col-span-4">
                 <p class="text-xs font-bold tracking-[.18em] text-white/70 uppercase">Why work with us</p>
                 <h2 id="home-why" class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Engineering that is clear, careful and practical.</h2>
@@ -79,7 +79,7 @@
 
     {{-- Projects --}}
     @if ($featuredProjects->isNotEmpty())
-        <section aria-labelledby="home-work" class="py-16 sm:py-24">
+        <section aria-labelledby="home-work" class="section">
             <div class="container-site">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
@@ -88,7 +88,7 @@
                     </div>
                     <a href="{{ route('projects.index') }}" class="link-arrow">All projects <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
                 </div>
-                <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="section-body grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($featuredProjects as $project)
                         @include('projects.partials.card')
                     @endforeach
@@ -98,5 +98,5 @@
     @endif
 
     {{-- Space the CTA away from the dark band when no projects section sits between them. --}}
-    <x-cta-band class="{{ $featuredProjects->isEmpty() ? 'mt-16 sm:mt-24' : '' }}" />
+    <x-cta-band class="{{ $featuredProjects->isEmpty() ? 'section-top' : '' }}" />
 </x-layouts.site>

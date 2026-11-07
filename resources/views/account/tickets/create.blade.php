@@ -1,12 +1,12 @@
 <x-layouts.site :title="'Open a support ticket — '.$brandName">
-    <div class="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+    <div class="mx-auto w-full max-w-2xl section px-4 sm:px-6">
         <a href="{{ route('account.tickets.index') }}" class="text-sm font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
             <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> Support tickets
         </a>
         <h1 class="mt-6 text-3xl font-semibold tracking-tight">Open a support ticket</h1>
         <p class="mt-3 leading-7 text-muted">Describe the problem, what you have already tried, and how it affects your work. Please do not include passwords.</p>
 
-        <form method="POST" action="{{ route('account.tickets.store') }}" enctype="multipart/form-data" class="mt-8 grid gap-5 card p-6 sm:p-8" novalidate>
+        <form method="POST" action="{{ route('account.tickets.store') }}" enctype="multipart/form-data" class="mt-6 grid gap-5 card p-5 sm:p-8" novalidate>
             @csrf
             <x-form.errors />
             <x-form.field name="subject" label="Subject" placeholder="Briefly describe the problem" required />

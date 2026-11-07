@@ -12,7 +12,7 @@
         ['label' => 'Book', 'route' => 'booking', 'active' => 'booking'],
     ]));
     $navLink = 'relative rounded-full px-3.5 py-2 text-sm font-medium text-ink/80 transition hover:bg-brand-tint hover:text-brand-dark aria-[current=page]:bg-brand-tint aria-[current=page]:text-brand-dark';
-    $mobileLink = 'flex min-h-12 items-center justify-between rounded-xl px-4 text-base font-medium text-ink hover:bg-brand-tint aria-[current=page]:bg-brand-tint aria-[current=page]:text-brand-dark';
+    $mobileLink = 'flex min-h-11 items-center justify-between rounded-xl px-4 text-base font-medium text-ink hover:bg-brand-tint aria-[current=page]:bg-brand-tint aria-[current=page]:text-brand-dark';
     $footerLink = 'text-white/75 transition hover:text-white';
 @endphp
 <!doctype html>
@@ -50,7 +50,7 @@
     @endif
 
     <header class="sticky top-0 z-40 border-b border-transparent bg-white/85 backdrop-blur-lg transition-[box-shadow,border-color] supports-[backdrop-filter]:bg-white/75 data-[scrolled=true]:border-line data-[scrolled=true]:shadow-[0_6px_24px_-12px_rgb(20_38_61/0.25)]" data-site-header>
-        <div class="container-site flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
+        <div class="container-site flex h-16 items-center justify-between gap-3 sm:gap-4">
             <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2.5 text-lg font-bold tracking-tight text-ink" aria-label="{{ $brandName }} home">
                 @if ($logoUrl)
                     <img src="{{ $logoUrl }}" alt="{{ $brandName }}" class="h-9 w-auto max-w-[10rem] object-contain sm:h-10 sm:max-w-[12rem]">
@@ -76,24 +76,24 @@
                 @else
                     <a class="{{ $navLink }}" href="{{ route('login') }}">Sign in</a>
                 @endauth
-                <a class="btn-primary !px-5 !py-2.5" href="{{ route('contact') }}" @if (request()->routeIs('contact')) aria-current="page" @endif>Contact</a>
+                <a class="btn-primary btn-sm" href="{{ route('contact') }}" @if (request()->routeIs('contact')) aria-current="page" @endif>Contact</a>
             </div>
 
-            <button type="button" class="grid size-11 place-items-center rounded-full border border-line bg-white text-ink lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu" data-menu-toggle>
+            <button type="button" class="grid size-10 place-items-center rounded-full border border-line bg-white text-ink lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu" data-menu-toggle>
                 <i class="fa-solid fa-bars text-lg" aria-hidden="true" data-menu-icon-open></i>
                 <i class="fa-solid fa-xmark hidden text-lg" aria-hidden="true" data-menu-icon-close></i>
             </button>
         </div>
 
         <div id="mobile-menu" hidden class="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-white lg:hidden">
-            <nav aria-label="Mobile navigation" class="container-site grid gap-1 py-4">
+            <nav aria-label="Mobile navigation" class="container-site grid gap-1 py-3">
                 @foreach ($navItems as $item)
                     <a class="{{ $mobileLink }}" href="{{ route($item['route']) }}" @if (request()->routeIs($item['active'])) aria-current="page" @endif>{{ $item['label'] }}<i class="fa-solid fa-chevron-right text-xs text-muted" aria-hidden="true"></i></a>
                 @endforeach
                 @auth
                     <a class="{{ $mobileLink }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account<i class="fa-solid fa-chevron-right text-xs text-muted" aria-hidden="true"></i></a>
                 @endauth
-                <div class="mt-3 grid gap-2 border-t border-line pt-4 sm:grid-cols-2">
+                <div class="mt-2 grid gap-2 border-t border-line pt-3 sm:grid-cols-2">
                     <a class="btn-primary w-full" href="{{ route('contact') }}">Contact us</a>
                     @auth
                         <form method="POST" action="{{ route('logout') }}">

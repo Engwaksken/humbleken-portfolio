@@ -1,6 +1,6 @@
 <x-layouts.site :title="'Choose a new password — '.$brandName">
     <x-auth-card heading="Choose a new password">
-        <form method="POST" action="{{ route('password.update') }}" class="grid gap-5" novalidate>
+        <form method="POST" action="{{ route('password.update') }}" class="grid gap-4" novalidate>
             @csrf
             <input type="hidden" name="token" value="{{ $request->route('token') }}">
             <x-form.errors />

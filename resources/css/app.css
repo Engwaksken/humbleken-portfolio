@@ -47,7 +47,7 @@
     html {
         scroll-behavior: smooth;
         /* Keep in-page anchors and focused elements clear of the sticky header. */
-        scroll-padding-top: 5.5rem;
+        scroll-padding-top: 5rem;
         -webkit-text-size-adjust: 100%;
     }
     body {
@@ -70,8 +70,12 @@
 }
 
 /* Base primitives other component classes compose with @apply. */
+/*
+ * Buttons are 40px tall (36px for .btn-sm): compact on desktop while staying a
+ * comfortable touch target on phones. Labels may wrap on very narrow screens.
+ */
 @utility btn {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-5 py-2 text-center text-sm leading-5 font-semibold transition;
 }
 @utility card {
     @apply rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgb(20_38_61/0.04)];
@@ -121,6 +125,10 @@
     .btn-light {
         @apply btn bg-white text-ink hover:bg-brand-tint;
     }
+    /* Smaller button for headers and dense toolbars. Must stay after the variants above. */
+    .btn-sm {
+        @apply min-h-9 px-4 py-1.5;
+    }
     .link-arrow {
         @apply inline-flex items-center gap-1.5 text-sm font-semibold text-brand transition hover:gap-2.5 hover:text-brand-dark;
     }
@@ -131,10 +139,15 @@
         @apply inline-flex items-center rounded-full bg-brand-tint px-3 py-1 text-xs font-medium text-brand-dark;
     }
     .input {
-        @apply w-full rounded-xl border border-ink/20 bg-white px-4 py-3 text-base text-ink placeholder:text-muted/70 focus-visible:border-brand focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-brand aria-invalid:border-[#b42318] sm:text-sm;
+        /* 42px tall on phones (16px text prevents iOS zoom on focus), 40px from sm up. */
+        @apply min-h-10 w-full rounded-lg border border-ink/20 bg-white px-3.5 py-2 text-base text-ink placeholder:text-muted/70 focus-visible:border-brand focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-brand aria-invalid:border-[#b42318] sm:text-sm;
     }
     .label {
         @apply text-sm font-semibold text-ink;
+    }
+    /* Native file picker styled to match .input. */
+    .input-file {
+        @apply w-full rounded-lg border border-ink/20 bg-white p-1.5 text-sm text-muted file:mr-3 file:min-h-8 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-tint file:px-3 file:py-1 file:text-sm file:font-semibold file:text-brand-dark hover:file:bg-brand-tint-strong focus-visible:border-brand focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-brand;
     }
     .page-hero {
         @apply border-b border-line bg-white;

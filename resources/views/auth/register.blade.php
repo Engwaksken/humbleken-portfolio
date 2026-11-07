@@ -1,6 +1,6 @@
 <x-layouts.site :title="'Create an account — '.$brandName">
     <x-auth-card heading="Create an account" intro="An account lets you open support tickets and follow their progress.">
-        <form method="POST" action="{{ route('register.store') }}" class="grid gap-5" novalidate>
+        <form method="POST" action="{{ route('register.store') }}" class="grid gap-4" novalidate>
             @csrf
             <x-form.errors />
             <x-form.field name="name" label="Name" autocomplete="name" required />

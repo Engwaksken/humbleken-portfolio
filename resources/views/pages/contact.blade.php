@@ -45,7 +45,7 @@
                         <p class="font-medium">Thank you. Your enquiry has been received and will be reviewed shortly.</p>
                     </div>
                 @else
-                    <form method="POST" action="{{ route('enquiries.store') }}" class="card grid gap-5 p-6 sm:grid-cols-2 sm:p-8" novalidate>
+                    <form method="POST" action="{{ route('enquiries.store') }}" class="card grid gap-4 p-5 sm:grid-cols-2 sm:p-6 lg:p-8" novalidate>
                         @csrf
                         <div class="sm:col-span-2">
                             <h2 class="text-xl font-semibold">Send an enquiry</h2>

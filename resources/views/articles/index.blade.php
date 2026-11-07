@@ -19,7 +19,7 @@
                 <i class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted" aria-hidden="true"></i>
                 <input id="article-search" name="q" type="search" value="{{ $search }}" maxlength="100" placeholder="Search by keyword" class="input !rounded-full pl-11">
             </div>
-            <button type="submit" class="btn-primary">Search</button>
+            <button type="submit" class="btn-primary sm:shrink-0">Search</button>
         </form>
     </x-page-hero>
 

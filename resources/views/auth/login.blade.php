@@ -1,6 +1,6 @@
 <x-layouts.site :title="'Sign in — '.$brandName">
     <x-auth-card heading="Sign in" intro="Sign in to view and reply to your support tickets.">
-        <form method="POST" action="{{ route('login.store') }}" class="grid gap-5" novalidate>
+        <form method="POST" action="{{ route('login.store') }}" class="grid gap-4" novalidate>
             @csrf
             <x-form.errors />
             <x-form.field name="email" label="Email" type="email" autocomplete="email" required />

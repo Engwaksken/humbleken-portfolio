@@ -10,7 +10,7 @@
                         <p class="font-medium">Thank you. Your appointment request has been received.</p>
                     </div>
                 @else
-                    <form method="POST" action="{{ route('booking-requests.store') }}" class="card grid gap-5 p-6 sm:grid-cols-2 sm:p-8" novalidate>
+                    <form method="POST" action="{{ route('booking-requests.store') }}" class="card grid gap-4 p-5 sm:grid-cols-2 sm:p-6 lg:p-8" novalidate>
                         @csrf
                         @if ($errors->booking->any())
                             <p role="alert" class="rounded-xl bg-[#fef3f2] px-4 py-3 text-sm font-medium text-[#b42318] sm:col-span-2">Please correct the highlighted fields and try again.</p>

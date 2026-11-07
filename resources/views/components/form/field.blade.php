@@ -18,7 +18,7 @@
     $current = $type === 'password' ? null : old($name, $value);
     $placeholderText = $placeholder ?? 'Enter '.strtolower($label);
 @endphp
-<div {{ $attributes->class('grid gap-2') }}>
+<div {{ $attributes->class('grid gap-1.5') }}>
     <label for="{{ $id }}" class="label">{{ $label }}</label>
     @if ($hint)
         <p id="{{ $id }}-hint" class="text-sm text-muted">{{ $hint }}</p>
@@ -33,8 +33,8 @@
             <input id="{{ $id }}" name="{{ $name }}" type="password" value="" placeholder="{{ $placeholderText }}" @required($required) @if ($required) aria-required="true" @endif
                 @if ($autocomplete) autocomplete="{{ $autocomplete }}" @endif
                 @if ($error) aria-invalid="true" @endif @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif
-                class="{{ $inputClass }} pr-12" spellcheck="false" autocapitalize="off">
-            <button type="button" class="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-xl text-muted transition hover:text-brand-dark"
+                class="{{ $inputClass }} pr-11" spellcheck="false" autocapitalize="off">
+            <button type="button" class="absolute inset-y-0 right-0 grid w-11 place-items-center rounded-r-lg text-muted transition hover:text-brand-dark"
                 aria-controls="{{ $id }}" aria-pressed="false" aria-label="Show {{ strtolower($label) }}" data-password-toggle data-label="{{ strtolower($label) }}">
                 <i class="fa-solid fa-eye" aria-hidden="true" data-password-icon></i>
             </button>

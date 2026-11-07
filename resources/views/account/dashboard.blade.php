@@ -38,7 +38,7 @@
 
         <section aria-labelledby="password-title" class="mt-10 max-w-md sm:mt-12">
             <h2 id="password-title" class="text-2xl font-semibold">Change password</h2>
-            <form method="POST" action="{{ route('user-password.update') }}" class="mt-6 grid gap-5 card p-6 sm:p-8" novalidate>
+            <form method="POST" action="{{ route('user-password.update') }}" class="mt-6 grid gap-4 card p-5 sm:p-6 lg:p-8" novalidate>
                 @csrf
                 @method('PUT')
                 <x-form.errors bag="updatePassword" />

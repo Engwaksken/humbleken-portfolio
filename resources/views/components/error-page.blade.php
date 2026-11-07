@@ -63,7 +63,7 @@
                     @endif
                 </a>
                 @if ($contactUrl)
-                    <a href="{{ $contactUrl }}" class="btn-primary !px-5 !py-2.5">Contact</a>
+                    <a href="{{ $contactUrl }}" class="btn-primary btn-sm">Contact</a>
                 @endif
             </div>
         </header>

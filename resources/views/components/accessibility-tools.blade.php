@@ -60,8 +60,8 @@
     $iconWrap = 'a11y-icon grid size-8 place-items-center rounded-lg bg-brand-tint text-brand-dark';
 @endphp
 <div data-a11y-exempt data-accessibility-tools>
-    <button type="button" aria-expanded="false" aria-controls="accessibility-panel" aria-haspopup="dialog" aria-label="Open accessibility tools (Alt + A)" title="Accessibility tools (Alt + A)" class="fixed bottom-4 left-4 z-[60] grid size-14 place-items-center rounded-full bg-ink text-white shadow-[0_10px_30px_-8px_rgb(20_38_61/0.6)] ring-4 ring-white transition hover:scale-105 hover:bg-secondary-dark sm:bottom-6 sm:left-6" data-accessibility-toggle>
-        <i class="fa-solid fa-universal-access text-3xl" aria-hidden="true"></i>
+    <button type="button" aria-expanded="false" aria-controls="accessibility-panel" aria-haspopup="dialog" aria-label="Open accessibility tools (Alt + A)" title="Accessibility tools (Alt + A)" class="fixed bottom-3 left-3 z-[60] grid size-12 place-items-center sm:bottom-6 sm:left-6 sm:size-14 rounded-full bg-ink text-white shadow-[0_10px_30px_-8px_rgb(20_38_61/0.6)] ring-2 ring-white sm:ring-4 transition hover:scale-105 hover:bg-secondary-dark" data-accessibility-toggle>
+        <i class="fa-solid fa-universal-access text-2xl sm:text-3xl" aria-hidden="true"></i>
     </button>
 
     <div class="fixed inset-0 z-[64] bg-ink/40 backdrop-blur-[2px] sm:hidden" hidden data-accessibility-backdrop></div>

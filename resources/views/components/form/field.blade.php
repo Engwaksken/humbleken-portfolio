@@ -16,7 +16,7 @@
     $describedBy = trim(($hint ? $id.'-hint ' : '').($error ? $id.'-error' : ''));
     $inputClass = 'input';
     $current = $type === 'password' ? null : old($name, $value);
-    $placeholderText = $placeholder ?? 'Enter '.strtolower($label);
+    $placeholderText = $placeholder ?? 'Enter '.strtolower(trim(preg_replace('/\s*\(optional\)/i', '', $label)));
 @endphp
 <div {{ $attributes->class('grid gap-1.5') }}>
     <label for="{{ $id }}" class="label">{{ $label }}</label>

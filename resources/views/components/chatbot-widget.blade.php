@@ -5,8 +5,8 @@
 @endphp
 <div data-a11y-exempt data-chatbot data-endpoint="{{ route('chatbot.messages') }}" data-enabled="{{ $chatEnabled ? 'true' : 'false' }}" @if ($avatar) data-avatar="{{ $avatar }}" @endif>
     <button type="button" aria-expanded="false" aria-controls="chatbot-panel" aria-haspopup="dialog" title="Chat with us (Alt + C)"
-        class="group fixed right-4 bottom-4 z-50 inline-flex size-14 items-center justify-center gap-2.5 rounded-full bg-brand font-semibold text-white shadow-[0_10px_30px_-8px_rgb(7_119_132/0.7)] ring-4 ring-white transition hover:bg-brand-dark sm:right-6 sm:bottom-6 sm:size-auto sm:min-h-14 sm:pr-6 sm:pl-2 aria-expanded:pointer-events-none aria-expanded:opacity-0 max-sm:aria-expanded:scale-75" data-chatbot-toggle>
-        <span class="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-white" aria-hidden="true">
+        class="group fixed right-3 bottom-3 z-50 inline-flex size-12 items-center justify-center gap-2.5 rounded-full bg-brand font-semibold text-white shadow-[0_10px_30px_-8px_rgb(7_119_132/0.7)] ring-2 ring-white sm:ring-4 transition hover:bg-brand-dark sm:right-6 sm:bottom-6 sm:size-auto sm:min-h-14 sm:pr-6 sm:pl-2 aria-expanded:pointer-events-none aria-expanded:opacity-0 max-sm:aria-expanded:scale-75" data-chatbot-toggle>
+        <span class="relative grid size-9 shrink-0 sm:size-10 place-items-center overflow-hidden rounded-full bg-white" aria-hidden="true">
             @if ($avatar)
                 <img src="{{ $avatar }}" alt="" class="size-full object-cover">
             @else
@@ -15,7 +15,7 @@
         </span>
         <span class="max-sm:sr-only">Chat with us</span>
         @if ($chatEnabled)
-            <span class="absolute top-1 right-1 size-3 rounded-full bg-[#4ade80] ring-2 ring-white sm:top-0.5 sm:right-0.5" aria-hidden="true"></span>
+            <span class="absolute top-0.5 right-0.5 size-3 rounded-full bg-[#4ade80] ring-2 ring-white" aria-hidden="true"></span>
         @endif
     </button>
 

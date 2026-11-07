@@ -27,7 +27,7 @@
             <aside class="lg:col-span-4" aria-label="Project details">
                 <div class="space-y-5 lg:sticky lg:top-24">
                     @if (! empty($project->technologies))
-                        <div class="card p-6">
+                        <div class="card p-5 sm:p-6">
                             <h2 class="text-xs font-bold tracking-[.14em] text-muted uppercase">Technologies</h2>
                             <ul class="mt-4 flex flex-wrap gap-2" aria-label="Technologies">
                                 @foreach ($project->technologies as $technology)

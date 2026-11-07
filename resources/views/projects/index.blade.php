@@ -4,7 +4,7 @@
 
     <section aria-labelledby="projects-title" class="container-site section">
         @if ($projects->isEmpty())
-            <p class="card p-8 text-center text-muted">Projects are being added.</p>
+            <p class="card p-6 text-center text-muted sm:p-8">Projects are being added.</p>
         @else
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($projects as $project)

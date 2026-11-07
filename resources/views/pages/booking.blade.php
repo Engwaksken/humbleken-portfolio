@@ -5,7 +5,7 @@
         <div class="grid gap-layout lg:grid-cols-12">
             <div class="lg:col-span-8">
                 @if (session('booking_sent'))
-                    <div role="status" class="card flex items-start gap-4 border-brand/40 p-6 sm:p-8">
+                    <div role="status" class="card flex items-start gap-4 border-brand/40 p-5 sm:p-8">
                         <i class="fa-solid fa-circle-check pt-0.5 text-2xl text-brand" aria-hidden="true"></i>
                         <p class="font-medium">Thank you. Your appointment request has been received.</p>
                     </div>
@@ -18,7 +18,7 @@
                         @foreach ([['name','Name','text','name'],['email','Email','email','email'],['phone','Phone (optional)','tel','tel']] as [$field,$label,$type,$autocomplete])
                             <div class="grid content-start gap-2">
                                 <label for="booking-{{ $field }}" class="label">{{ $label }}</label>
-                                <input id="booking-{{ $field }}" name="{{ $field }}" type="{{ $type }}" autocomplete="{{ $autocomplete }}" value="{{ old($field) }}" placeholder="{{ $field === 'phone' ? 'Enter your phone number (optional)' : 'Enter your '.strtolower($label) }}" @if($field !== 'phone') required aria-required="true" @endif @error($field,'booking') aria-invalid="true" aria-describedby="booking-{{ $field }}-error" @enderror class="input">
+                                <input id="booking-{{ $field }}" name="{{ $field }}" type="{{ $type }}" autocomplete="{{ $autocomplete }}" value="{{ old($field) }}" placeholder="{{ $field === 'phone' ? 'Enter your phone number' : 'Enter your '.strtolower($label) }}" @if($field !== 'phone') required aria-required="true" @endif @error($field,'booking') aria-invalid="true" aria-describedby="booking-{{ $field }}-error" @enderror class="input">
                                 @error($field,'booking')<p id="booking-{{ $field }}-error" class="text-sm text-[#b42318]">{{ $message }}</p>@enderror
                             </div>
                         @endforeach
@@ -46,7 +46,7 @@
                 @endif
             </div>
             <aside class="lg:col-span-4" aria-label="What happens next">
-                <div class="card p-6 lg:sticky lg:top-24">
+                <div class="card p-5 sm:p-6 lg:sticky lg:top-24">
                     <h2 class="text-xs font-bold tracking-[.14em] text-muted uppercase">What happens next</h2>
                     <ol class="mt-5 space-y-5">
                         @foreach (['We review your request and preferred time.', 'We contact you to confirm availability.', 'We meet to discuss your requirements.'] as $i => $step)

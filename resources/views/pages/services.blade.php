@@ -26,7 +26,7 @@
                     @endforeach
                 </div>
             @else
-                <p class="card p-8 text-center text-muted">Services are being updated. Please contact us to discuss your requirements.</p>
+                <p class="card p-6 text-center text-muted sm:p-8">Services are being updated. Please contact us to discuss your requirements.</p>
             @endif
         @endforelse
 

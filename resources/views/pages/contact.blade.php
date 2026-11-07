@@ -8,7 +8,7 @@
     <section class="container-site section">
         <div class="grid gap-layout lg:grid-cols-12">
             <aside class="lg:col-span-4" aria-label="Contact details">
-                <div class="card space-y-1 p-6 lg:sticky lg:top-24">
+                <div class="card space-y-1 p-5 sm:p-6 lg:sticky lg:top-24">
                     <h2 class="mb-4 text-xs font-bold tracking-[.14em] text-muted uppercase">Get in touch</h2>
                     @if ($contactEmail)
                         <a href="mailto:{{ $contactEmail }}" class="{{ $contactRow }}"><span class="{{ $iconBox }}" aria-hidden="true"><i class="fa-solid fa-envelope"></i></span><span class="min-w-0"><span class="block text-xs text-muted">Email</span><span class="block font-semibold break-all text-brand-dark">{{ $contactEmail }}</span></span></a>
@@ -40,7 +40,7 @@
 
             <div class="lg:col-span-8">
                 @if (session('enquiry_sent'))
-                    <div role="status" class="card flex items-start gap-4 border-brand/40 p-6 sm:p-8">
+                    <div role="status" class="card flex items-start gap-4 border-brand/40 p-5 sm:p-8">
                         <i class="fa-solid fa-circle-check pt-0.5 text-2xl text-brand" aria-hidden="true"></i>
                         <p class="font-medium">Thank you. Your enquiry has been received and will be reviewed shortly.</p>
                     </div>
@@ -57,7 +57,7 @@
                         @foreach ([['name','Name','text','name',true],['email','Email','email','email',true],['phone','Phone (optional)','tel','tel',false]] as [$field,$label,$type,$autocomplete,$required])
                             <div class="grid content-start gap-2">
                                 <label for="enquiry-{{ $field }}" class="label">{{ $label }}</label>
-                                <input id="enquiry-{{ $field }}" name="{{ $field }}" type="{{ $type }}" autocomplete="{{ $autocomplete }}" value="{{ old($field) }}" placeholder="{{ $field === 'phone' ? 'Enter your phone number (optional)' : 'Enter your '.strtolower($label) }}" @if($required) required aria-required="true" @endif @error($field,'enquiry') aria-invalid="true" aria-describedby="enquiry-{{ $field }}-error" @enderror class="input">
+                                <input id="enquiry-{{ $field }}" name="{{ $field }}" type="{{ $type }}" autocomplete="{{ $autocomplete }}" value="{{ old($field) }}" placeholder="{{ $field === 'phone' ? 'Enter your phone number' : 'Enter your '.strtolower($label) }}" @if($required) required aria-required="true" @endif @error($field,'enquiry') aria-invalid="true" aria-describedby="enquiry-{{ $field }}-error" @enderror class="input">
                                 @error($field,'enquiry')<p id="enquiry-{{ $field }}-error" class="text-sm text-[#b42318]">{{ $message }}</p>@enderror
                             </div>
                         @endforeach

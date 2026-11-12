@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,34 +10,154 @@ import '../router/routes.dart';
 import '../theme/app_theme.dart';
 import 'app_drawer.dart';
 
-/// Brand logo; decorative unless [semanticLabel] is given.
-/// Renders [fallback] (or nothing) if the image fails, e.g. an SVG logo.
-class BrandLogo extends StatelessWidget {
+/// The logo uploaded in the website admin, with any blank margin around the
+/// artwork trimmed so it fills its space. Decorative unless [semanticLabel]
+/// is given. While it loads, or when it is missing or fails (offline, or an
+/// SVG logo), the bundled copy from [bundledAsset] is shown, unless a
+/// [fallback] widget is given.
+class BrandLogo extends StatefulWidget {
   const BrandLogo({super.key, required this.url, this.size = 32, this.fallback, this.semanticLabel});
 
+  /// Copy of the uploaded logo made by tool/sync_brand.dart.
+  static const bundledAsset = 'assets/brand/logo.png';
+
   final String? url;
+
+  /// Height of the logo.
   final double size;
   final Widget? fallback;
   final String? semanticLabel;
 
   @override
-  Widget build(BuildContext context) {
-    final logo = url;
-    if (logo == null) return fallback ?? const SizedBox.shrink();
-    final image = CachedNetworkImage(
-      imageUrl: logo,
-      height: size,
-      fit: BoxFit.contain,
-      placeholder: (_, _) => SizedBox(width: size, height: size),
-      errorWidget: (_, _, _) => fallback ?? const SizedBox.shrink(),
+  State<BrandLogo> createState() => _BrandLogoState();
+}
+
+class _BrandLogoState extends State<BrandLogo> {
+  /// Trimmed logos by URL, so each one is only scanned once per run.
+  static final _cache = <String, _Trimmed>{};
+
+  _Trimmed? _logo;
+  ImageStream? _stream;
+  ImageStreamListener? _listener;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void didUpdateWidget(BrandLogo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) {
+      _stopListening();
+      _logo = null;
+      _load();
+    }
+  }
+
+  void _load() {
+    final url = widget.url;
+    if (url == null) return;
+    final cached = _cache[url];
+    if (cached != null) {
+      _logo = cached;
+      return;
+    }
+    // Decoded at a modest width: plenty for a header logo and quick to scan.
+    final stream = CachedNetworkImageProvider(url, maxWidth: 900).resolve(ImageConfiguration.empty);
+    final listener = ImageStreamListener(
+      (info, _) async {
+        final trimmed = await _Trimmed.from(info.image.clone());
+        info.dispose();
+        _cache[url] = trimmed;
+        if (mounted && widget.url == url) setState(() => _logo = trimmed);
+      },
+      onError: (_, _) {}, // Keep showing the bundled logo.
     );
-    if (semanticLabel == null) return ExcludeSemantics(child: image);
+    stream.addListener(listener);
+    _stream = stream;
+    _listener = listener;
+  }
+
+  void _stopListening() {
+    final listener = _listener;
+    if (listener != null) _stream?.removeListener(listener);
+    _stream = null;
+    _listener = null;
+  }
+
+  @override
+  void dispose() {
+    _stopListening();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = widget.size;
+    final logo = _logo;
+    final Widget image = logo == null
+        ? widget.fallback ?? Image.asset(BrandLogo.bundledAsset, height: size, fit: BoxFit.contain)
+        : SizedBox(
+            height: size,
+            width: size * logo.crop.width / logo.crop.height,
+            child: CustomPaint(painter: _CropPainter(logo)),
+          );
+    if (widget.semanticLabel == null) return ExcludeSemantics(child: image);
     return Semantics(
-      label: semanticLabel,
+      label: widget.semanticLabel,
       image: true,
       child: ExcludeSemantics(child: image),
     );
   }
+}
+
+/// An image plus the rectangle that holds its artwork.
+class _Trimmed {
+  const _Trimmed(this.image, this.crop);
+
+  final ui.Image image;
+  final Rect crop;
+
+  /// Finds the box around pixels that are neither transparent nor near-white.
+  static Future<_Trimmed> from(ui.Image image) async {
+    final full = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
+    final data = await image.toByteData(format: ui.ImageByteFormat.rawStraightRgba);
+    if (data == null) return _Trimmed(image, full);
+    final w = image.width, h = image.height;
+    var left = w, top = h, right = -1, bottom = -1;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        final i = (y * w + x) * 4;
+        final ink =
+            data.getUint8(i + 3) > 24 &&
+            (data.getUint8(i) < 236 || data.getUint8(i + 1) < 236 || data.getUint8(i + 2) < 236);
+        if (!ink) continue;
+        if (x < left) left = x;
+        if (x > right) right = x;
+        if (y < top) top = y;
+        if (y > bottom) bottom = y;
+      }
+    }
+    if (right < 0) return _Trimmed(image, full);
+    // A little breathing room, kept inside the image.
+    final pad = 0.02 * (right - left);
+    return _Trimmed(image, Rect.fromLTRB(left - pad, top - pad, right + 1 + pad, bottom + 1 + pad).intersect(full));
+  }
+}
+
+class _CropPainter extends CustomPainter {
+  const _CropPainter(this.logo);
+  final _Trimmed logo;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawImageRect(logo.image, logo.crop, Offset.zero & size, Paint()..filterQuality = FilterQuality.high);
+  }
+
+  @override
+  bool shouldRepaint(_CropPainter old) => old.logo != logo;
 }
 
 /// Name set as a two-tone wordmark ("Humble" + accent "Ken").

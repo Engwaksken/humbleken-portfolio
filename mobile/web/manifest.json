@@ -4,7 +4,7 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#077784",
+    "theme_color": "#14263D",
     "description": "HumbleKen companion app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,

@@ -191,6 +191,11 @@ void main() {
     await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text('Chatbot')));
     await tester.pumpAndSettle();
     expect(find.text('Hi! How can I help?'), findsOneWidget);
+    expect(
+      find.image(const AssetImage('assets/brand/favicon.png')),
+      findsOneWidget,
+      reason: 'avatar falls back to the bundled favicon',
+    );
     await tester.tap(find.text(ChatScreen.suggestions.first));
     await tester.pumpAndSettle();
     expect(find.text(ChatScreen.suggestions.first), findsOneWidget, reason: 'question shown as a bubble');

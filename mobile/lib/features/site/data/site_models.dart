@@ -61,6 +61,7 @@ class SiteConfig {
     required this.brandName,
     this.tagline,
     this.logoUrl,
+    this.faviconUrl,
     this.primaryHex = defaultPrimaryHex,
     this.secondaryHex = defaultSecondaryHex,
     this.contact = const SiteContact(),
@@ -78,6 +79,9 @@ class SiteConfig {
   final String brandName;
   final String? tagline;
   final String? logoUrl;
+
+  /// Favicon uploaded in the website admin; used as the chatbot's avatar.
+  final String? faviconUrl;
   final String primaryHex;
   final String secondaryHex;
   final SiteContact contact;
@@ -98,6 +102,7 @@ class SiteConfig {
       brandName: asStringOrNull(json['brand_name']) ?? defaultBrandName,
       tagline: asStringOrNull(json['tagline']),
       logoUrl: asStringOrNull(json['logo_url']),
+      faviconUrl: asStringOrNull(json['favicon_url']),
       primaryHex: asStringOrNull(theme['primary']) ?? defaultPrimaryHex,
       secondaryHex: asStringOrNull(theme['secondary']) ?? defaultSecondaryHex,
       contact: SiteContact.fromJson(asMap(json['contact'])),

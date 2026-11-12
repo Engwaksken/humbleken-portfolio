@@ -49,20 +49,17 @@ class AppDrawer extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (site.logoUrl != null) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                        child: BrandLogo(url: site.logoUrl, size: 44, semanticLabel: AppConfig.appName),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                    // The logo already spells out the name, so it doubles as the heading.
                     Semantics(
                       header: true,
-                      child: Text(AppConfig.appName, style: theme.textTheme.titleLarge?.copyWith(color: Colors.white)),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14)),
+                        child: BrandLogo(url: site.logoUrl, size: 60, semanticLabel: AppConfig.appName),
+                      ),
                     ),
                     if (site.tagline != null) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 14),
                       Text(
                         site.tagline!,
                         style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white.withValues(alpha: 0.8)),

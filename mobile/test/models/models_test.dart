@@ -128,6 +128,7 @@ void main() {
       final site = SiteConfig.fromJson({
         'brand_name': 'IT Problem Solver',
         'logo_url': 'https://example.test/site-assets/logo',
+        'favicon_url': 'https://example.test/site-assets/favicon',
         'theme': {'primary': '#077784', 'secondary': '#14263d'},
         'contact': {'email': 'hello@example.test', 'phone': null, 'whatsapp': '+254 700 000 000'},
         'social_links': [

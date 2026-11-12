@@ -53,6 +53,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  image: ^4.12.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -64,6 +67,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Bundled copy of the logo uploaded in the website admin; shown when the
+  # network logo is unavailable. Refresh with tool/sync_brand.dart.
+  assets:
+    - assets/brand/logo.png
+    - assets/brand/favicon.png
 
   # Inter (SIL Open Font License, see assets/fonts/OFL.txt), bundled so text
   # looks the same on every device without fetching fonts at runtime.
@@ -112,3 +121,30 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Launcher icon and splash, generated from the logo and favicon uploaded in
+# the website admin. To refresh after uploading new ones:
+#   dart run tool/sync_brand.dart
+#   dart run flutter_launcher_icons
+#   dart run flutter_native_splash:create
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: assets/brand/icon.png
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: assets/brand/icon_foreground.png
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: assets/brand/icon.png
+    background_color: "#FFFFFF"
+    theme_color: "#14263D"
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/brand/logo.png
+  android_12:
+    color: "#FFFFFF"
+    image: assets/brand/splash_icon.png
+  web: false

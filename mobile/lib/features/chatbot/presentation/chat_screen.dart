@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -194,22 +195,41 @@ class _Welcome extends StatelessWidget {
   }
 }
 
-class _BotAvatar extends StatelessWidget {
+/// The chatbot's avatar: the favicon uploaded in the website admin, or the
+/// bundled copy while it loads or when it is unavailable.
+class _BotAvatar extends ConsumerWidget {
   const _BotAvatar({this.size = 32});
   final double size;
 
+  static const bundledAsset = 'assets/brand/favicon.png';
+
   @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        gradient: BrandTokens.of(context).heroGradient,
-        borderRadius: BorderRadius.circular(size * 0.32),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final url = ref.watch(siteConfigProvider.select((s) => s.faviconUrl));
+    final scheme = Theme.of(context).colorScheme;
+    final bundled = Image.asset(bundledAsset, fit: BoxFit.contain);
+    return ExcludeSemantics(
+      child: Container(
+        width: size,
+        height: size,
+        padding: EdgeInsets.all(size * 0.12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(size * 0.3),
+          border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.8)),
+          boxShadow: BrandTokens.of(context).cardShadow,
+        ),
+        child: url == null
+            ? bundled
+            : CachedNetworkImage(
+                imageUrl: url,
+                fit: BoxFit.contain,
+                placeholder: (_, _) => bundled,
+                errorWidget: (_, _, _) => bundled,
+              ),
       ),
-      child: Icon(Icons.smart_toy_rounded, color: Colors.white, size: size * 0.56),
-    ),
-  );
+    );
+  }
 }
 
 class _Bubble extends StatelessWidget {

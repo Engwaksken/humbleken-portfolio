@@ -30,12 +30,14 @@ The app reads the server origin (without `/api/v1`) from a compile-time define:
 
 ```bash
 flutter run --dart-define=API_BASE_URL=http://192.168.1.20:8000
-flutter build web --dart-define=API_BASE_URL=https://example.com
+flutter build web --dart-define=API_BASE_URL=https://staging.example.com
 ```
 
-When `API_BASE_URL` is not set, it defaults to:
+When `API_BASE_URL` is not set, **release builds** (`flutter build apk/appbundle/ipa/web`,
+`flutter run --release`) use the live site, **https://www.humbleken.com**. Debug and profile
+builds default to a local server:
 
-| Platform | Default | Why |
+| Platform (debug/profile) | Default | Why |
 | --- | --- | --- |
 | Android emulator | `http://10.0.2.2:8000` | `10.0.2.2` is the emulator's alias for the host machine's `127.0.0.1`. `127.0.0.1` inside the emulator is the emulator itself. |
 | iOS simulator, web, desktop | `http://127.0.0.1:8000` | Same machine as `php artisan serve`. |

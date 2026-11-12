@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\PublicMaintenanceMode;
 use App\Http\Middleware\SecurityHeaders;
 use App\Support\Backups;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(SecurityHeaders::class);
         $middleware->web(append: [PublicMaintenanceMode::class]);
+        $middleware->api(prepend: [ForceJsonResponse::class]);
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->call(fn () => Backups::create())

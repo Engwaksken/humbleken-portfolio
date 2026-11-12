@@ -1,5 +1,5 @@
-<x-layouts.site :title="$pageTitle.' — '.$brandName" :description="$pageIntro">
-    <x-page-hero eyebrow="Appointment request" :title="$pageTitle" :intro="$pageIntro" />
+<x-layouts.site :title="$page['title'].' — '.$brandName" :description="$page['intro']">
+    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :image="$page['image_url']" :image-alt="$page['image_alt']" />
 
     <section class="container-site section">
         <div class="grid gap-layout lg:grid-cols-12">
@@ -49,10 +49,13 @@
                 <div class="card p-5 sm:p-6 lg:sticky lg:top-24">
                     <h2 class="text-xs font-bold tracking-[.14em] text-muted uppercase">What happens next</h2>
                     <ol class="mt-5 space-y-5">
-                        @foreach (['We review your request and preferred time.', 'We contact you to confirm availability.', 'We meet to discuss your requirements.'] as $i => $step)
+                        @foreach ($page['steps'] as $i => $step)
                             <li class="flex gap-3">
                                 <span class="w-5 shrink-0 text-sm font-bold text-brand" aria-hidden="true">{{ $i + 1 }}.</span>
-                                <span class="text-sm leading-6">{{ $step }}</span>
+                                <span class="text-sm leading-6">
+                                    @if ($step['title'])<span class="block font-semibold">{{ $step['title'] }}</span>@endif
+                                    {{ $step['text'] }}
+                                </span>
                             </li>
                         @endforeach
                     </ol>
@@ -60,4 +63,6 @@
             </aside>
         </div>
     </section>
+
+    <x-page-extras :page="$page" />
 </x-layouts.site>

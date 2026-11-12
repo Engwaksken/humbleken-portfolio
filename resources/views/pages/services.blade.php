@@ -1,5 +1,5 @@
-<x-layouts.site :title="$pageTitle.' — '.$brandName" :description="$pageIntro">
-    <x-page-hero eyebrow="Services" :title="$pageTitle" :intro="$pageIntro">
+<x-layouts.site :title="$page['title'].' — '.$brandName" :description="$page['intro']">
+    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :image="$page['image_url']" :image-alt="$page['image_alt']">
         <a class="btn-primary mt-6" href="{{ route('booking') }}">Request a consultation</a>
     </x-page-hero>
 
@@ -41,6 +41,8 @@
             </section>
         @endif
     </div>
+
+    <x-page-extras :page="$page" />
 
     <x-cta-band />
 </x-layouts.site>

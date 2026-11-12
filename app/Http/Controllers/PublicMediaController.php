@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Service;
+use App\Support\PageContent;
 use App\Support\Settings;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -30,6 +31,14 @@ class PublicMediaController extends Controller
 
         $path = $model->sample_image;
         abort_unless(is_string($path) && $path !== '' && Storage::disk('public')->exists($path), 404);
+
+        return $this->inlineFile($path);
+    }
+
+    public function page(string $file): StreamedResponse
+    {
+        $path = PageContent::MEDIA_DIRECTORY.'/'.$file;
+        abort_unless(PageContent::isMediaPath($path) && Storage::disk('public')->exists($path), 404);
 
         return $this->inlineFile($path);
     }

@@ -73,7 +73,7 @@ class SiteConfig {
 
   static const defaultPrimaryHex = '#077784';
   static const defaultSecondaryHex = '#14263d';
-  static const defaultBrandName = 'IT Problem Solver';
+  static const defaultBrandName = 'HumbleKen';
 
   final String brandName;
   final String? tagline;

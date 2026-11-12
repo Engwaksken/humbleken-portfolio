@@ -110,6 +110,9 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.assistant, builder: (_, _) => const ChatScreen())],
+          ),
         ],
       ),
       GoRoute(
@@ -122,7 +125,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             BookingScreen(initialServiceId: int.tryParse(state.uri.queryParameters['service'] ?? '')),
       ),
       GoRoute(path: Routes.contact, builder: (_, _) => const ContactScreen()),
-      GoRoute(path: Routes.assistant, builder: (_, _) => const ChatScreen()),
     ],
   );
   ref.onDispose(router.dispose);

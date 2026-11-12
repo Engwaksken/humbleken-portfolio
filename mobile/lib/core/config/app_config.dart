@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 
 /// Runtime configuration resolved from `--dart-define` values.
 class AppConfig {
+  /// Name shown for the app: launcher label, header and menu.
+  static const String appName = 'HumbleKen';
+
   const AppConfig({required this.apiBaseUrl});
 
   /// Origin of the Laravel app, without the `/api/v1` suffix,

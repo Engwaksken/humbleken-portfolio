@@ -6,6 +6,8 @@ import 'package:humbleken_portfolio/core/api/paginated.dart';
 import 'package:humbleken_portfolio/core/auth/token_store.dart';
 import 'package:humbleken_portfolio/features/articles/data/article_models.dart';
 import 'package:humbleken_portfolio/features/articles/data/articles_repository.dart';
+import 'package:humbleken_portfolio/features/chatbot/data/chat_repository.dart';
+import 'package:humbleken_portfolio/features/chatbot/presentation/chat_screen.dart';
 import 'package:humbleken_portfolio/features/home/data/home_models.dart';
 import 'package:humbleken_portfolio/features/pages/data/page_models.dart';
 import 'package:humbleken_portfolio/features/pages/data/pages_repository.dart';
@@ -101,6 +103,11 @@ class _Articles implements ArticlesRepository {
       }, ArticleSummary.fromJson);
 }
 
+class _Chat implements ChatRepository {
+  @override
+  Future<String> send(List<ChatMessage> history) async => 'Try restarting the router. (${history.length})';
+}
+
 Future<void> pumpApp(WidgetTester tester, SiteConfig site) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -112,6 +119,7 @@ Future<void> pumpApp(WidgetTester tester, SiteConfig site) async {
         servicesRepositoryProvider.overrideWithValue(_Services()),
         projectsRepositoryProvider.overrideWithValue(_Projects()),
         articlesRepositoryProvider.overrideWithValue(_Articles()),
+        chatRepositoryProvider.overrideWithValue(_Chat()),
       ],
       child: const PortfolioApp(),
     ),
@@ -124,6 +132,7 @@ void main() {
     brandName: 'IT Problem Solver',
     contact: SiteContact(email: 'hello@example.test', whatsapp: '+254 700 000 000'),
     socialLinks: [SocialLink(platform: 'linkedin', url: 'https://linkedin.test/x')],
+    features: SiteFeatures(chatbot: true),
   );
 
   testWidgets('every tab and pushed screen renders without errors', (tester) async {
@@ -140,7 +149,11 @@ void main() {
     expect(find.text('Page services'), findsOneWidget);
     expect(find.text('Infrastructure'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Network setup'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Network setup'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Request this service'));
     await tester.pumpAndSettle();
     expect(find.text('Request this service'), findsOneWidget);
     await tester.tap(find.text('Request this service'));
@@ -174,6 +187,15 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Create an account'), findsOneWidget);
 
+    // Chatbot tab: a suggestion sends a question and shows the reply.
+    await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text('Chatbot')));
+    await tester.pumpAndSettle();
+    expect(find.text('Hi! How can I help?'), findsOneWidget);
+    await tester.tap(find.text(ChatScreen.suggestions.first));
+    await tester.pumpAndSettle();
+    expect(find.text(ChatScreen.suggestions.first), findsOneWidget, reason: 'question shown as a bubble');
+    expect(find.text('Try restarting the router. (1)'), findsOneWidget);
+
     // Drawer -> Contact and Approach.
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pumpAndSettle();
@@ -202,6 +224,11 @@ void main() {
     final bar = find.byType(NavigationBar);
     expect(find.descendant(of: bar, matching: find.text('Work')), findsNothing);
     expect(find.descendant(of: bar, matching: find.text('Articles')), findsNothing);
+    expect(
+      find.descendant(of: bar, matching: find.text('Chatbot')),
+      findsNothing,
+      reason: 'chatbot off by default',
+    );
     expect(find.descendant(of: bar, matching: find.text('Account')), findsOneWidget);
   });
 

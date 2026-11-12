@@ -16,7 +16,6 @@ class ServicesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final header = ref.watch(pageContentProvider('services'));
     final catalogue = ref.watch(serviceCatalogueProvider);
-    final theme = Theme.of(context);
 
     Future<void> refresh() async {
       ref.invalidate(pageContentProvider('services'));
@@ -26,14 +25,8 @@ class ServicesScreen extends ConsumerWidget {
       } catch (_) {}
     }
 
-    final children = <Widget>[
-      // The page header is optional decoration; fall back to a plain title.
-      if (header.value case final page?)
-        PageContentView(page: page)
-      else if (!header.isLoading)
-        const SectionHeading(title: 'Services', level: 1),
-      const SizedBox(height: 24),
-    ];
+    final page = header.value;
+    final children = <Widget>[if (page != null) PageContentView(page: page)];
 
     switch (catalogue) {
       case AsyncValue(:final value?):
@@ -43,16 +36,8 @@ class ServicesScreen extends ConsumerWidget {
         }
         for (final group in groups) {
           children.addAll([
-            SectionHeading(title: group.title),
-            if (group.description != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  group.description!,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                ),
-              ),
-            const SizedBox(height: 12),
+            SectionHeading(title: group.title, subtitle: group.description),
+            const SizedBox(height: 16),
             ResponsiveGrid(children: [for (final s in group.services) ServiceCard(service: s, showCategory: false)]),
             const SizedBox(height: 28),
           ]);
@@ -64,17 +49,12 @@ class ServicesScreen extends ConsumerWidget {
     }
 
     return TopLevelScaffold(
-      body: RefreshIndicator(
+      onBrand: true,
+      body: BrandedPageBody(
         onRefresh: refresh,
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-          children: [
-            ContentWidth(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-            ),
-          ],
-        ),
+        // The page header is optional decoration; fall back to a plain title.
+        header: page != null ? PageHeader(page: page) : const GradientHeader(title: 'Services'),
+        children: children,
       ),
     );
   }

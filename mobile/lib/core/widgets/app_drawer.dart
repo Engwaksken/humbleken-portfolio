@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/site/data/site_repository.dart';
+import '../config/app_config.dart';
 import '../router/routes.dart';
+import '../theme/app_theme.dart';
 import 'brand.dart';
 
 /// "More" navigation: every destination, including the screens that are not
-/// in the bottom bar (Approach, Booking, Contact, Assistant).
+/// in the bottom bar (Approach, Booking, Contact).
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
@@ -35,39 +37,62 @@ class AppDrawer extends ConsumerWidget {
     }
 
     return Drawer(
-      child: SafeArea(
-        child: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BrandLogo(url: site.logoUrl, size: 48),
-                  const SizedBox(height: 8),
-                  Semantics(header: true, child: Text(site.brandName, style: theme.textTheme.titleLarge)),
-                  if (site.tagline != null)
-                    Text(
-                      site.tagline!,
-                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(gradient: BrandTokens.of(context).heroGradient),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (site.logoUrl != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                        child: BrandLogo(url: site.logoUrl, size: 44, semanticLabel: AppConfig.appName),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    Semantics(
+                      header: true,
+                      child: Text(AppConfig.appName, style: theme.textTheme.titleLarge?.copyWith(color: Colors.white)),
                     ),
-                ],
+                    if (site.tagline != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        site.tagline!,
+                        style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
-            const Divider(),
-            item(Icons.home_outlined, 'Home', Routes.home, tab: true),
-            item(Icons.design_services_outlined, 'Services', Routes.services, tab: true),
-            if (site.features.projects) item(Icons.work_outline, 'Work', Routes.work, tab: true),
-            if (site.features.articles) item(Icons.article_outlined, 'Articles', Routes.articles, tab: true),
-            const Divider(),
-            item(Icons.route_outlined, 'Our approach', Routes.approach),
-            item(Icons.event_available_outlined, 'Book a consultation', Routes.booking),
-            item(Icons.mail_outline, 'Contact', Routes.contact),
-            if (site.features.chatbot) item(Icons.smart_toy_outlined, 'AI assistant', Routes.assistant),
-            const Divider(),
-            item(Icons.person_outline, 'Account', Routes.account, tab: true),
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              children: [
+                item(Icons.home_outlined, 'Home', Routes.home, tab: true),
+                item(Icons.design_services_outlined, 'Services', Routes.services, tab: true),
+                if (site.features.projects) item(Icons.work_outline, 'Work', Routes.work, tab: true),
+                if (site.features.articles) item(Icons.article_outlined, 'Articles', Routes.articles, tab: true),
+                if (site.features.chatbot) item(Icons.smart_toy_outlined, 'Chatbot', Routes.assistant, tab: true),
+                const Divider(),
+                item(Icons.route_outlined, 'Our approach', Routes.approach),
+                item(Icons.event_available_outlined, 'Book a consultation', Routes.booking),
+                item(Icons.mail_outline, 'Contact', Routes.contact),
+                const Divider(),
+                item(Icons.person_outline, 'Account', Routes.account, tab: true),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

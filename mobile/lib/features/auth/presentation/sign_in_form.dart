@@ -51,21 +51,24 @@ class _SignInViewState extends ConsumerState<SignInView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+    return BrandedPageBody(
+      maxWidth: 520,
+      header: const GradientHeader(
+        eyebrow: 'Account',
+        title: 'Welcome back',
+        intro: 'Sign in to open support tickets, follow replies and get help faster.',
+      ),
       children: [
-        ContentWidth(
-          maxWidth: 520,
+        SurfaceCard(
+          padding: const EdgeInsets.all(22),
           child: Form(
             key: _formKey,
             child: AutofillGroup(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SectionHeading(eyebrow: 'Account', title: 'Sign in', level: 1),
-                  const SizedBox(height: 8),
-                  Text('Sign in to view and reply to your support tickets.', style: theme.textTheme.bodyLarge),
-                  const SizedBox(height: 20),
+                  Semantics(header: true, child: Text('Sign in', style: theme.textTheme.titleLarge)),
+                  const SizedBox(height: 18),
                   ListenableBuilder(
                     listenable: _errors,
                     builder: (context, _) => _errors.message() == null
@@ -105,16 +108,34 @@ class _SignInViewState extends ConsumerState<SignInView> {
                       child: const Text('Forgot your password?'),
                     ),
                   ),
-                  const Divider(height: 32),
-                  Text('New here?', style: theme.textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: () => context.push(Routes.register),
-                    child: const Text('Create an account'),
-                  ),
                 ],
               ),
             ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        SurfaceCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const IconBadge(icon: Icons.person_add_alt_1_rounded, size: 44),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('New here?', style: theme.textTheme.titleMedium),
+                        Text('Create a free account to get support.', style: theme.textTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              OutlinedButton(onPressed: () => context.push(Routes.register), child: const Text('Create an account')),
+            ],
           ),
         ),
       ],

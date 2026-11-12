@@ -20,32 +20,21 @@ class BookingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final page = ref.watch(pageContentProvider('booking')).value;
     return Scaffold(
-      appBar: AppBar(title: const Text('Book a consultation')),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+      appBar: brandedAppBar(context, title: 'Book a consultation'),
+      body: BrandedPageBody(
+        maxWidth: 720,
+        header: page != null ? PageHeader(page: page) : const GradientHeader(title: 'Book a consultation'),
         children: [
-          ContentWidth(
-            maxWidth: 720,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (page != null)
-                  PageContentView(page: page, showSteps: false)
-                else
-                  const SectionHeading(title: 'Book a consultation', level: 1),
-                const SizedBox(height: 24),
-                const SectionHeading(title: 'Request a time'),
-                const SizedBox(height: 12),
-                BookingForm(initialServiceId: initialServiceId),
-                if (page != null && page.steps.isNotEmpty) ...[
-                  const SizedBox(height: 32),
-                  const SectionHeading(title: 'What happens next'),
-                  const SizedBox(height: 12),
-                  PageStepsList(steps: page.steps),
-                ],
-              ],
-            ),
-          ),
+          if (page != null) PageContentView(page: page, showSteps: false),
+          const SectionHeading(title: 'Request a time', subtitle: 'Choose a time that suits you and we will confirm.'),
+          const SizedBox(height: 16),
+          SurfaceCard(child: BookingForm(initialServiceId: initialServiceId)),
+          if (page != null && page.steps.isNotEmpty) ...[
+            const SizedBox(height: 32),
+            const SectionHeading(title: 'What happens next'),
+            const SizedBox(height: 16),
+            PageStepsList(steps: page.steps),
+          ],
         ],
       ),
     );

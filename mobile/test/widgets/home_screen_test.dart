@@ -79,12 +79,13 @@ void main() {
     final repo = await pumpHome(tester, json: homePageJson());
 
     expect(repo.homeCalls, 1);
-    // Brand in the app bar.
-    expect(find.text('IT Problem Solver'), findsOneWidget);
+    // App name in the app bar, whatever the site's brand name is.
+    expect(find.text('HumbleKen'), findsOneWidget);
+    expect(find.text('IT Problem Solver'), findsNothing);
     // Hero + aside card with numbered steps.
     expect(find.text('Turning complex IT challenges into simple solutions'), findsOneWidget);
     expect(find.text('Explore services'), findsOneWidget);
-    expect(find.text('How it works'), findsOneWidget);
+    expect(find.text('HOW IT WORKS'), findsOneWidget, reason: 'eyebrows are shown in capitals');
     expect(find.text('Tell us the problem'), findsOneWidget);
     expect(find.text('Send an enquiry'), findsOneWidget);
     // Services, why (with mapped icon), projects, CTA.

@@ -18,7 +18,7 @@ class ArticleDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final article = ref.watch(articleDetailProvider(slug));
     return Scaffold(
-      appBar: AppBar(title: Text(article.value?.title ?? 'Article')),
+      appBar: brandedAppBar(context),
       body: switch (article) {
         AsyncValue(:final value?) => _ArticleBody(article: value),
         AsyncValue(:final error?) => ErrorView(
@@ -40,39 +40,29 @@ class _ArticleBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final meta = articleMetaLine(article);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+    return BrandedPageBody(
+      maxWidth: 760,
+      header: GradientHeader(
+        eyebrow: [article.category?.name, if (meta.isNotEmpty) meta].whereType<String>().join(' · '),
+        title: article.title,
+      ),
       children: [
-        ContentWidth(
-          maxWidth: 760,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionHeading(eyebrow: article.category?.name, title: article.title, level: 1),
-              if (meta.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(meta, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-              ],
-              if (article.tags.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Semantics(
-                  label: 'Tags: ${article.tags.map((t) => t.name).join(', ')}',
-                  excludeSemantics: true,
-                  child: Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [for (final tag in article.tags) InfoPill(label: '#${tag.name}')],
-                  ),
-                ),
-              ],
-              const SizedBox(height: 20),
-              if (article.bodyMarkdown != null)
-                MarkdownView(data: article.bodyMarkdown!)
-              else if (article.excerpt != null)
-                Text(article.excerpt!, style: theme.textTheme.bodyLarge),
-            ],
+        if (article.tags.isNotEmpty) ...[
+          Semantics(
+            label: 'Tags: ${article.tags.map((t) => t.name).join(', ')}',
+            excludeSemantics: true,
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [for (final tag in article.tags) InfoPill(label: '#${tag.name}')],
+            ),
           ),
-        ),
+        ],
+        const SizedBox(height: 20),
+        if (article.bodyMarkdown != null)
+          MarkdownView(data: article.bodyMarkdown!)
+        else if (article.excerpt != null)
+          Text(article.excerpt!, style: theme.textTheme.bodyLarge),
       ],
     );
   }

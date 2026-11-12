@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/widgets/brand.dart';
 import '../data/site_models.dart';
 import '../data/site_repository.dart';
@@ -32,7 +33,7 @@ class MaintenanceScreen extends ConsumerWidget {
                   Semantics(
                     header: true,
                     child: Text(
-                      '${site.brandName} is under maintenance',
+                      '${AppConfig.appName} is under maintenance',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.headlineSmall,
                     ),

@@ -14,25 +14,17 @@ class ContactScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final page = ref.watch(pageContentProvider('contact')).value;
     return Scaffold(
-      appBar: AppBar(title: const Text('Contact')),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+      appBar: brandedAppBar(context, title: 'Contact'),
+      body: BrandedPageBody(
+        maxWidth: 720,
+        header: page != null ? PageHeader(page: page) : const GradientHeader(title: 'Contact us'),
         children: [
-          ContentWidth(
-            maxWidth: 720,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (page != null) PageContentView(page: page) else const SectionHeading(title: 'Contact us', level: 1),
-                const SizedBox(height: 24),
-                const ContactDetails(),
-                const SizedBox(height: 24),
-                const SectionHeading(title: 'Send an enquiry'),
-                const SizedBox(height: 12),
-                const EnquiryForm(),
-              ],
-            ),
-          ),
+          if (page != null) PageContentView(page: page),
+          const ContactDetails(),
+          const SizedBox(height: 28),
+          const SectionHeading(title: 'Send an enquiry', subtitle: 'We usually reply within one working day.'),
+          const SizedBox(height: 16),
+          const SurfaceCard(child: EnquiryForm()),
         ],
       ),
     );

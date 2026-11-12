@@ -1,11 +1,11 @@
 {
-    "name": "IT Problem Solver",
-    "short_name": "IT Solver",
+    "name": "HumbleKen",
+    "short_name": "HumbleKen",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
     "theme_color": "#077784",
-    "description": "IT Problem Solver companion app.",
+    "description": "HumbleKen companion app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

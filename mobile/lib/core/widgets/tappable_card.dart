@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 /// A card that navigates when tapped. Its content is merged into a single
 /// semantics node so screen readers announce it as one link.
 class TappableCard extends StatelessWidget {
@@ -11,13 +13,22 @@ class TappableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.zero,
-      color: color,
-      child: MergeSemantics(
-        child: Semantics(
-          link: true,
-          child: InkWell(onTap: onTap, child: child),
+    final scheme = Theme.of(context).colorScheme;
+    final radius = BorderRadius.circular(AppTheme.radius);
+    return DecoratedBox(
+      decoration: BoxDecoration(borderRadius: radius, boxShadow: BrandTokens.of(context).cardShadow),
+      child: Material(
+        color: color ?? scheme.surfaceContainerLowest,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.7)),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: MergeSemantics(
+          child: Semantics(
+            link: true,
+            child: InkWell(onTap: onTap, child: child),
+          ),
         ),
       ),
     );
@@ -36,17 +47,17 @@ class InfoPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final fg = foreground ?? scheme.onSecondaryContainer;
+    final fg = foreground ?? scheme.primary;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: background ?? scheme.secondaryContainer,
+        color: background ?? scheme.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[ExcludeSemantics(child: Icon(icon, size: 16, color: fg)), const SizedBox(width: 4)],
+          if (icon != null) ...[ExcludeSemantics(child: Icon(icon, size: 15, color: fg)), const SizedBox(width: 4)],
           Flexible(
             child: Text(label, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: fg)),
           ),

@@ -40,7 +40,9 @@ class ServerErrors extends ChangeNotifier {
 }
 
 /// Text field wired to [ServerErrors] for the given API [field] name.
-class ApiTextField extends StatelessWidget {
+/// Password fields ([obscureText])
+/// get an eye button to show or hide what was typed.
+class ApiTextField extends StatefulWidget {
   const ApiTextField({
     super.key,
     required this.controller,
@@ -77,26 +79,44 @@ class ApiTextField extends StatelessWidget {
   final bool enabled;
 
   @override
+  State<ApiTextField> createState() => _ApiTextFieldState();
+}
+
+class _ApiTextFieldState extends State<ApiTextField> {
+  bool _revealed = false;
+
+  @override
   Widget build(BuildContext context) {
+    final w = widget;
+    final hidden = w.obscureText && !_revealed;
     return ListenableBuilder(
-      listenable: errors,
+      listenable: w.errors,
       builder: (context, _) => TextFormField(
-        controller: controller,
-        enabled: enabled,
-        validator: validator,
-        keyboardType: keyboardType,
-        textInputAction: textInputAction,
-        autofillHints: autofillHints,
-        obscureText: obscureText,
-        maxLines: obscureText ? 1 : maxLines,
-        minLines: minLines,
-        maxLength: maxLength,
-        forceErrorText: errors.of(field),
-        onChanged: (_) => errors.clearField(field),
+        controller: w.controller,
+        enabled: w.enabled,
+        validator: w.validator,
+        keyboardType: w.obscureText && _revealed ? TextInputType.visiblePassword : w.keyboardType,
+        textInputAction: w.textInputAction,
+        autofillHints: w.autofillHints,
+        obscureText: hidden,
+        enableSuggestions: !w.obscureText,
+        autocorrect: !w.obscureText,
+        maxLines: w.obscureText ? 1 : w.maxLines,
+        minLines: w.minLines,
+        maxLength: w.maxLength,
+        forceErrorText: w.errors.of(w.field),
+        onChanged: (_) => w.errors.clearField(w.field),
         decoration: InputDecoration(
-          labelText: isRequired ? '$label (required)' : label,
-          helperText: helperText,
-          alignLabelWithHint: (maxLines ?? 2) > 1,
+          labelText: w.isRequired ? '${w.label} (required)' : w.label,
+          helperText: w.helperText,
+          alignLabelWithHint: (w.maxLines ?? 2) > 1,
+          suffixIcon: w.obscureText
+              ? IconButton(
+                  tooltip: _revealed ? 'Hide password' : 'Show password',
+                  onPressed: w.enabled ? () => setState(() => _revealed = !_revealed) : null,
+                  icon: Icon(_revealed ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                )
+              : null,
         ),
       ),
     );

@@ -20,7 +20,7 @@ class ProjectDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final project = ref.watch(projectDetailProvider(slug));
     return Scaffold(
-      appBar: AppBar(title: Text(project.value?.title ?? 'Project')),
+      appBar: brandedAppBar(context),
       body: switch (project) {
         AsyncValue(:final value?) => _ProjectBody(project: value),
         AsyncValue(:final error?) => ErrorView(
@@ -40,61 +40,43 @@ class _ProjectBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+    return BrandedPageBody(
+      header: GradientHeader(
+        eyebrow: project.publishedAt != null ? 'Project · ${formatDate(project.publishedAt)}' : 'Project',
+        title: project.title,
+        intro: project.summary,
+      ),
       children: [
-        ContentWidth(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionHeading(title: project.title, level: 1),
-              if (project.publishedAt != null)
-                Text(
-                  formatDate(project.publishedAt),
-                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                ),
-              if (project.technologies.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Semantics(
-                  label: 'Technologies: ${project.technologies.join(', ')}',
-                  excludeSemantics: true,
-                  child: Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [for (final t in project.technologies) InfoPill(label: t)],
-                  ),
-                ),
-              ],
-              if (project.imageUrl != null) ...[
-                const SizedBox(height: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: AppNetworkImage(url: project.imageUrl!, aspectRatio: 16 / 9),
-                ),
-              ],
-              if (project.summary != null) ...[
-                const SizedBox(height: 16),
-                Text(project.summary!, style: theme.textTheme.titleMedium),
-              ],
-              if (project.videoEmbedUrl != null) ...[
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: OutlinedButton.icon(
-                    onPressed: () => openExternalUrl(context, watchUrlFromEmbed(project.videoEmbedUrl!)),
-                    icon: const Icon(Icons.play_circle_outline),
-                    label: const Text('Watch the video'),
-                  ),
-                ),
-              ],
-              if (project.bodyMarkdown != null) ...[
-                const SizedBox(height: 16),
-                MarkdownView(data: project.bodyMarkdown!),
-              ],
-            ],
+        if (project.technologies.isNotEmpty) ...[
+          Semantics(
+            label: 'Technologies: ${project.technologies.join(', ')}',
+            excludeSemantics: true,
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [for (final t in project.technologies) InfoPill(label: t)],
+            ),
           ),
-        ),
+          const SizedBox(height: 16),
+        ],
+        if (project.imageUrl != null) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: AppNetworkImage(url: project.imageUrl!, aspectRatio: 16 / 9),
+          ),
+        ],
+        if (project.videoEmbedUrl != null) ...[
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: () => openExternalUrl(context, watchUrlFromEmbed(project.videoEmbedUrl!)),
+              icon: const Icon(Icons.play_circle_outline),
+              label: const Text('Watch the video'),
+            ),
+          ),
+        ],
+        if (project.bodyMarkdown != null) ...[const SizedBox(height: 16), MarkdownView(data: project.bodyMarkdown!)],
       ],
     );
   }

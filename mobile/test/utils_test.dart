@@ -71,6 +71,10 @@ void main() {
       expect(AppConfig.defaultBaseUrl(isWeb: false, platform: TargetPlatform.android), 'http://10.0.2.2:8000');
       expect(AppConfig.defaultBaseUrl(isWeb: true, platform: TargetPlatform.android), 'http://127.0.0.1:8000');
       expect(AppConfig.defaultBaseUrl(isWeb: false, platform: TargetPlatform.iOS), 'http://127.0.0.1:8000');
+      for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+        expect(AppConfig.defaultBaseUrl(isWeb: false, platform: platform, isRelease: true), 'https://www.humbleken.com');
+      }
+      expect(AppConfig.defaultBaseUrl(isWeb: true, platform: TargetPlatform.android, isRelease: true), 'https://www.humbleken.com');
     });
 
     test('API v1 URL is derived from the origin', () {

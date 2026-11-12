@@ -13,17 +13,22 @@ class AppConfig {
 
   static const String _defined = String.fromEnvironment('API_BASE_URL');
 
-  /// Uses `--dart-define=API_BASE_URL=...` when provided. Otherwise defaults to
+  /// The live website, used by release builds.
+  static const String productionUrl = 'https://www.humbleken.com';
+
+  /// Uses `--dart-define=API_BASE_URL=...` when provided. Otherwise release builds
+  /// use the live site, and debug/profile builds use a local `php artisan serve`:
   /// `10.0.2.2:8000` on Android (the emulator's alias for the host machine's
   /// loopback) and `127.0.0.1:8000` everywhere else.
   factory AppConfig.fromEnvironment() {
     if (_defined.isNotEmpty) return const AppConfig(apiBaseUrl: _defined);
     return AppConfig(
-      apiBaseUrl: defaultBaseUrl(isWeb: kIsWeb, platform: defaultTargetPlatform),
+      apiBaseUrl: defaultBaseUrl(isWeb: kIsWeb, platform: defaultTargetPlatform, isRelease: kReleaseMode),
     );
   }
 
-  static String defaultBaseUrl({required bool isWeb, required TargetPlatform platform}) {
+  static String defaultBaseUrl({required bool isWeb, required TargetPlatform platform, bool isRelease = false}) {
+    if (isRelease) return productionUrl;
     if (!isWeb && platform == TargetPlatform.android) return 'http://10.0.2.2:8000';
     return 'http://127.0.0.1:8000';
   }

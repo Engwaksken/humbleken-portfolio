@@ -13,6 +13,7 @@ use App\Http\Controllers\PublicMediaController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SitePageController;
 use App\Http\Middleware\EnsureAdminMfaForTicketAttachments;
+use App\Support\Settings;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -22,7 +23,7 @@ Route::get('/approach', [SitePageController::class, 'approach'])->name('approach
 Route::get('/booking', [SitePageController::class, 'booking'])->name('booking');
 Route::get('/contact', [SitePageController::class, 'contact'])->name('contact');
 Route::get('/site-assets/{key}', [PublicMediaController::class, 'branding'])
-    ->whereIn('key', ['logo', 'favicon'])
+    ->whereIn('key', Settings::BRANDING_FILES)
     ->name('site-assets.show');
 Route::get('/media/pages/{file}', [PublicMediaController::class, 'page'])
     ->where('file', '[A-Za-z0-9_-]+\.(webp|png|jpe?g|gif)')

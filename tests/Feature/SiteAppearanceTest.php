@@ -104,6 +104,37 @@ class SiteAppearanceTest extends TestCase
             ->assertSee('<link rel="icon" href="'.route('site-assets.show', 'favicon').'">', false);
     }
 
+    public function test_sticky_logo_replaces_the_logo_once_the_header_is_scrolled(): void
+    {
+        Storage::disk('public')->put('branding/logo.png', 'png');
+        Storage::disk('public')->put('branding/sticky.png', 'png');
+        Settings::set('logo', 'branding/logo.png');
+
+        $this->get('/')->assertDontSee(route('site-assets.show', 'sticky_logo'), false);
+
+        Settings::set('sticky_logo', 'branding/sticky.png');
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('group-data-[scrolled=true]/header:hidden', false)
+            ->assertSee('<img src="'.route('site-assets.show', 'sticky_logo').'"', false);
+        $this->get(route('site-assets.show', 'sticky_logo'))->assertOk();
+        $this->getJson('/api/v1/site')->assertJsonPath('data.sticky_logo_url', route('site-assets.show', 'sticky_logo'));
+    }
+
+    public function test_admin_can_upload_a_sticky_logo(): void
+    {
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+
+        Livewire::test(SettingsPage::class)
+            ->fillForm(['sticky_logo' => $this->pngUpload('sticky.png')])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertIsString(Settings::get('sticky_logo'));
+        Storage::disk('public')->assertExists(Settings::get('sticky_logo'));
+    }
+
     public function test_branding_assets_are_served_without_a_public_storage_symlink(): void
     {
         Storage::disk('public')->put('branding/logo.png', 'logo bytes');

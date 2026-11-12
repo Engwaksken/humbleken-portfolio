@@ -37,6 +37,7 @@ class ContentController extends Controller
             'brand_name' => Settings::get('brand_name') ?: 'IT Problem Solver',
             'tagline' => Settings::get('tagline') ?: 'Engineering solutions and technical consulting',
             'logo_url' => Settings::publicFileUrl('logo'),
+            'sticky_logo_url' => Settings::publicFileUrl('sticky_logo'),
             'favicon_url' => Settings::publicFileUrl('favicon'),
             'theme' => ['primary' => Theme::color(), 'secondary' => Theme::secondaryColor()],
             'contact' => [

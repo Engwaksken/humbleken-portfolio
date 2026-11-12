@@ -40,6 +40,7 @@ absolute URLs or `null`. Timestamps are ISO 8601 strings.
   "brand_name": "IT Problem Solver",
   "tagline": "Engineering solutions and technical consulting",
   "logo_url": "https://example.test/site-assets/logo",
+  "sticky_logo_url": null,                 // optional alternative logo for the scrolled/sticky header
   "favicon_url": null,
   "theme": {"primary": "#077784", "secondary": "#14263d"},
   "contact": {"email": "hello@example.test", "phone": null, "whatsapp": null, "business_hours": null, "address": null},

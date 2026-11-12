@@ -49,11 +49,15 @@
         </p>
     @endif
 
-    <header class="sticky top-0 z-40 border-b border-transparent bg-white/85 backdrop-blur-lg transition-[box-shadow,border-color] supports-[backdrop-filter]:bg-white/75 data-[scrolled=true]:border-line data-[scrolled=true]:shadow-[0_6px_24px_-12px_rgb(20_38_61/0.25)]" data-site-header>
+    <header class="group/header sticky top-0 z-40 border-b border-transparent bg-white/85 backdrop-blur-lg transition-[box-shadow,border-color] supports-[backdrop-filter]:bg-white/75 data-[scrolled=true]:border-line data-[scrolled=true]:shadow-[0_6px_24px_-12px_rgb(20_38_61/0.25)]" data-site-header>
         <div class="container-site flex h-16 items-center justify-between gap-3 sm:gap-4">
             <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2.5 text-lg font-bold tracking-tight text-ink" aria-label="{{ $brandName }} home">
                 @if ($logoUrl)
-                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" class="h-9 w-auto max-w-[10rem] object-contain sm:h-10 sm:max-w-[12rem]">
+                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" @class(['h-9 w-auto max-w-[10rem] object-contain sm:h-10 sm:max-w-[12rem]', 'group-data-[scrolled=true]/header:hidden' => $stickyLogoUrl])>
+                    @if ($stickyLogoUrl)
+                        {{-- Shown in place of the main logo once the header sticks to the top while scrolling. --}}
+                        <img src="{{ $stickyLogoUrl }}" alt="{{ $brandName }}" class="hidden h-9 w-auto max-w-[10rem] object-contain group-data-[scrolled=true]/header:block sm:h-10 sm:max-w-[12rem]">
+                    @endif
                 @else
                     <span aria-hidden="true" class="grid size-9 place-items-center rounded-xl bg-ink text-sm font-bold text-white">{{ mb_strtoupper(mb_substr($brandName, 0, 1)) }}</span>
                     <span>{{ $brandLead }}@if ($brandRemainder !== '') <span class="text-brand">{{ $brandRemainder }}</span>@endif</span>

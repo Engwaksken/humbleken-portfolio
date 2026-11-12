@@ -85,6 +85,20 @@ class Settings extends Page
                                     ->fetchFileInformation(false)
                                     ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
                                     ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
+                                FileUpload::make('sticky_logo')
+                                    ->label('Sticky header logo')
+                                    ->helperText('Optional. Shown in the header once visitors scroll and it sticks to the top, e.g. a compact or icon-only logo. Leave empty to keep the main logo. PNG, JPG or WebP, up to 1 MB.')
+                                    ->disk('public')
+                                    ->directory('branding')
+                                    ->visibility('public')
+                                    ->multiple()
+                                    ->maxFiles(2)
+                                    ->image()
+                                    ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
+                                    ->maxSize(1024)
+                                    ->fetchFileInformation(false)
+                                    ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
                                 FileUpload::make('favicon')
                                     ->label('Favicon')
                                     ->helperText('Square PNG or ICO, up to 256 KB. Upload a replacement alongside the current favicon; the latest upload is saved. PNG images are compressed to WebP.')
@@ -323,7 +337,7 @@ class Settings extends Page
 
         // A single FileUpload field can temporarily contain the persisted path and a
         // replacement upload together. Prefer the newly stored path for these settings.
-        foreach (['logo', 'favicon'] as $key) {
+        foreach (SettingsStore::BRANDING_FILES as $key) {
             if (! is_array($state[$key] ?? null)) {
                 continue;
             }
@@ -345,13 +359,13 @@ class Settings extends Page
         }
 
         // Remove replaced or cleared branding files so old uploads do not linger.
-        foreach (['logo', 'favicon'] as $key) {
+        foreach (SettingsStore::BRANDING_FILES as $key) {
             $path = $state[$key] ?? null;
 
             if (filled($path) && (! is_string($path) || ! Storage::disk('public')->exists($path))) {
                 Notification::make()
                     ->danger()
-                    ->title(ucfirst($key).' upload is not ready')
+                    ->title(ucfirst(str_replace('_', ' ', $key)).' upload is not ready')
                     ->body('The image has not finished uploading. Please retry it and save again.')
                     ->persistent()
                     ->send();
@@ -612,7 +626,7 @@ class Settings extends Page
         // Never send stored secrets back to the browser.
         unset($data['mail_password_ciphertext'], $data['ai_api_key_ciphertext']);
 
-        foreach (['logo', 'favicon'] as $key) {
+        foreach (SettingsStore::BRANDING_FILES as $key) {
             if (filled($data[$key] ?? null) && ! Storage::disk('public')->exists($data[$key])) {
                 // A stale DB path should not prevent choosing a replacement upload.
                 $data[$key] = null;

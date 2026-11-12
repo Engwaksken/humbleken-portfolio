@@ -22,6 +22,7 @@ class SiteComposer
             'hasPublishedProjects' => Project::query()->published()->exists(),
             'hasPublishedArticles' => Article::query()->published()->exists(),
             'logoUrl' => Settings::publicFileUrl('logo'),
+            'stickyLogoUrl' => Settings::publicFileUrl('sticky_logo'),
             'faviconUrl' => Settings::publicFileUrl('favicon'),
         ]);
     }

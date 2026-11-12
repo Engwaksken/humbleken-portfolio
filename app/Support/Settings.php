@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Settings
 {
+    /** Settings that hold uploaded branding images served from /site-assets/{key}. */
+    public const BRANDING_FILES = ['logo', 'sticky_logo', 'favicon'];
+
     public static function get(string $key, mixed $default = null): mixed
     {
         $value = Cache::rememberForever("settings.{$key}", fn () => static::model()->where('key', $key)->value('value'));
@@ -17,13 +20,13 @@ class Settings
     }
 
     /**
-     * Public URL of an uploaded file stored under a setting (logo, favicon), or null if unset or missing.
+     * Public URL of an uploaded file stored under a setting (logo, sticky logo, favicon), or null if unset or missing.
      */
     public static function publicFileUrl(string $key): ?string
     {
         $path = static::get($key);
 
-        if (! in_array($key, ['logo', 'favicon'], true) || ! is_string($path) || $path === '' || ! Storage::disk('public')->exists($path)) {
+        if (! in_array($key, static::BRANDING_FILES, true) || ! is_string($path) || $path === '' || ! Storage::disk('public')->exists($path)) {
             return null;
         }
 

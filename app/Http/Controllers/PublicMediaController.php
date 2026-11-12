@@ -13,7 +13,7 @@ class PublicMediaController extends Controller
 {
     public function branding(string $key): StreamedResponse
     {
-        abort_unless(in_array($key, ['logo', 'favicon'], true), 404);
+        abort_unless(in_array($key, Settings::BRANDING_FILES, true), 404);
 
         $path = Settings::get($key);
         abort_unless(is_string($path) && $path !== '' && Storage::disk('public')->exists($path), 404);

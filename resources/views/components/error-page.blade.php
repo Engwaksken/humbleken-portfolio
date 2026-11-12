@@ -56,7 +56,7 @@
             <div class="container-site flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
                 <a href="{{ $homeUrl }}" class="flex items-center gap-2.5 text-lg font-bold tracking-tight text-ink" aria-label="{{ $brandName }} home">
                     @if ($logoUrl)
-                        <img src="{{ $logoUrl }}" alt="{{ $brandName }}" class="h-9 w-auto max-w-[10rem] object-contain sm:h-10">
+                        <img src="{{ $logoUrl }}" alt="{{ $brandName }}" class="h-11 w-auto max-w-[12rem] object-contain sm:h-12 sm:max-w-[16rem]">
                     @else
                         <span aria-hidden="true" class="grid size-9 place-items-center rounded-xl bg-ink text-sm font-bold text-white">{{ mb_strtoupper(mb_substr($brandName, 0, 1)) }}</span>
                         <span>{{ $brandName }}</span>

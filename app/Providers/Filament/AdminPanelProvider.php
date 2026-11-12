@@ -52,7 +52,7 @@ class AdminPanelProvider extends PanelProvider
             // Branding follows admin Settings; rescue() keeps the panel usable before migrations run.
             ->brandName(fn (): string => rescue(fn () => Settings::get('brand_name'), null, report: false) ?: config('app.name'))
             ->brandLogo(fn (): ?string => rescue(fn () => Settings::publicFileUrl('logo'), null, report: false))
-            ->brandLogoHeight('2.25rem')
+            ->brandLogoHeight('3rem')
             ->favicon(fn (): ?string => rescue(fn () => Settings::publicFileUrl('favicon'), null, report: false))
             ->colors(fn (): array => [
                 'primary' => Color::hex(rescue(fn () => Theme::color(), Theme::DEFAULT_COLOR, report: false)),

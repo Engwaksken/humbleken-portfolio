@@ -41,7 +41,9 @@ class SiteAppearanceTest extends TestCase
             $this->markTestSkipped('GD is required to test image compression.');
         }
 
-        $compressed = ImageCompressor::compress($this->pngUpload('logo.png')->getRealPath(), 'image/png');
+        // Keep the upload referenced: its temporary file is deleted once the object is released.
+        $upload = $this->pngUpload('logo.png');
+        $compressed = ImageCompressor::compress($upload->getRealPath(), 'image/png');
 
         $this->assertNotNull($compressed);
         $this->assertStringStartsWith('RIFF', $compressed);

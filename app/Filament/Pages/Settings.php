@@ -73,7 +73,7 @@ class Settings extends Page
                                     ->maxLength(255),
                                 FileUpload::make('logo')
                                     ->label('Logo')
-                                    ->helperText('PNG, JPG or WebP, up to 1 MB. Upload a replacement alongside the current logo; the latest upload is saved. Raster images are compressed to WebP. SVG is not accepted.')
+                                    ->helperText('PNG, JPG or WebP, up to 1 MB. Upload a replacement alongside the current logo; the latest upload is saved. Raster images are compressed to WebP, and blank margins around the logo are trimmed automatically. SVG is not accepted.')
                                     ->disk('public')
                                     ->directory('branding')
                                     ->visibility('public')
@@ -84,7 +84,7 @@ class Settings extends Page
                                     ->maxSize(1024)
                                     ->fetchFileInformation(false)
                                     ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
-                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file, trimMargins: true)),
                                 FileUpload::make('sticky_logo')
                                     ->label('Sticky header logo')
                                     ->helperText('Optional. Shown in the header once visitors scroll and it sticks to the top, e.g. a compact or icon-only logo. Leave empty to keep the main logo. PNG, JPG or WebP, up to 1 MB.')
@@ -98,7 +98,7 @@ class Settings extends Page
                                     ->maxSize(1024)
                                     ->fetchFileInformation(false)
                                     ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
-                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file, trimMargins: true)),
                                 FileUpload::make('favicon')
                                     ->label('Favicon')
                                     ->helperText('Square PNG or ICO, up to 256 KB. Upload a replacement alongside the current favicon; the latest upload is saved. PNG images are compressed to WebP.')

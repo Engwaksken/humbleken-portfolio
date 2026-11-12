@@ -13,11 +13,13 @@ class ImageCompressor
      * Convert supported raster images to optimized WebP, preserving alpha where present.
      * When GD is unavailable (e.g. an incomplete local PHP setup), callers may keep the original.
      *
-     * Images wider or taller than $maxDimension pixels are scaled down to fit.
+     * Images wider or taller than $maxDimension pixels are scaled down to fit. With $trimMargins,
+     * blank (transparent or near-white) margins around the artwork are cropped away first, so a
+     * logo exported on a large canvas still fills the space it is shown in.
      *
      * @return ?string Compressed image bytes, or null when the source is not a supported image.
      */
-    public static function compress(string $path, string $mimeType, ?int $maxDimension = null): ?string
+    public static function compress(string $path, string $mimeType, ?int $maxDimension = null, bool $trimMargins = false): ?string
     {
         if (! in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true) || ! extension_loaded('gd')) {
             return null;
@@ -37,6 +39,10 @@ class ImageCompressor
                 imagepalettetotruecolor($image);
             }
 
+            if ($trimMargins) {
+                $image = static::trimMargins($image);
+            }
+
             $image = static::fit($image, $maxDimension);
 
             imagealphablending($image, false);
@@ -53,9 +59,9 @@ class ImageCompressor
         }
     }
 
-    public static function storeUpload(BaseFileUpload $component, TemporaryUploadedFile $file, ?int $maxDimension = null): ?string
+    public static function storeUpload(BaseFileUpload $component, TemporaryUploadedFile $file, ?int $maxDimension = null, bool $trimMargins = false): ?string
     {
-        $compressed = static::compress($file->getRealPath(), $file->getMimeType(), $maxDimension);
+        $compressed = static::compress($file->getRealPath(), $file->getMimeType(), $maxDimension, $trimMargins);
 
         if ($compressed === null) {
             return $component->saveUploadedFile($file);
@@ -125,5 +131,69 @@ class ImageCompressor
         imagedestroy($image);
 
         return $resized;
+    }
+
+    /**
+     * Crop away transparent or near-white margins. The bounds are found on a small copy (fast even
+     * for large exports) and padded slightly so anti-aliased edges are never clipped.
+     */
+    private static function trimMargins(\GdImage $image): \GdImage
+    {
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $scale = min(1, 400 / max($width, $height));
+        $sampleWidth = max(1, (int) round($width * $scale));
+        $sampleHeight = max(1, (int) round($height * $scale));
+
+        $sample = imagecreatetruecolor($sampleWidth, $sampleHeight);
+        imagealphablending($sample, false);
+        imagesavealpha($sample, true);
+        imagecopyresampled($sample, $image, 0, 0, 0, 0, $sampleWidth, $sampleHeight, $width, $height);
+
+        $left = $sampleWidth;
+        $top = $sampleHeight;
+        $right = -1;
+        $bottom = -1;
+
+        for ($y = 0; $y < $sampleHeight; $y++) {
+            for ($x = 0; $x < $sampleWidth; $x++) {
+                $rgba = imagecolorat($sample, $x, $y);
+                $alpha = ($rgba >> 24) & 0x7F; // 0 = opaque, 127 = transparent.
+                $ink = $alpha < 110 && ((($rgba >> 16) & 0xFF) < 236 || (($rgba >> 8) & 0xFF) < 236 || ($rgba & 0xFF) < 236);
+
+                if ($ink) {
+                    $left = min($left, $x);
+                    $right = max($right, $x);
+                    $top = min($top, $y);
+                    $bottom = max($bottom, $y);
+                }
+            }
+        }
+
+        imagedestroy($sample);
+
+        if ($right < 0) {
+            return $image; // Blank image: nothing to trim.
+        }
+
+        $pad = 0.02 * max($right - $left + 1, $bottom - $top + 1) + 1;
+        $x0 = max(0, (int) floor(($left - $pad) / $scale));
+        $y0 = max(0, (int) floor(($top - $pad) / $scale));
+        $x1 = min($width, (int) ceil(($right + 1 + $pad) / $scale));
+        $y1 = min($height, (int) ceil(($bottom + 1 + $pad) / $scale));
+
+        if ($x0 === 0 && $y0 === 0 && $x1 === $width && $y1 === $height) {
+            return $image;
+        }
+
+        $cropped = imagecrop($image, ['x' => $x0, 'y' => $y0, 'width' => $x1 - $x0, 'height' => $y1 - $y0]);
+
+        if ($cropped === false) {
+            return $image;
+        }
+
+        imagedestroy($image);
+
+        return $cropped;
     }
 }

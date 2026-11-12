@@ -53,10 +53,10 @@
         <div class="container-site flex h-16 items-center justify-between gap-3 sm:gap-4">
             <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2.5 text-lg font-bold tracking-tight text-ink" aria-label="{{ $brandName }} home">
                 @if ($logoUrl)
-                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" @class(['h-9 w-auto max-w-[10rem] object-contain sm:h-10 sm:max-w-[12rem]', 'group-data-[scrolled=true]/header:hidden' => $stickyLogoUrl])>
+                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" @class(['h-11 w-auto max-w-[12rem] object-contain sm:h-12 sm:max-w-[16rem]', 'group-data-[scrolled=true]/header:hidden' => $stickyLogoUrl])>
                     @if ($stickyLogoUrl)
                         {{-- Shown in place of the main logo once the header sticks to the top while scrolling. --}}
-                        <img src="{{ $stickyLogoUrl }}" alt="{{ $brandName }}" class="hidden h-9 w-auto max-w-[10rem] object-contain group-data-[scrolled=true]/header:block sm:h-10 sm:max-w-[12rem]">
+                        <img src="{{ $stickyLogoUrl }}" alt="{{ $brandName }}" class="hidden h-11 w-auto max-w-[12rem] object-contain group-data-[scrolled=true]/header:block sm:h-12 sm:max-w-[16rem]">
                     @endif
                 @else
                     <span aria-hidden="true" class="grid size-9 place-items-center rounded-xl bg-ink text-sm font-bold text-white">{{ mb_strtoupper(mb_substr($brandName, 0, 1)) }}</span>

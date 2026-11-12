@@ -24,6 +24,9 @@ Route::get('/contact', [SitePageController::class, 'contact'])->name('contact');
 Route::get('/site-assets/{key}', [PublicMediaController::class, 'branding'])
     ->whereIn('key', ['logo', 'favicon'])
     ->name('site-assets.show');
+Route::get('/media/pages/{file}', [PublicMediaController::class, 'page'])
+    ->where('file', '[A-Za-z0-9_-]+\.(webp|png|jpe?g|gif)')
+    ->name('page-media.show');
 Route::get('/samples/{type}/{record}', [PublicMediaController::class, 'sample'])
     ->whereIn('type', ['project', 'service'])
     ->whereNumber('record')

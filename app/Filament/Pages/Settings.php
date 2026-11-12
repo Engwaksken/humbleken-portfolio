@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Support\AiChat;
 use App\Support\ImageCompressor;
 use App\Support\MailSettings;
 use App\Support\Settings as SettingsStore;
@@ -169,21 +170,6 @@ class Settings extends Page
                                     ->keyLabel('Platform')
                                     ->valueLabel('URL')
                                     ->helperText('Full web addresses starting with https://. Other links are not shown on the site.'),
-                            ]),
-                        Tab::make('Page content')
-                            ->icon(Heroicon::OutlinedDocumentText)
-                            ->schema([
-                                TextInput::make('home_title')->label('Home page heading')->maxLength(255),
-                                Textarea::make('home_intro')->label('Home page introduction')->rows(3)->maxLength(1000),
-                                TextInput::make('services_title')->label('Services page heading')->maxLength(255),
-                                Textarea::make('services_intro')->label('Services page introduction')->rows(3)->maxLength(1000),
-                                TextInput::make('approach_title')->label('Approach page heading')->maxLength(255),
-                                Textarea::make('approach_intro')->label('Approach page introduction')->rows(3)->maxLength(1000),
-                                Textarea::make('approach_steps')->label('Approach steps (one per line)')->rows(5)->maxLength(3000),
-                                TextInput::make('booking_title')->label('Booking page heading')->maxLength(255),
-                                Textarea::make('booking_intro')->label('Booking page introduction')->rows(3)->maxLength(1000),
-                                TextInput::make('contact_title')->label('Contact page heading')->maxLength(255),
-                                Textarea::make('contact_intro')->label('Contact page introduction')->rows(3)->maxLength(1000),
                             ]),
                         Tab::make('AI assistant')
                             ->icon(Heroicon::OutlinedChatBubbleLeftRight)
@@ -465,7 +451,7 @@ class Settings extends Page
     {
         $baseUrl = rtrim(trim((string) ($this->data['ai_api_base_url'] ?? '')), '/');
         $model = trim((string) ($this->data['ai_api_model'] ?? ''));
-        $apiKey = trim((string) ($this->data['ai_api_key'] ?? '')) ?: \App\Support\AiChat::apiKey();
+        $apiKey = trim((string) ($this->data['ai_api_key'] ?? '')) ?: AiChat::apiKey();
 
         if (blank($baseUrl) || blank($model) || blank($apiKey)) {
             Notification::make()

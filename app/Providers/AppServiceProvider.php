@@ -39,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('enquiries', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
         RateLimiter::for('chatbot', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
+        RateLimiter::for('api-auth', fn (Request $request) => Limit::perMinute(6)->by($request->ip()));
+        RateLimiter::for('api-content', fn (Request $request) => Limit::perMinute(120)->by($request->user()?->id ?: $request->ip()));
         RateLimiter::for('tickets', fn (Request $request) => Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()));
     }
 }

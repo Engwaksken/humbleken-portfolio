@@ -50,7 +50,8 @@ return [
     |
     */
 
-    'expiration' => null,
+    // Mobile app tokens expire after 30 days by default; customers then sign in again.
+    'expiration' => env('SANCTUM_TOKEN_EXPIRATION', 60 * 24 * 30),
 
     /*
     |--------------------------------------------------------------------------

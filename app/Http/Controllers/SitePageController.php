@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use App\Models\ServiceCategory;
+use App\Support\PageContent;
 use App\Support\Settings;
 use Illuminate\Contracts\View\View;
 
@@ -18,8 +19,7 @@ class SitePageController extends Controller
             'categories' => $categories,
             'services' => $services,
             'servicesByCategory' => $services->groupBy('service_category_id'),
-            'pageTitle' => Settings::get('services_title', 'Technical expertise for systems and decisions.'),
-            'pageIntro' => Settings::get('services_intro', 'Focused consulting and engineering support to address operational issues, strengthen systems, and make informed technology choices.'),
+            'page' => PageContent::get('services'),
         ]);
     }
 
@@ -32,19 +32,14 @@ class SitePageController extends Controller
 
     public function approach(): View
     {
-        return view('pages.approach', [
-            'pageTitle' => Settings::get('approach_title', 'Clear analysis. Practical recommendations.'),
-            'pageIntro' => Settings::get('approach_intro', 'A straightforward process to understand the challenge, evaluate options, and move forward with confidence.'),
-            'approachSteps' => Settings::get('approach_steps', "Understand the current environment, the issue, and the outcome you need.\nAssess options and explain technical implications and trade-offs in clear language.\nDevelop a proportionate path forward focused on effective engineering and reliable systems."),
-        ]);
+        return view('pages.approach', ['page' => PageContent::get('approach')]);
     }
 
     public function booking(): View
     {
         return view('pages.booking', [
             'services' => Service::query()->where('is_active', true)->orderBy('sort_order')->get(),
-            'pageTitle' => Settings::get('booking_title', 'Request a consultation.'),
-            'pageIntro' => Settings::get('booking_intro', 'Share a preferred time and we’ll get back to you to confirm availability. This is a request, not a confirmed booking.'),
+            'page' => PageContent::get('booking'),
         ]);
     }
 
@@ -62,8 +57,7 @@ class SitePageController extends Controller
             'businessHours' => Settings::get('business_hours'),
             'address' => Settings::get('address'),
             'socialLinks' => $socialLinks,
-            'pageTitle' => Settings::get('contact_title', 'Discuss your technical requirements.'),
-            'pageIntro' => Settings::get('contact_intro', 'Share the issue, objective, or decision you are working through to begin a focused discussion.'),
+            'page' => PageContent::get('contact'),
         ]);
     }
 }

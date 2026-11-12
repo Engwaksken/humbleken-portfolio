@@ -29,6 +29,25 @@ The default local configuration uses SQLite. Production database, mail, storage,
 and queue settings must be supplied through the deployment environment; never
 commit `.env` or production credentials.
 
+## Editing page content
+
+In the admin panel, **Configuration → Pages** edits every home-page section and the fixed
+pages (Services, Approach, Booking, Contact):
+
+- **Home sections:** hero, getting-started card or hero image, services, "why work with us",
+  recent work, and the call to action. Each can be shown or hidden.
+- **Other pages:** a header image, steps with images, extra text, and a picture gallery.
+
+Uploaded images are resized to at most 2000 px and compressed to WebP. They are served from
+`/media/pages/...`, so no storage symlink is needed, and images that are no longer used are
+deleted when the pages are saved.
+
+## Mobile app and API
+
+A Flutter companion app lives in [`mobile/`](mobile/README.md). It uses the versioned JSON API
+documented in [`docs/API.md`](docs/API.md) for public content, enquiries, bookings, customer
+sign-in and support tickets.
+
 ## Tests
 
 ```powershell

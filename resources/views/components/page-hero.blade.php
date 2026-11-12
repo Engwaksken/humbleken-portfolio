@@ -1,7 +1,7 @@
-@props(['eyebrow' => null, 'title', 'intro' => null, 'titleId' => null, 'narrow' => false])
+@props(['eyebrow' => null, 'title', 'intro' => null, 'titleId' => null, 'narrow' => false, 'image' => null, 'imageAlt' => ''])
 <section {{ $attributes->class('page-hero') }}>
-    <div class="container-site section">
-        <div @class(['max-w-3xl' => ! $narrow, 'mx-auto max-w-3xl' => $narrow])>
+    <div @class(['container-site section', 'grid gap-layout lg:grid-cols-12 lg:items-center' => $image])>
+        <div @class(['lg:col-span-7' => $image, 'max-w-3xl' => ! $narrow && ! $image, 'mx-auto max-w-3xl' => $narrow && ! $image])>
             {{ $before ?? '' }}
             @if ($eyebrow)
                 <p class="eyebrow">{{ $eyebrow }}</p>
@@ -12,5 +12,10 @@
             @endif
             {{ $slot }}
         </div>
+        @if ($image)
+            <div class="lg:col-span-5">
+                <img src="{{ $image }}" alt="{{ $imageAlt }}" class="aspect-[4/3] w-full rounded-2xl border border-line object-cover" fetchpriority="high">
+            </div>
+        @endif
     </div>
 </section>

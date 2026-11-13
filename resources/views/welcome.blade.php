@@ -88,11 +88,18 @@
                 </div>
                 <div class="section-body grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($featuredServices as $service)
-                        <a href="{{ route('services.show', $service->slug) }}" class="card-hover group flex flex-col p-5 sm:p-7">
-                            <span class="text-sm font-bold tracking-widest text-brand" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                            <h3 class="mt-3 text-xl font-semibold">{{ $service->name }}</h3>
-                            <p class="mt-3 line-clamp-4 leading-7 text-muted">{{ $service->summary ?: $service->description }}</p>
-                            <span class="link-arrow mt-auto pt-6">Learn more <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></span>
+                        <a href="{{ route('services.show', $service->slug) }}" class="card-hover group flex flex-col overflow-hidden">
+                            @if ($service->sampleImageUrl())
+                                <span class="block aspect-[16/9] overflow-hidden border-b border-line bg-canvas">
+                                    <img src="{{ $service->sampleImageUrl() }}" alt="" loading="lazy" decoding="async" class="size-full object-cover transition duration-500 group-hover:scale-[1.03]">
+                                </span>
+                            @endif
+                            <div class="flex flex-1 flex-col p-5 sm:p-7">
+                                <span class="text-sm font-bold tracking-widest text-brand" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                <h3 class="mt-3 text-xl font-semibold">{{ $service->name }}</h3>
+                                <p class="mt-3 line-clamp-4 leading-7 text-muted">{{ $service->summary ?: $service->description }}</p>
+                                <span class="link-arrow mt-auto pt-6">Learn more <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></span>
+                            </div>
                         </a>
                     @endforeach
                 </div>

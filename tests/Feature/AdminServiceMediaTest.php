@@ -37,7 +37,7 @@ class AdminServiceMediaTest extends TestCase
         $this->get(route('samples.show', ['type' => 'service', 'record' => $service->id]))->assertOk();
 
         $this->get(route('services.show', $service->slug))
-            ->assertSee('Sample image for Network assessment')
+            ->assertSee('alt="Network assessment"', false)
             ->assertSee('https://www.youtube-nocookie.com/embed/abcdefghijk');
     }
 

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $this->call([ServiceCategorySeeder::class, ArticleTaxonomySeeder::class]);
+        // Also adds the service categories and the article categories and tags.
+        $this->call(SampleContentSeeder::class);
     }
 }

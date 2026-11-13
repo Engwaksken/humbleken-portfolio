@@ -29,6 +29,9 @@ Route::get('/site-assets/{key}', [PublicMediaController::class, 'branding'])
 Route::get('/media/pages/{file}', [PublicMediaController::class, 'page'])
     ->where('file', '[A-Za-z0-9_-]+\.(webp|png|jpe?g|gif)')
     ->name('page-media.show');
+Route::get('/media/articles/{record}', [PublicMediaController::class, 'article'])
+    ->whereNumber('record')
+    ->name('article-images.show');
 Route::get('/samples/{type}/{record}', [PublicMediaController::class, 'sample'])
     ->whereIn('type', ['project', 'service'])
     ->whereNumber('record')

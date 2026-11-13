@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 class Article extends Model
 {
@@ -31,7 +32,41 @@ class Article extends Model
         'body',
         'status',
         'published_at',
+        'featured_image',
+        'featured_image_alt',
     ];
+
+    protected static function booted(): void
+    {
+        // Remove an image file once nothing points at it.
+        static::updated(function (Article $article): void {
+            $previous = $article->getOriginal('featured_image');
+
+            if (filled($previous) && $previous !== $article->featured_image) {
+                Storage::disk('public')->delete($previous);
+            }
+        });
+
+        static::deleted(function (Article $article): void {
+            if (filled($article->featured_image)) {
+                Storage::disk('public')->delete($article->featured_image);
+            }
+        });
+    }
+
+    /**
+     * Public URL of the featured image, or null when none is set or the file is missing.
+     */
+    public function featuredImageUrl(): ?string
+    {
+        $path = $this->featured_image;
+
+        if (! is_string($path) || $path === '' || ! Storage::disk('public')->exists($path)) {
+            return null;
+        }
+
+        return route('article-images.show', ['record' => $this->getKey(), 'v' => substr(md5($path), 0, 8)]);
+    }
 
     public function category(): BelongsTo
     {

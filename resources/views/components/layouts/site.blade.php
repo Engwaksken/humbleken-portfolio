@@ -2,6 +2,8 @@
     'title' => null,
     'description' => null,
     'ogType' => 'website',
+    // Image for link previews; the logo is used when a page has none of its own.
+    'ogImage' => null,
 ])
 @php
     $navItems = array_values(array_filter([
@@ -33,7 +35,10 @@
     @if ($faviconUrl)
         <link rel="icon" href="{{ $faviconUrl }}">
     @endif
-    @if ($logoUrl)
+    @if ($ogImage)
+        <meta property="og:image" content="{{ $ogImage }}">
+        <meta name="twitter:card" content="summary_large_image">
+    @elseif ($logoUrl)
         <meta property="og:image" content="{{ $logoUrl }}">
     @endif
     {{ $head ?? '' }}

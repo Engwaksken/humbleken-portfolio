@@ -1,4 +1,4 @@
-<x-layouts.site :title="$article->title.' | '.$brandName" :description="$article->excerpt" og-type="article">
+<x-layouts.site :title="$article->title.' | '.$brandName" :description="$article->excerpt" og-type="article" :og-image="$article->featuredImageUrl()">
     <x-slot:head>
         <meta property="article:published_time" content="{{ $article->published_at->toAtomString() }}">
         <meta property="article:modified_time" content="{{ $article->updated_at->toAtomString() }}">
@@ -20,6 +20,11 @@
 
     <article aria-labelledby="article-title" class="container-site section">
         <div class="mx-auto max-w-3xl">
+            @if ($article->featuredImageUrl())
+                <figure class="mb-10">
+                    <img src="{{ $article->featuredImageUrl() }}" alt="{{ $article->featured_image_alt }}" fetchpriority="high" decoding="async" class="aspect-[16/9] w-full rounded-2xl border border-line object-cover">
+                </figure>
+            @endif
             @if ($article->body)
                 <div class="markdown-body">
                     {{ $article->bodyHtml() }}

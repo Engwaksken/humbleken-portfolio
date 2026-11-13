@@ -33,6 +33,8 @@ class ArticleResource extends JsonResource
             'tags' => $this->tags->map(fn (Tag $tag): array => ['name' => $tag->name, 'slug' => $tag->slug])->values(),
             'published_at' => $this->published_at?->toIso8601String(),
             'reading_minutes' => $this->readingMinutes(),
+            'image_url' => $this->featuredImageUrl(),
+            'image_alt' => $this->featuredImageUrl() ? (string) $this->featured_image_alt : null,
             $this->mergeWhen($this->detailed, fn (): array => [
                 'body_markdown' => (string) $this->body,
                 'body_html' => (string) $this->bodyHtml(),

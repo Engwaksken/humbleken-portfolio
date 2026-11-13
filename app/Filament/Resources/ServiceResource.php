@@ -72,11 +72,11 @@ class ServiceResource extends Resource
                                     ->numeric()
                                     ->prefix('$'),
                             ]),
-                        Tab::make('Samples')
+                        Tab::make('Images & video')
                             ->icon(Heroicon::OutlinedPhoto)
                             ->schema([
                                 FileUpload::make('sample_image')
-                                    ->label('Sample image')
+                                    ->label('Featured image')
                                     ->disk('public')
                                     ->directory('service-samples')
                                     ->visibility('public')
@@ -84,7 +84,7 @@ class ServiceResource extends Resource
                                     ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
                                     ->maxSize(10240)
                                     ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file))
-                                    ->helperText('Optional. Images are compressed to WebP when GD is available.'),
+                                    ->helperText('Optional. Shown on the service card and the service page. A landscape image around 1600 × 900 px works best. Images are compressed to WebP.'),
                                 TextInput::make('sample_video_url')
                                     ->label('Sample video URL')
                                     ->url()

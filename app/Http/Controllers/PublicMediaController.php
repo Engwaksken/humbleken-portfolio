@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use App\Models\Project;
 use App\Models\Service;
 use App\Support\PageContent;
@@ -30,6 +31,17 @@ class PublicMediaController extends Controller
         };
 
         $path = $model->sample_image;
+        abort_unless(is_string($path) && $path !== '' && Storage::disk('public')->exists($path), 404);
+
+        return $this->inlineFile($path);
+    }
+
+    /**
+     * Featured image of a published article. Drafts and scheduled articles stay private.
+     */
+    public function article(int $record): StreamedResponse
+    {
+        $path = Article::query()->published()->findOrFail($record)->featured_image;
         abort_unless(is_string($path) && $path !== '' && Storage::disk('public')->exists($path), 404);
 
         return $this->inlineFile($path);

@@ -5,12 +5,15 @@ namespace App\Filament\Resources;
 use App\Enums\PublicationStatus;
 use App\Filament\Resources\ArticleResource\Pages;
 use App\Models\Article;
+use App\Support\ImageCompressor;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -24,6 +27,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
 class ArticleResource extends Resource
@@ -59,6 +63,24 @@ class ArticleResource extends Resource
                                     ->rows(2)
                                     ->maxLength(500)
                                     ->helperText('Shown in article lists and search results.'),
+                            ]),
+                        Tab::make('Featured image')
+                            ->icon(Heroicon::OutlinedPhoto)
+                            ->schema([
+                                FileUpload::make('featured_image')
+                                    ->label('Featured image')
+                                    ->disk('public')
+                                    ->directory('article-images')
+                                    ->visibility('public')
+                                    ->image()
+                                    ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
+                                    ->maxSize(10240)
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file, maxDimension: 1600))
+                                    ->helperText('Optional. Shown on the article card, at the top of the article and when the link is shared. A landscape image around 1600 × 900 px works best. Images are compressed to WebP.'),
+                                TextInput::make('featured_image_alt')
+                                    ->label('Image description (alt text)')
+                                    ->maxLength(255)
+                                    ->helperText('Describe the image for people using screen readers. Leave empty if it is purely decorative.'),
                             ]),
                         Tab::make('Body')
                             ->icon(Heroicon::OutlinedDocumentText)

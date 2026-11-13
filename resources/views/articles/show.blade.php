@@ -1,4 +1,4 @@
-<x-layouts.site :title="$article->title.' — '.$brandName" :description="$article->excerpt" og-type="article">
+<x-layouts.site :title="$article->title.' | '.$brandName" :description="$article->excerpt" og-type="article">
     <x-slot:head>
         <meta property="article:published_time" content="{{ $article->published_at->toAtomString() }}">
         <meta property="article:modified_time" content="{{ $article->updated_at->toAtomString() }}">

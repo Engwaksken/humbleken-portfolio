@@ -1,4 +1,4 @@
-<x-layouts.site :title="'Ticket #'.$ticket->id.' — '.$brandName">
+<x-layouts.site :title="'Ticket #'.$ticket->id.' | '.$brandName">
     <div class="mx-auto w-full max-w-3xl section px-4 sm:px-6">
         <a href="{{ route('account.tickets.index') }}" class="text-sm font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
             <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> Support tickets

@@ -4,7 +4,7 @@
     $chipOn = 'border-ink bg-ink text-white';
     $filtered = $search !== '' || $activeCategory || $activeTag;
 @endphp
-<x-layouts.site :title="'Articles — '.$brandName" description="Practical articles on IT systems, troubleshooting and technology decisions.">
+<x-layouts.site :title="'Articles | '.$brandName" description="Practical articles on IT systems, troubleshooting and technology decisions.">
     <x-page-hero eyebrow="Articles" title="Notes on systems and decisions." title-id="articles-title"
         intro="Practical articles on IT systems, troubleshooting and technology decisions.">
         <form method="GET" action="{{ route('articles.index') }}" role="search" class="mt-6 flex max-w-xl flex-col gap-3 sm:flex-row">

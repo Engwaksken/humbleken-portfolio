@@ -1,4 +1,4 @@
-<x-layouts.site :title="'Projects — '.$brandName" description="Selected projects and case studies.">
+<x-layouts.site :title="'Projects | '.$brandName" description="Selected projects and case studies.">
     <x-page-hero eyebrow="Projects" title="Selected work and case studies." title-id="projects-title"
         intro="A selection of engagements showing the problem, the approach taken, and the outcome delivered." />
 

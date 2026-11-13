@@ -1,7 +1,7 @@
 @php
     $linkClass = 'font-semibold text-brand hover:text-brand-dark focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 @endphp
-<x-layouts.site :title="'Your account — '.$brandName">
+<x-layouts.site :title="'Your account | '.$brandName">
     <div class="mx-auto w-full max-w-4xl section px-4 sm:px-6">
         <h1 class="text-3xl font-semibold tracking-tight">Hello, {{ auth()->user()->name }}</h1>
 

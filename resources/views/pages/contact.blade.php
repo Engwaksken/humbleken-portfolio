@@ -2,8 +2,8 @@
     $contactRow = 'flex items-start gap-4 py-2 transition hover:text-brand-dark';
     $iconBox = 'w-6 shrink-0 pt-2.5 text-center text-lg text-brand';
 @endphp
-<x-layouts.site :title="$page['title'].' — '.$brandName" :description="$page['intro']">
-    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :image="$page['image_url']" :image-alt="$page['image_alt']" />
+<x-layouts.site :title="$page['title'].' | '.$brandName" :description="$page['intro']">
+    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :intro-lines="$page['intro_lines']" :image="$page['image_url']" :image-alt="$page['image_alt']" />
 
     <section class="container-site section">
         <div class="grid gap-layout lg:grid-cols-12">

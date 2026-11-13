@@ -1,4 +1,4 @@
-<x-layouts.site :title="'Confirm your email — '.$brandName">
+<x-layouts.site :title="'Confirm your email | '.$brandName">
     <x-auth-card heading="Confirm your email" intro="We sent a confirmation link to {{ auth()->user()->email }}. Follow it to finish setting up your account." :brand-name="$brandName" :logo-url="$logoUrl">
         @if (session('status') === 'verification-link-sent')
             <p role="status" class="mb-5 text-sm font-medium">A new confirmation link has been sent.</p>

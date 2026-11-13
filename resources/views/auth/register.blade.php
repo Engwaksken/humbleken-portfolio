@@ -1,4 +1,4 @@
-<x-layouts.site :title="'Create an account — '.$brandName">
+<x-layouts.site :title="'Create an account | '.$brandName">
     <x-auth-card heading="Create an account" intro="An account lets you open support tickets and follow their progress." :brand-name="$brandName" :logo-url="$logoUrl">
         <form method="POST" action="{{ route('register.store') }}" class="grid gap-4" novalidate>
             @csrf

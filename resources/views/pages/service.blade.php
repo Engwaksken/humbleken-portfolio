@@ -1,4 +1,4 @@
-<x-layouts.site :title="$service->name.' — '.$brandName" :description="$service->summary ?: $service->description">
+<x-layouts.site :title="$service->name.' | '.$brandName" :description="$service->summary ?: $service->description">
     <x-page-hero :eyebrow="$service->category?->name ?? 'Service'" :title="$service->name" :intro="$service->summary">
         <x-slot:before>
             <a href="{{ route('services.index') }}" class="link-arrow mb-8 flex w-fit"><i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> All services</a>

@@ -34,7 +34,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <title>{{ $title }} ({{ $code }}) — {{ $brandName }}</title>
+    <title>{{ $title }} ({{ $code }}) | {{ $brandName }}</title>
     @if ($faviconUrl)
         <link rel="icon" href="{{ $faviconUrl }}">
     @endif

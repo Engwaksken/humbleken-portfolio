@@ -143,6 +143,21 @@ class PageEditorTest extends TestCase
         $this->get('/')->assertOk()->assertDontSee('data-read-more style', false)->assertDontSee('data-read-more-toggle', false);
     }
 
+    public function test_other_page_headers_get_a_read_more_toggle_with_their_own_line_setting(): void
+    {
+        foreach (['services.index', 'approach', 'booking', 'contact', 'projects.index', 'articles.index'] as $route) {
+            $this->get(route($route))->assertOk()
+                ->assertSee('data-read-more style="--read-more-lines: 2"', false)
+                ->assertSee('data-read-more-toggle', false);
+        }
+
+        PageContent::save('contact', array_merge(PageContent::raw('contact'), ['intro_lines' => 4]));
+        $this->get(route('contact'))->assertSee('data-read-more style="--read-more-lines: 4"', false);
+
+        PageContent::save('approach', array_merge(PageContent::raw('approach'), ['intro_lines' => 0]));
+        $this->get(route('approach'))->assertDontSee('data-read-more-toggle', false);
+    }
+
     public function test_image_aside_without_an_image_falls_back_to_text_only(): void
     {
         PageContent::save('home', array_merge(PageContent::raw('home'), ['hero_aside' => 'image', 'hero_image' => null]));

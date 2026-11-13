@@ -1,4 +1,4 @@
-<x-layouts.site :title="$project->title.' — '.$brandName" :description="$project->summary">
+<x-layouts.site :title="$project->title.' | '.$brandName" :description="$project->summary">
     <x-page-hero eyebrow="Case study" :title="$project->title" :intro="$project->summary" title-id="project-title">
         <x-slot:before>
             <a href="{{ route('projects.index') }}" class="link-arrow mb-8 flex w-fit"><i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> All projects</a>

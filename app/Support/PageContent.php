@@ -45,6 +45,9 @@ class PageContent
         'none' => 'Nothing (text only)',
     ];
 
+    /** Default number of introduction lines shown before "Read more". */
+    public const INTRO_LINES = 2;
+
     /** Where the hero image sits when the hero shows an image. */
     public const HERO_IMAGE_POSITIONS = [
         'right' => 'Right of the text',
@@ -59,14 +62,14 @@ class PageContent
      */
     public static function defaults(string $page): array
     {
-        $common = ['image' => null, 'image_alt' => '', 'body' => '', 'gallery' => []];
+        $common = ['intro_lines' => static::INTRO_LINES, 'image' => null, 'image_alt' => '', 'body' => '', 'gallery' => []];
 
         return match ($page) {
             'home' => [
                 'hero_eyebrow' => '',
                 'hero_title' => 'Engineering solutions for reliable, effective IT.',
                 'hero_intro' => 'Practical IT consulting that finds the cause of recurring problems and fixes it. We assess your systems, explain the options in plain language and help you choose a sensible way forward. From a single troublesome server to a wider infrastructure review, you get clear recommendations and hands-on engineering support through to a working result.',
-                'hero_intro_lines' => 2,
+                'hero_intro_lines' => static::INTRO_LINES,
                 'hero_primary_label' => 'Explore services',
                 'hero_secondary_label' => 'Book a consultation',
                 'hero_aside' => 'card',
@@ -91,7 +94,7 @@ class PageContent
                 'why_heading' => 'Engineering that is clear, careful and practical.',
                 'why_items' => [
                     ['icon' => 'fa-comments', 'heading' => 'Clear communication', 'text' => 'Technical findings explained in plain language, so you can make confident decisions.', 'image' => null],
-                    ['icon' => 'fa-scale-balanced', 'heading' => 'Proportionate solutions', 'text' => 'Recommendations sized to the problem and your budget — no unnecessary complexity.', 'image' => null],
+                    ['icon' => 'fa-scale-balanced', 'heading' => 'Proportionate solutions', 'text' => 'Recommendations sized to the problem and your budget, with no unnecessary complexity.', 'image' => null],
                     ['icon' => 'fa-circle-check', 'heading' => 'Reliable follow-through', 'text' => 'Practical engineering support from diagnosis through to a working result.', 'image' => null],
                 ],
                 'projects_enabled' => true,
@@ -198,6 +201,7 @@ class PageContent
             'eyebrow' => $raw['eyebrow'],
             'title' => $raw['title'],
             'intro' => $raw['intro'],
+            'intro_lines' => static::introLines($raw['intro_lines']),
             'image_url' => static::mediaUrl($raw['image']),
             'image_alt' => (string) $raw['image_alt'],
             'body' => (string) $raw['body'],
@@ -277,6 +281,12 @@ class PageContent
         }
     }
 
+    /** Lines of an introduction shown before "Read more", kept to 0 (show all) to 10. */
+    public static function introLines(mixed $value): int
+    {
+        return is_numeric($value) ? max(0, min(10, (int) $value)) : static::INTRO_LINES;
+    }
+
     public static function settingKey(string $page): string
     {
         if (! in_array($page, static::PAGES, true)) {
@@ -301,7 +311,7 @@ class PageContent
                 'title' => $raw['hero_title'],
                 'intro' => $raw['hero_intro'],
                 // Lines of the introduction shown before "Read more"; 0 shows it all.
-                'intro_lines' => max(0, min(10, (int) $raw['hero_intro_lines'])),
+                'intro_lines' => static::introLines($raw['hero_intro_lines']),
                 'primary_label' => $raw['hero_primary_label'],
                 'secondary_label' => $raw['hero_secondary_label'],
                 // An image aside without an image would leave an empty column.

@@ -1,4 +1,4 @@
-<x-layouts.site :title="'Track your booking — '.$brandName" description="Check the status of an appointment request using its reference and your email address.">
+<x-layouts.site :title="'Track your booking | '.$brandName" description="Check the status of an appointment request using its reference and your email address.">
     <x-page-hero eyebrow="Appointment request" title="Track your booking." intro="Enter the reference you received and the email address you used to see where your request stands." />
 
     <section class="container-site section">

@@ -46,7 +46,7 @@ enum BookingStatus: string implements HasColor, HasLabel
     public function customerLabel(): string
     {
         return match ($this) {
-            self::New => 'Received — awaiting review',
+            self::New => 'Received, awaiting review',
             self::Contacted => 'We are arranging a time',
             self::Confirmed => 'Confirmed',
             self::Completed => 'Completed',

@@ -69,7 +69,7 @@ class HomepageContentTest extends TestCase
 
         $this->get(route('contact'))
             ->assertOk()
-            ->assertSee('<title>Discuss your technical requirements. — Acme Tech Help', false)
+            ->assertSee('<title>Discuss your technical requirements. | Acme Tech Help', false)
             ->assertSee('hello@example.test')
             ->assertSee('https://linkedin.example.test/acme')
             ->assertDontSee('Contact details are being added.');

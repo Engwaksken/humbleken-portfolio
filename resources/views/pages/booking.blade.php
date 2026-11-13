@@ -1,5 +1,5 @@
-<x-layouts.site :title="$page['title'].' — '.$brandName" :description="$page['intro']">
-    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :image="$page['image_url']" :image-alt="$page['image_alt']" />
+<x-layouts.site :title="$page['title'].' | '.$brandName" :description="$page['intro']">
+    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :intro-lines="$page['intro_lines']" :image="$page['image_url']" :image-alt="$page['image_alt']" />
 
     <section class="container-site section">
         <div class="grid gap-layout lg:grid-cols-12">

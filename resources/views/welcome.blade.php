@@ -7,7 +7,7 @@
     $heroImageSide = $heroHasImage && ! $heroBackground ? $hero['image_position'] : null;
     $heroHasAside = $heroImageSide !== null || $hero['aside'] === 'card';
 @endphp
-<x-layouts.site :title="$brandName.' — '.$tagline" :description="$hero['intro']">
+<x-layouts.site :title="$brandName.' | '.$tagline" :description="$hero['intro']">
     {{-- Hero --}}
     <section @class([
         'relative isolate overflow-hidden border-b border-line',
@@ -30,19 +30,8 @@
                 @endif
                 <h1 class="mt-4 text-[clamp(2rem,6vw,4.25rem)] leading-[1.05] font-semibold tracking-tight text-balance">{{ $hero['title'] }}</h1>
                 @if (filled($hero['intro']))
-                    <div class="mt-4 max-w-2xl" @if ($hero['intro_lines'] > 0) data-read-more style="--read-more-lines: {{ $hero['intro_lines'] }}" @endif>
-                        <p id="hero-intro" data-read-more-text @class([
-                            'text-base leading-7 sm:text-lg sm:leading-8 text-pretty',
-                            'text-muted' => ! $heroBackground,
-                            'text-white/85' => $heroBackground,
-                        ])>{{ $hero['intro'] }}</p>
-                        @if ($hero['intro_lines'] > 0)
-                            <button type="button" class="read-more-toggle" data-read-more-toggle aria-controls="hero-intro" aria-expanded="false" hidden>
-                                <span data-read-more-label>Read more</span>
-                                <i class="fa-solid fa-chevron-down text-xs transition-transform" aria-hidden="true"></i>
-                            </button>
-                        @endif
-                    </div>
+                    <x-read-more :lines="$hero['intro_lines']" class="mt-4 max-w-2xl"
+                        :text-class="'text-base leading-7 sm:text-lg sm:leading-8 text-pretty '.($heroBackground ? 'text-white/85' : 'text-muted')">{{ $hero['intro'] }}</x-read-more>
                 @endif
                 <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ route('services.index') }}" class="btn-primary">{{ $hero['primary_label'] }} <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>

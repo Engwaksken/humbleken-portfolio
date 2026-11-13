@@ -1,5 +1,5 @@
-<x-layouts.site :title="$page['title'].' — '.$brandName" :description="$page['intro']">
-    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :image="$page['image_url']" :image-alt="$page['image_alt']">
+<x-layouts.site :title="$page['title'].' | '.$brandName" :description="$page['intro']">
+    <x-page-hero :eyebrow="$page['eyebrow']" :title="$page['title']" :intro="$page['intro']" :intro-lines="$page['intro_lines']" :image="$page['image_url']" :image-alt="$page['image_alt']">
         <a class="btn-primary mt-6" href="{{ route('booking') }}">Request a consultation</a>
     </x-page-hero>
 

@@ -146,14 +146,7 @@ class SitePages extends Page
                         ->maxLength(255),
                     TextInput::make('home.hero_title')->label('Title')->required()->maxLength(255),
                     Textarea::make('home.hero_intro')->label('Introduction')->rows(4)->maxLength(2000),
-                    TextInput::make('home.hero_intro_lines')
-                        ->label('Introduction lines shown before "Read more"')
-                        ->helperText('Longer introductions are shortened to this many lines with a "Read more" link. Use 0 to always show the full text.')
-                        ->numeric()
-                        ->integer()
-                        ->minValue(0)
-                        ->maxValue(10)
-                        ->default(2),
+                    $this->introLinesInput('home.hero_intro_lines'),
                     Grid::make(2)->schema([
                         TextInput::make('home.hero_primary_label')->label('Main button text')->helperText('Links to the services page.')->required()->maxLength(60),
                         TextInput::make('home.hero_secondary_label')->label('Second button text')->helperText('Links to the booking page.')->required()->maxLength(60),
@@ -260,6 +253,18 @@ class SitePages extends Page
     /**
      * @return array<int, Component>
      */
+    private function introLinesInput(string $name): TextInput
+    {
+        return TextInput::make($name)
+            ->label('Introduction lines shown before "Read more"')
+            ->helperText('Longer introductions are shortened to this many lines with a "Read more" link. Use 0 to always show the full text.')
+            ->numeric()
+            ->integer()
+            ->minValue(0)
+            ->maxValue(10)
+            ->default(PageContent::INTRO_LINES);
+    }
+
     private function pageSchema(string $page, ?string $steps = null): array
     {
         $schema = [
@@ -268,7 +273,8 @@ class SitePages extends Page
                 ->schema([
                     TextInput::make("{$page}.eyebrow")->label('Small heading above the title')->maxLength(255),
                     TextInput::make("{$page}.title")->label('Title')->required()->maxLength(255),
-                    Textarea::make("{$page}.intro")->label('Introduction')->rows(3)->maxLength(1000),
+                    Textarea::make("{$page}.intro")->label('Introduction')->rows(4)->maxLength(2000),
+                    $this->introLinesInput("{$page}.intro_lines"),
                     $this->imageUpload("{$page}.image", 'Header image (optional)'),
                     $this->altText("{$page}.image_alt"),
                 ]),

@@ -434,7 +434,7 @@ html.a11y-reduced-motion *::marker {
     animation: hero-settle 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
 }
 
-/* Soft brand-coloured glow and dot pattern behind plain (non-image) headers. */
+/* Soft brand-coloured shades behind plain (non-image) headers. */
 .hero-glow::before {
     content: '';
     position: absolute;
@@ -443,9 +443,7 @@ html.a11y-reduced-motion *::marker {
     pointer-events: none;
     background:
         radial-gradient(38rem 24rem at 92% -10%, color-mix(in srgb, var(--color-brand) 14%, transparent), transparent 70%),
-        radial-gradient(30rem 20rem at -6% 110%, color-mix(in srgb, var(--color-secondary) 8%, transparent), transparent 70%),
-        radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--color-ink) 9%, transparent) 1px, transparent 0) 0 0 / 22px 22px;
-    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+        radial-gradient(30rem 20rem at -6% 110%, color-mix(in srgb, var(--color-secondary) 8%, transparent), transparent 70%);
 }
 
 /* Arrows in buttons and links nudge forward on hover. */

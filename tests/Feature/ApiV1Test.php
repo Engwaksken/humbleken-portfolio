@@ -212,7 +212,7 @@ class ApiV1Test extends TestCase
             ->assertOk()
             ->assertJsonCount(2, 'data.replies')
             ->assertJsonPath('data.replies.1.from_staff', true)
-            ->assertJsonPath('data.replies.1.author_name', 'Support team')
+            ->assertJsonPath('data.replies.1.author_name', 'Support')
             ->assertDontSee('old firmware');
 
         $this->postJson("/api/v1/tickets/{$ticketId}/replies", ['body' => 'Done, works now.'])

@@ -46,7 +46,7 @@
                         @endif
                         <div class="grid gap-2 sm:col-span-2">
                             <label for="booking-message" class="label">What would you like to discuss? (optional)</label>
-                            <textarea id="booking-message" name="message" rows="4" placeholder="Tell us what you would like to discuss" class="input">{{ old('message') }}</textarea>
+                            <textarea id="booking-message" name="message" rows="4" placeholder="Tell me what you would like to discuss" class="input">{{ old('message') }}</textarea>
                         </div>
                         <div class="hidden" aria-hidden="true"><label for="booking-website">Leave this field empty</label><input id="booking-website" name="website" tabindex="-1" autocomplete="off"></div>
                         <div class="sm:col-span-2"><button type="submit" class="btn-primary w-full sm:w-auto">Request appointment <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button></div>

@@ -1,1 +1,1 @@
-<x-error-page code="500" icon="fa-screwdriver-wrench" title="Something went wrong" message="An unexpected error happened on our side. It has been logged, and you can try again in a moment." :show-retry="true" />
+<x-error-page code="500" icon="fa-screwdriver-wrench" title="Something went wrong" message="An unexpected error happened on the server. It has been logged, and you can try again in a moment." :show-retry="true" />

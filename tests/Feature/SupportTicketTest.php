@@ -133,7 +133,7 @@ class SupportTicketTest extends TestCase
             ->assertOk()
             ->assertSee('Customer message here')
             ->assertSee('Please restart the router.')
-            ->assertSee('Support team')
+            ->assertSee('IT Problem Solver')
             ->assertDontSee('Staff only: check their firewall');
     }
 

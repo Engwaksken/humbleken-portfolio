@@ -74,7 +74,7 @@ class BookingTrackingTest extends TestCase
 
         $this->post(route('booking.track.lookup'), ['reference' => $booking->reference, 'email' => 'someone@example.test'])
             ->assertOk()
-            ->assertSee('We could not find a request')
+            ->assertSee('No request matches that reference')
             ->assertDontSee('General consultation');
 
         $this->post(route('booking.track.lookup'), [])->assertSessionHasErrors(['reference', 'email'], null, 'track');

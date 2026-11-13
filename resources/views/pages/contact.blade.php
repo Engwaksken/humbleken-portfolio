@@ -33,7 +33,7 @@
                         </div>
                     @endif
                     @if (! $contactEmail && ! $contactPhone && ! $whatsapp && ! $address)
-                        <p class="text-sm leading-6 text-muted">Use the form to send an enquiry and we will respond as soon as possible.</p>
+                        <p class="text-sm leading-6 text-muted">Use the form to send me an enquiry and I will reply as soon as I can.</p>
                     @endif
                 </div>
             </aside>
@@ -71,7 +71,7 @@
                             </div>
                         @endif
                         <div class="grid gap-2 sm:col-span-2">
-                            <label for="enquiry-message" class="label">How can we help?</label>
+                            <label for="enquiry-message" class="label">How can I help?</label>
                             <textarea id="enquiry-message" name="message" rows="5" placeholder="Describe what you need help with" required aria-required="true" @error('message','enquiry') aria-invalid="true" aria-describedby="enquiry-message-error" @enderror class="input">{{ old('message') }}</textarea>
                             @error('message','enquiry')<p id="enquiry-message-error" class="text-sm text-[#b42318]">{{ $message }}</p>@enderror
                         </div>

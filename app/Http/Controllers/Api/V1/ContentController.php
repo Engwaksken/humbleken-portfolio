@@ -59,7 +59,7 @@ class ContentController extends Controller
             'maintenance' => [
                 'enabled' => $maintenance,
                 'message' => $maintenance
-                    ? (Settings::get('maintenance_message') ?: 'We are making some improvements and will be back shortly.')
+                    ? (Settings::get('maintenance_message') ?: 'I am making some improvements and the site will be back shortly.')
                     : null,
             ],
         ]]);

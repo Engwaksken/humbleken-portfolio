@@ -58,6 +58,10 @@ class ArticleController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return view('articles.show', ['article' => $article]);
+        return view('articles.show', [
+            'article' => $article,
+            'contents' => $article->bodyWithContents(),
+            'related' => $article->related(),
+        ]);
     }
 }

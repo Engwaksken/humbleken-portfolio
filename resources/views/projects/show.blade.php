@@ -38,7 +38,7 @@
                     @endif
                     <div class="rounded-2xl bg-secondary p-6 text-white">
                         <p class="font-semibold">Working on something similar?</p>
-                        <p class="mt-2 text-sm leading-6 text-white/75">Share your requirements and we will suggest a practical approach.</p>
+                        <p class="mt-2 text-sm leading-6 text-white/75">Share what you need and I will suggest a practical approach.</p>
                         <a href="{{ route('contact') }}" class="btn-light mt-5 w-full">Send an enquiry</a>
                     </div>
                 </div>

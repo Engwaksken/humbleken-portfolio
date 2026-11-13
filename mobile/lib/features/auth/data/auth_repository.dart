@@ -68,7 +68,7 @@ class AuthRepository {
   Future<String> forgotPassword(String email) async {
     final json = await _api.post('auth/forgot-password', data: {'email': email.trim()});
     return asStringOrNull(json['message']) ??
-        'If an account exists for that email, we have sent a password reset link.';
+        'If an account exists for that email, a password reset link has been sent to it.';
   }
 
   Future<AppUser> currentUser() async {

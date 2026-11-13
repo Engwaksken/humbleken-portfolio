@@ -31,7 +31,7 @@ class PublicMaintenanceMode
         return response()
             ->view('maintenance', [
                 'brandName' => Settings::get('brand_name') ?: 'IT Problem Solver',
-                'message' => Settings::get('maintenance_message') ?: 'We are making some improvements and will be back shortly.',
+                'message' => Settings::get('maintenance_message') ?: 'I am making some improvements and the site will be back shortly.',
                 'faviconUrl' => Settings::publicFileUrl('favicon'),
                 'themeTags' => Theme::headTags(),
             ], 503)

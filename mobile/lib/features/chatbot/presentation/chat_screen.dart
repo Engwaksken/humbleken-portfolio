@@ -153,7 +153,7 @@ class _Welcome extends StatelessWidget {
               Semantics(header: true, child: Text('Hi! How can I help?', style: theme.textTheme.headlineSmall)),
               const SizedBox(height: 8),
               Text(
-                'Ask about our services or describe a technical problem and I will suggest next steps.',
+                'Ask about the services on offer or describe a technical problem and I will suggest next steps.',
                 style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
               ),
             ],

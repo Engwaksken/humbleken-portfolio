@@ -113,6 +113,37 @@ class Settings extends Page
                                     ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
                                     ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file)),
                             ]),
+                        Tab::make('About you')
+                            ->icon(Heroicon::OutlinedUserCircle)
+                            ->schema([
+                                TextInput::make('owner_name')
+                                    ->label('Your name')
+                                    ->helperText('Shown as the author of your articles. Leave empty to use the brand name.')
+                                    ->maxLength(120),
+                                TextInput::make('owner_role')
+                                    ->label('Your role')
+                                    ->placeholder('IT Engineer and Consultant')
+                                    ->maxLength(120),
+                                Textarea::make('owner_bio')
+                                    ->label('Short bio')
+                                    ->helperText('Two or three sentences in your own words, shown in the "About the author" box under each article.')
+                                    ->rows(3)
+                                    ->maxLength(600),
+                                FileUpload::make('owner_photo')
+                                    ->label('Your photo')
+                                    ->helperText('Square photo of you, at least 400 × 400 px. PNG, JPG or WebP, up to 5 MB. Shown next to your name on articles.')
+                                    ->disk('public')
+                                    ->directory('branding')
+                                    ->visibility('public')
+                                    ->multiple()
+                                    ->maxFiles(2)
+                                    ->image()
+                                    ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
+                                    ->maxSize(5120)
+                                    ->fetchFileInformation(false)
+                                    ->getUploadedFileUsing(fn (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array => static::getStoredBrandingFile($component, $file, $storedFileNames))
+                                    ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file, maxDimension: 600)),
+                            ]),
                         Tab::make('Appearance')
                             ->icon(Heroicon::OutlinedSwatch)
                             ->schema([
@@ -278,7 +309,7 @@ class Settings extends Page
                                     ->helperText('The admin panel keeps working, and you can still browse the site while signed in as an administrator.'),
                                 Textarea::make('maintenance_message')
                                     ->label('Message for visitors')
-                                    ->placeholder('We are making some improvements and will be back shortly.')
+                                    ->placeholder('I am making some improvements and the site will be back shortly.')
                                     ->rows(3)
                                     ->maxLength(500),
                             ]),

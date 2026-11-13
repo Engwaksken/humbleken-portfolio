@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\HeroImagePosition;
 use App\Models\Concerns\HasSampleMedia;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,7 @@ class Service extends Model
         'sort_order',
         'sample_image',
         'sample_video_url',
+        'image_position',
     ];
 
     /**
@@ -46,7 +48,14 @@ class Service extends Model
             'is_active' => 'boolean',
             'sort_order' => 'integer',
             'indicative_price' => 'decimal:2',
+            'image_position' => HeroImagePosition::class,
         ];
+    }
+
+    /** Where the featured image goes; services default to beside the title. */
+    public function featuredImagePosition(): HeroImagePosition
+    {
+        return $this->image_position ?? HeroImagePosition::Right;
     }
 
     public function category(): BelongsTo

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class Settings
 {
     /** Settings that hold uploaded branding images served from /site-assets/{key}. */
-    public const BRANDING_FILES = ['logo', 'sticky_logo', 'favicon'];
+    public const BRANDING_FILES = ['logo', 'sticky_logo', 'favicon', 'owner_photo'];
 
     public static function get(string $key, mixed $default = null): mixed
     {

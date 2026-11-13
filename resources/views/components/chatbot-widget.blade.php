@@ -4,7 +4,7 @@
     $suggestions = ['What services do you offer?', 'How does a consultation work?', 'Can you help with a network issue?'];
 @endphp
 <div data-a11y-exempt data-chatbot data-endpoint="{{ route('chatbot.messages') }}" data-enabled="{{ $chatEnabled ? 'true' : 'false' }}" @if ($avatar) data-avatar="{{ $avatar }}" @endif>
-    <button type="button" aria-expanded="false" aria-controls="chatbot-panel" aria-haspopup="dialog" title="Chat with us (Alt + C)"
+    <button type="button" aria-expanded="false" aria-controls="chatbot-panel" aria-haspopup="dialog" title="Ask a question (Alt + C)"
         class="group fixed right-3 bottom-3 z-50 inline-flex size-12 items-center justify-center gap-2.5 rounded-full bg-brand font-semibold text-white shadow-[0_10px_30px_-8px_rgb(7_119_132/0.7)] ring-2 ring-white sm:ring-4 transition hover:bg-brand-dark sm:right-6 sm:bottom-6 sm:size-auto sm:min-h-14 sm:pr-6 sm:pl-2 aria-expanded:pointer-events-none aria-expanded:opacity-0 max-sm:aria-expanded:scale-75" data-chatbot-toggle>
         <span class="relative grid size-9 shrink-0 sm:size-10 place-items-center overflow-hidden rounded-full bg-white" aria-hidden="true">
             @if ($avatar)
@@ -13,7 +13,7 @@
                 <i class="fa-solid fa-comment-dots text-lg text-brand"></i>
             @endif
         </span>
-        <span class="max-sm:sr-only">Chat with us</span>
+        <span class="max-sm:sr-only">Ask a question</span>
         @if ($chatEnabled)
             <span class="absolute top-0.5 right-0.5 size-3 rounded-full bg-[#4ade80] ring-2 ring-white" aria-hidden="true"></span>
         @endif
@@ -34,7 +34,7 @@
             </span>
             <div class="min-w-0 flex-1">
                 <h2 id="chatbot-title" class="truncate font-semibold">Website assistant</h2>
-                <p class="truncate text-xs text-white/75">{{ $chatEnabled ? 'Online · Replies in a few seconds' : 'Offline · Contact us directly' }}</p>
+                <p class="truncate text-xs text-white/75">{{ $chatEnabled ? 'Online · Replies in a few seconds' : 'Offline · Contact me directly' }}</p>
             </div>
             @if ($chatEnabled)
                 <button type="button" class="grid size-10 place-items-center rounded-full text-white/85 hover:bg-white/15 hover:text-white" aria-label="Start a new conversation" title="New conversation" data-chatbot-reset>
@@ -59,9 +59,9 @@
                     <div class="max-w-[85%] rounded-2xl rounded-bl-md border border-line bg-white px-4 py-3 text-sm leading-6 shadow-sm">
                         @if ($chatEnabled)
                             <p class="font-semibold">Hi there</p>
-                            <p class="mt-1 text-muted">Ask me about our services, projects, or articles. You can also attach a file for me to review.</p>
+                            <p class="mt-1 text-muted">Ask me about the services, projects or articles on this site. You can also attach a file for me to review.</p>
                         @else
-                            <p>Our assistant is being set up. Please contact us and we’ll be happy to help.</p>
+                            <p>The assistant is being set up. Please contact me directly and I will be happy to help.</p>
                             <a href="{{ route('contact') }}" class="mt-2 inline-flex items-center gap-1.5 font-semibold text-brand hover:text-brand-dark">Go to the contact page <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
                         @endif
                     </div>

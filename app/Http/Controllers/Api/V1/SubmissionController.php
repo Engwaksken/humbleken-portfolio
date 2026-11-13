@@ -38,7 +38,7 @@ class SubmissionController extends Controller
         Notification::send(User::query()->where('is_admin', true)->get(), new BookingRequestReceived($booking));
 
         return response()->json([
-            'message' => 'Thank you. Your appointment request has been received. We will contact you to confirm availability.',
+            'message' => 'Thank you. Your appointment request has been received. I will contact you to confirm availability.',
             'reference' => $booking->reference,
         ], 201);
     }

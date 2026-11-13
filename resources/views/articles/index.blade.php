@@ -6,7 +6,7 @@
 @endphp
 <x-layouts.site :title="'Articles | '.$brandName" description="Practical articles on IT systems, troubleshooting and technology decisions.">
     <x-page-hero eyebrow="Articles" title="Notes on systems and decisions." title-id="articles-title"
-        intro="Practical articles on IT systems, troubleshooting and technology decisions.">
+        intro="Practical notes from my work on IT systems, troubleshooting and technology decisions.">
         <form method="GET" action="{{ route('articles.index') }}" role="search" class="mt-6 flex max-w-xl flex-col gap-3 sm:flex-row">
             @if ($activeCategory)
                 <input type="hidden" name="category" value="{{ $activeCategory->slug }}">
@@ -58,26 +58,7 @@
         @else
             <div class="section-body grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($articles as $article)
-                    <article class="card-hover group relative flex flex-col overflow-hidden">
-                        @if ($article->featuredImageUrl())
-                            <div class="aspect-[16/9] overflow-hidden border-b border-line bg-canvas">
-                                <img src="{{ $article->featuredImageUrl() }}" alt="" loading="lazy" decoding="async" class="size-full object-cover transition duration-500 group-hover:scale-[1.03]">
-                            </div>
-                        @endif
-                        <div class="flex flex-1 flex-col p-6 sm:p-7">
-                        <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-muted">
-                            @if ($article->category)<span class="chip">{{ $article->category->name }}</span>@endif
-                            <time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('j F Y') }}</time>
-                        </p>
-                        <h2 class="mt-4 text-xl leading-snug font-semibold tracking-tight">
-                            <a href="{{ route('articles.show', ['article' => $article->slug]) }}" class="after:absolute after:inset-0 after:content-[''] group-hover:text-brand-dark">{{ $article->title }}</a>
-                        </h2>
-                        @if ($article->excerpt)
-                            <p class="mt-3 line-clamp-3 leading-7 text-muted">{{ $article->excerpt }}</p>
-                        @endif
-                        <span class="link-arrow mt-auto pt-6" aria-hidden="true">Read article <i class="fa-solid fa-arrow-right text-xs"></i></span>
-                        </div>
-                    </article>
+                    @include('articles.partials.card', ['headingTag' => 'h2'])
                 @endforeach
             </div>
 

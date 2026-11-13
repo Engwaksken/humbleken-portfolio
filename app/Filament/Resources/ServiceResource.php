@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\HeroImagePosition;
 use App\Filament\Resources\ServiceResource\Pages;
 use App\Models\Service;
 use App\Support\ImageCompressor;
@@ -12,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -85,6 +87,11 @@ class ServiceResource extends Resource
                                     ->maxSize(10240)
                                     ->saveUploadedFileUsing(fn (BaseFileUpload $component, TemporaryUploadedFile $file): ?string => ImageCompressor::storeUpload($component, $file))
                                     ->helperText('Optional. Shown on the service card and the service page. A landscape image around 1600 × 900 px works best. Images are compressed to WebP.'),
+                                Radio::make('image_position')
+                                    ->label('On the service page, show the image')
+                                    ->options(HeroImagePosition::class)
+                                    ->default(HeroImagePosition::Right->value)
+                                    ->helperText('The service card always shows the image at the top.'),
                                 TextInput::make('sample_video_url')
                                     ->label('Sample video URL')
                                     ->url()

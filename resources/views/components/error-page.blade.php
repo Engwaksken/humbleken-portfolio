@@ -99,7 +99,7 @@
                     </div>
 
                     @if ($contactUrl)
-                        <p class="mt-8 text-sm text-muted">Still stuck? <a href="{{ $contactUrl }}" class="font-semibold text-brand hover:text-brand-dark">Contact us</a> and tell us what you were trying to do.</p>
+                        <p class="mt-8 text-sm text-muted">Still stuck? <a href="{{ $contactUrl }}" class="font-semibold text-brand hover:text-brand-dark">Contact me</a> and tell me what you were trying to do.</p>
                     @endif
                 </div>
             </div>

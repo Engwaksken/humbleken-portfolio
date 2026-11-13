@@ -24,7 +24,7 @@ class ArticleTaxonomySeeder extends Seeder
         ['name' => 'IT Strategy', 'description' => 'Planning technology decisions, budgets and roadmaps.'],
         ['name' => 'Troubleshooting Guides', 'description' => 'Step-by-step help for diagnosing recurring technical problems.'],
         ['name' => 'Case Studies', 'description' => 'How real problems were assessed and solved.'],
-        ['name' => 'News & Updates', 'description' => 'Announcements, new services and updates from us.'],
+        ['name' => 'News & Updates', 'description' => 'Announcements, new services and updates from me.'],
     ];
 
     /** @var list<string> */

@@ -6,10 +6,10 @@ use App\Filament\Pages\Settings as SettingsPage;
 use App\Support\AiChat;
 use App\Support\Settings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ChatbotTest extends TestCase
@@ -30,7 +30,7 @@ class ChatbotTest extends TestCase
         Settings::set('ai_api_key_ciphertext', Crypt::encryptString('secret-test-key'));
         Http::fake(['api.example.test/*' => Http::response(['choices' => [['message' => ['content' => 'Here is an answer.']]]])]);
 
-        $this->get('/')->assertOk()->assertSee('Chat with us')->assertSee('Accessibility tools');
+        $this->get('/')->assertOk()->assertSee('Ask a question')->assertSee('Accessibility tools');
         $this->postJson(route('chatbot.messages'), ['messages' => [['role' => 'user', 'content' => 'What services do you offer?']]])
             ->assertOk()
             ->assertJsonPath('reply', 'Here is an answer.');

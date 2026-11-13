@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\SupportTicket;
 use App\Models\TicketReply;
+use App\Support\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,7 +29,7 @@ class SupportTicketResource extends JsonResource
                 'id' => $reply->id,
                 'body' => $reply->body,
                 'from_staff' => $reply->isFromStaff(),
-                'author_name' => $reply->isFromStaff() ? 'Support team' : ($reply->user?->name ?? 'You'),
+                'author_name' => $reply->isFromStaff() ? (Settings::get('owner_name') ?: Settings::get('brand_name') ?: 'Support') : ($reply->user?->name ?? 'You'),
                 'created_at' => $reply->created_at?->toIso8601String(),
                 'attachments' => collect($reply->attachments ?? [])->map(fn (array $file, int $index): array => [
                     'index' => $index,

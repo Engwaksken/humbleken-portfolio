@@ -47,7 +47,7 @@ enum BookingStatus: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::New => 'Received, awaiting review',
-            self::Contacted => 'We are arranging a time',
+            self::Contacted => 'Arranging a time with you',
             self::Confirmed => 'Confirmed',
             self::Completed => 'Completed',
             self::Declined => 'Not available',

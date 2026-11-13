@@ -81,7 +81,7 @@ class AppDrawer extends ConsumerWidget {
                 if (site.features.articles) item(Icons.article_outlined, 'Articles', Routes.articles, tab: true),
                 if (site.features.chatbot) item(Icons.smart_toy_outlined, 'Chatbot', Routes.assistant, tab: true),
                 const Divider(),
-                item(Icons.route_outlined, 'Our approach', Routes.approach),
+                item(Icons.route_outlined, 'My approach', Routes.approach),
                 item(Icons.event_available_outlined, 'Book a consultation', Routes.booking),
                 item(Icons.mail_outline, 'Contact', Routes.contact),
                 const Divider(),

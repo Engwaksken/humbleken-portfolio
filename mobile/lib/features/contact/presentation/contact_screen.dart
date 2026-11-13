@@ -17,12 +17,12 @@ class ContactScreen extends ConsumerWidget {
       appBar: brandedAppBar(context, title: 'Contact'),
       body: BrandedPageBody(
         maxWidth: 720,
-        header: page != null ? PageHeader(page: page) : const GradientHeader(title: 'Contact us'),
+        header: page != null ? PageHeader(page: page) : const GradientHeader(title: 'Contact me'),
         children: [
           if (page != null) PageContentView(page: page),
           const ContactDetails(),
           const SizedBox(height: 28),
-          const SectionHeading(title: 'Send an enquiry', subtitle: 'We usually reply within one working day.'),
+          const SectionHeading(title: 'Send an enquiry', subtitle: 'I usually reply within one working day.'),
           const SizedBox(height: 16),
           const SurfaceCard(child: EnquiryForm()),
         ],

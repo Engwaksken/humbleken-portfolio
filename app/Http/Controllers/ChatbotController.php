@@ -6,8 +6,8 @@ use App\Support\AiChat;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Smalot\PdfParser\Parser as PdfParser;
 use RuntimeException;
+use Smalot\PdfParser\Parser as PdfParser;
 
 class ChatbotController extends Controller
 {
@@ -43,11 +43,11 @@ class ChatbotController extends Controller
                 try {
                     $attachmentText = match (strtolower($file->getClientOriginalExtension())) {
                         'txt', 'csv' => file_get_contents($file->getRealPath()),
-                        'pdf' => (new PdfParser())->parseFile($file->getRealPath())->getText(),
+                        'pdf' => (new PdfParser)->parseFile($file->getRealPath())->getText(),
                         default => '',
                     };
                 } catch (\Throwable) {
-                    return response()->json(['message' => 'We could not read that file. Please try a text-based PDF or another supported file.'], 422);
+                    return response()->json(['message' => 'That file could not be read. Please try a text-based PDF or another supported file.'], 422);
                 }
                 $attachmentText = mb_substr(trim((string) $attachmentText), 0, 30000);
                 $label = basename($file->getClientOriginalName());

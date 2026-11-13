@@ -98,7 +98,7 @@ class ReplyBubble extends StatelessWidget {
     final staff = reply.fromStaff;
     final bg = staff ? scheme.secondaryContainer : scheme.primaryContainer;
     final fg = staff ? scheme.onSecondaryContainer : scheme.onPrimaryContainer;
-    final author = staff ? '${reply.authorName.isEmpty ? 'Support' : reply.authorName} (support team)' : 'You';
+    final author = staff ? (reply.authorName.isEmpty ? 'Support' : reply.authorName) : 'You';
 
     return Align(
       alignment: staff ? Alignment.centerLeft : Alignment.centerRight,

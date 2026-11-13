@@ -68,7 +68,7 @@ class PageContent
             'home' => [
                 'hero_eyebrow' => '',
                 'hero_title' => 'Engineering solutions for reliable, effective IT.',
-                'hero_intro' => 'Practical IT consulting that finds the cause of recurring problems and fixes it. We assess your systems, explain the options in plain language and help you choose a sensible way forward. From a single troublesome server to a wider infrastructure review, you get clear recommendations and hands-on engineering support through to a working result.',
+                'hero_intro' => 'Practical IT consulting that finds the cause of recurring problems and fixes it. I assess your systems, explain the options in plain language and help you choose a sensible way forward. From a single troublesome server to a wider infrastructure review, you get clear recommendations and hands-on engineering support through to a working result.',
                 'hero_intro_lines' => static::INTRO_LINES,
                 'hero_primary_label' => 'Explore services',
                 'hero_secondary_label' => 'Book a consultation',
@@ -77,7 +77,7 @@ class PageContent
                 'hero_image_alt' => '',
                 'hero_image_position' => 'right',
                 'card_eyebrow' => 'Start with the challenge',
-                'card_text' => 'Describe the issue or objective. We can clarify the requirements and identify a suitable path forward.',
+                'card_text' => 'Describe the issue or objective. I will help clarify the requirements and find a suitable path forward.',
                 'card_steps' => [
                     ['text' => 'Share the problem or goal'],
                     ['text' => 'Get a clear, jargon-free assessment'],
@@ -85,12 +85,12 @@ class PageContent
                 ],
                 'card_link_label' => 'Send an enquiry',
                 'services_enabled' => true,
-                'services_eyebrow' => 'What we do',
+                'services_eyebrow' => 'What I do',
                 'services_heading' => 'Services',
                 'services_link_label' => 'All services',
                 'services_count' => 3,
                 'why_enabled' => true,
-                'why_eyebrow' => 'Why work with us',
+                'why_eyebrow' => 'Why work with me',
                 'why_heading' => 'Engineering that is clear, careful and practical.',
                 'why_items' => [
                     ['icon' => 'fa-comments', 'heading' => 'Clear communication', 'text' => 'Technical findings explained in plain language, so you can make confident decisions.', 'image' => null],
@@ -104,7 +104,7 @@ class PageContent
                 'projects_count' => 3,
                 'cta_enabled' => true,
                 'cta_title' => 'Have a technical challenge in mind?',
-                'cta_text' => 'Tell us about the issue or objective and we will help you find a practical way forward.',
+                'cta_text' => 'Tell me about the issue or objective and I will help you find a practical way forward.',
             ],
             'services' => $common + [
                 'eyebrow' => 'Services',
@@ -120,8 +120,8 @@ class PageContent
             'booking' => $common + [
                 'eyebrow' => 'Appointment request',
                 'title' => 'Request a consultation.',
-                'intro' => 'Share a preferred time and we’ll get back to you to confirm availability. This is a request, not a confirmed booking.',
-                'steps' => static::stepsFromLines("We review your request and preferred time.\nWe contact you to confirm availability.\nWe meet to discuss your requirements."),
+                'intro' => 'Share a preferred time and I will get back to you to confirm availability. This is a request, not a confirmed booking.',
+                'steps' => static::stepsFromLines("I review your request and preferred time.\nI contact you to confirm availability.\nWe meet, online or in person, to discuss what you need."),
             ],
             'contact' => $common + [
                 'eyebrow' => 'Contact',

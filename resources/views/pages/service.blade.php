@@ -1,9 +1,21 @@
-<x-layouts.site :title="$service->name.' | '.$brandName" :description="$service->summary ?: $service->description" :og-image="$service->sampleImageUrl()">
-    <x-page-hero :eyebrow="$service->category?->name ?? 'Service'" :title="$service->name" :intro="$service->summary" :image="$service->sampleImageUrl()" :image-alt="$service->name">
+@php
+    $imageUrl = $service->sampleImageUrl();
+    $heroPosition = $imageUrl ? $service->featuredImagePosition()->heroPosition() : null;
+@endphp
+<x-layouts.site :title="$service->name.' | '.$brandName" :description="$service->summary ?: $service->description" :og-image="$imageUrl">
+    <x-page-hero :eyebrow="$service->category?->name ?? 'Service'" :title="$service->name" :intro="$service->summary"
+        :image="$heroPosition ? $imageUrl : null" :image-alt="$service->name" :image-position="$heroPosition">
         <x-slot:before>
             <a href="{{ route('services.index') }}" class="link-arrow mb-8 flex w-fit"><i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i> All services</a>
         </x-slot:before>
+        <a class="btn-primary mt-6" href="{{ route('booking', ['service' => $service->id]) }}">Request this service <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
     </x-page-hero>
+
+    @if ($imageUrl && $heroPosition === null)
+        <figure class="container-site mt-8 sm:mt-12">
+            <img src="{{ $imageUrl }}" alt="{{ $service->name }}" fetchpriority="high" decoding="async" class="aspect-[16/9] w-full rounded-2xl border border-line object-cover lg:aspect-[21/9]">
+        </figure>
+    @endif
 
     <article class="container-site section">
         <div class="grid gap-layout lg:grid-cols-12">
@@ -11,7 +23,7 @@
                 <h2 class="text-2xl font-semibold tracking-tight">Overview</h2>
                 <div class="mt-4 text-[1.0625rem] leading-8 whitespace-pre-line text-muted">{{ $service->description }}</div>
                 @if ($service->sampleVideoEmbedUrl())
-                    <div class="mt-8 aspect-video overflow-hidden rounded-2xl bg-ink"><iframe src="{{ $service->sampleVideoEmbedUrl() }}" title="Video sample for {{ $service->name }}" loading="lazy" allowfullscreen class="h-full w-full"></iframe></div>
+                    <div class="mt-8 aspect-video overflow-hidden rounded-2xl bg-ink"><iframe src="{{ $service->sampleVideoEmbedUrl() }}" title="Video about {{ $service->name }}" loading="lazy" allowfullscreen class="h-full w-full"></iframe></div>
                 @endif
             </div>
             <aside class="lg:col-span-4" aria-label="Service details">
@@ -30,7 +42,7 @@
                     @endif
                     <div class="rounded-2xl bg-secondary p-6 text-white">
                         <p class="font-semibold">Interested in this service?</p>
-                        <p class="mt-2 text-sm leading-6 text-white/75">Request a consultation and we will confirm availability.</p>
+                        <p class="mt-2 text-sm leading-6 text-white/75">Send me a request with a time that suits you and I will confirm my availability.</p>
                         <a class="btn-light mt-5 w-full" href="{{ route('booking', ['service' => $service->id]) }}">Request this service</a>
                     </div>
                 </div>

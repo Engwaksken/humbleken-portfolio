@@ -208,7 +208,7 @@ class _QuickActions extends StatelessWidget {
     final actions = [
       (icon: Icons.event_available_rounded, label: 'Book a call', route: Routes.booking),
       (icon: Icons.mail_outline_rounded, label: 'Send a message', route: Routes.contact),
-      (icon: Icons.route_rounded, label: 'How we work', route: Routes.approach),
+      (icon: Icons.route_rounded, label: 'How I work', route: Routes.approach),
     ];
     final theme = Theme.of(context);
     return Row(
@@ -306,7 +306,7 @@ class _WhyBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SectionHeading(eyebrow: section.eyebrow, title: section.heading ?? 'Why work with us'),
+        SectionHeading(eyebrow: section.eyebrow, title: section.heading ?? 'Why work with me'),
         const SizedBox(height: 16),
         ResponsiveGrid(
           minItemWidth: 280,
@@ -416,7 +416,7 @@ class _CtaBlock extends StatelessWidget {
               OutlinedButton(
                 style: onBrandOutlinedStyle(context),
                 onPressed: () => context.push(Routes.contact),
-                child: const Text('Contact us'),
+                child: const Text('Contact me'),
               ),
             ],
           ),

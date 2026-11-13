@@ -11,5 +11,5 @@
     @include('account.partials.booking-status-badge', ['status' => $booking->status])
 </div>
 @if (filled($booking->customer_note))
-    <p class="mt-3 border-l-2 border-brand bg-canvas px-3 py-2 text-sm leading-6"><span class="font-semibold">Update from us:</span> {{ $booking->customer_note }}</p>
+    <p class="mt-3 border-l-2 border-brand bg-canvas px-3 py-2 text-sm leading-6"><span class="font-semibold">Update from {{ $owner['name'] ?? 'me' }}:</span> {{ $booking->customer_note }}</p>
 @endif

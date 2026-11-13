@@ -1,1 +1,1 @@
-<x-error-page :code="$exception->getStatusCode()" icon="fa-screwdriver-wrench" title="Something went wrong" message="An unexpected error happened on our side. Please try again in a moment." :show-retry="true" />
+<x-error-page :code="$exception->getStatusCode()" icon="fa-screwdriver-wrench" title="Something went wrong" message="An unexpected error happened on the server. Please try again in a moment." :show-retry="true" />

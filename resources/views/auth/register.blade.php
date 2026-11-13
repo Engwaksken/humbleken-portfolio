@@ -4,7 +4,7 @@
             @csrf
             <x-form.errors />
             <x-form.field name="name" label="Name" autocomplete="name" required />
-            <x-form.field name="email" label="Email" type="email" autocomplete="email" required hint="We will send a link to confirm this address." />
+            <x-form.field name="email" label="Email" type="email" autocomplete="email" required hint="You will receive a link to confirm this address." />
             <x-form.field name="password" label="Password" type="password" autocomplete="new-password" required hint="At least 8 characters." />
             <x-form.field name="password_confirmation" label="Confirm password" type="password" autocomplete="new-password" required />
             <x-button>Create account</x-button>

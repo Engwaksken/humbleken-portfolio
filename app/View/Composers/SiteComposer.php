@@ -24,6 +24,13 @@ class SiteComposer
             'logoUrl' => Settings::publicFileUrl('logo'),
             'stickyLogoUrl' => Settings::publicFileUrl('sticky_logo'),
             'faviconUrl' => Settings::publicFileUrl('favicon'),
+            // The person behind the portfolio, shown as the author of articles.
+            'owner' => [
+                'name' => Settings::get('owner_name') ?: $brandName,
+                'role' => (string) Settings::get('owner_role'),
+                'bio' => (string) Settings::get('owner_bio'),
+                'photo_url' => Settings::publicFileUrl('owner_photo'),
+            ],
         ]);
     }
 }

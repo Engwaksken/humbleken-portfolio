@@ -17,7 +17,7 @@ class PasswordResetLinkResponse implements FailedPasswordResetLinkRequestRespons
     public function toResponse($request): JsonResponse|RedirectResponse
     {
         /** @var Request $request */
-        $message = 'If an account exists for that email, we have sent a password reset link.';
+        $message = 'If an account exists for that email, a password reset link has been sent to it.';
 
         return $request->wantsJson()
             ? new JsonResponse(['message' => $message], 200)

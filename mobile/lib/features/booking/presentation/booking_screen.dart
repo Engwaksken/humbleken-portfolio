@@ -26,7 +26,7 @@ class BookingScreen extends ConsumerWidget {
         header: page != null ? PageHeader(page: page) : const GradientHeader(title: 'Book a consultation'),
         children: [
           if (page != null) PageContentView(page: page, showSteps: false),
-          const SectionHeading(title: 'Request a time', subtitle: 'Choose a time that suits you and we will confirm.'),
+          const SectionHeading(title: 'Request a time', subtitle: 'Choose a time that suits you and I will confirm.'),
           const SizedBox(height: 16),
           SurfaceCard(child: BookingForm(initialServiceId: initialServiceId)),
           if (page != null && page.steps.isNotEmpty) ...[
@@ -238,7 +238,7 @@ class _BookingFormState extends ConsumerState<BookingForm> {
             ApiTextField(
               controller: _message,
               field: 'message',
-              label: 'Anything we should know? (optional)',
+              label: 'Anything I should know? (optional)',
               errors: _errors,
               validator: maxLength('message', 5000),
               maxLines: 5,

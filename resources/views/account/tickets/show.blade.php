@@ -17,7 +17,7 @@
             @foreach ($replies as $reply)
                 <li class="p-5 {{ $reply->isFromStaff() ? 'border-l-4 border-brand bg-brand-tint' : 'bg-white' }}">
                     <p class="text-sm text-muted">
-                        <span class="font-semibold text-ink">{{ $reply->isFromStaff() ? 'Support team' : 'You' }}</span>
+                        <span class="font-semibold text-ink">{{ $reply->isFromStaff() ? $owner['name'] : 'You' }}</span>
                         · <time datetime="{{ $reply->created_at->toAtomString() }}">{{ $reply->created_at->format('j M Y, H:i') }}</time>
                     </p>
                     <div class="mt-3 leading-7 whitespace-pre-line">{{ $reply->body }}</div>

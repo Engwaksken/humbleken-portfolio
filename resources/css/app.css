@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import '@fortawesome/fontawesome-free/css/fontawesome.min.css' layer(base);
 @import '@fortawesome/fontawesome-free/css/solid.min.css' layer(base);
+@import '@fortawesome/fontawesome-free/css/brands.min.css' layer(base);
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -194,6 +195,16 @@
     .markdown-body :where(img) { @apply mt-6 rounded-xl; }
     .markdown-body :where(table) { @apply mt-6 block w-full overflow-x-auto text-sm; }
     .markdown-body :where(th, td) { @apply border border-line px-3 py-2 text-left; }
+
+    /* Long-form article reading: comfortable size and spacing, headings clear the sticky header. */
+    .article-body { @apply text-[1.0625rem] leading-8 sm:text-lg sm:leading-[1.85]; }
+    .article-body :where(h2) { @apply mt-14 scroll-mt-28 text-[1.625rem] leading-tight sm:text-3xl; }
+    .article-body :where(h3) { @apply mt-10 scroll-mt-28; }
+    .article-body > :where(p:first-child) { @apply mt-0; }
+    .article-body :where(strong) { @apply font-semibold text-ink; }
+    .article-body :where(hr) { @apply my-12 border-line; }
+    .article-body :where(li)::marker { @apply text-brand; }
+    .article-body :where(img) { @apply w-full border border-line; }
 }
 
 /* Chat message content (assistant replies may contain line breaks and lists). */
@@ -357,4 +368,29 @@ html.a11y-reduced-motion *::marker {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/*
+ * Light text for headers drawn over a background image. Unlayered so it wins over the
+ * utility classes (text-muted, link colours) the shared header content already uses.
+ */
+.hero-on-image .eyebrow,
+.hero-on-image .text-muted {
+    color: rgb(255 255 255 / 0.82);
+}
+.hero-on-image .text-ink,
+.hero-on-image .link-arrow,
+.hero-on-image .breadcrumb a {
+    color: #fff;
+}
+.hero-on-image .breadcrumb a:hover,
+.hero-on-image .link-arrow:hover {
+    color: rgb(255 255 255 / 0.8);
+}
+.hero-on-image .chip {
+    background: rgb(255 255 255 / 0.16);
+    color: #fff;
+}
+.hero-on-image .author-avatar {
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.6);
 }

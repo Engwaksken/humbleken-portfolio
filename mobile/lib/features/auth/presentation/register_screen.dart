@@ -86,7 +86,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'After signing up we will email you a link to verify your address. '
+                      'After signing up you will receive an email with a link to verify your address. '
                       'You can open support tickets once it is verified.',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),

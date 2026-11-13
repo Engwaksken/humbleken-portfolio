@@ -117,7 +117,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: Routes.approach,
-        builder: (_, _) => const GenericPageScreen(pageKey: 'approach', fallbackTitle: 'Our approach'),
+        builder: (_, _) => const GenericPageScreen(pageKey: 'approach', fallbackTitle: 'My approach'),
       ),
       GoRoute(
         path: Routes.booking,

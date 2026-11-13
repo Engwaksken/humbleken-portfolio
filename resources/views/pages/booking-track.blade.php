@@ -24,7 +24,7 @@
                         @include('account.partials.booking-details', ['booking' => $result])
                     </div>
                 @elseif ($result === false)
-                    <p role="status" class="border-l-2 border-[#b42318] bg-white px-4 py-3 text-sm">We could not find a request with that reference and email. Check both and try again, or <a href="{{ route('contact') }}" class="font-semibold text-brand hover:text-brand-dark">contact us</a>.</p>
+                    <p role="status" class="border-l-2 border-[#b42318] bg-white px-4 py-3 text-sm">No request matches that reference and email. Check both and try again, or <a href="{{ route('contact') }}" class="font-semibold text-brand hover:text-brand-dark">contact me</a>.</p>
                 @endif
             </div>
 

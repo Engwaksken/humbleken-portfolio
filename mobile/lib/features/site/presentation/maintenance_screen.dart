@@ -40,7 +40,7 @@ class MaintenanceScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    site.maintenanceMessage ?? 'We are making some improvements and will be back shortly.',
+                    site.maintenanceMessage ?? 'I am making some improvements and the site will be back shortly.',
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyLarge,
                   ),

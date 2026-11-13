@@ -48,7 +48,7 @@ class ApiException implements Exception {
   static String defaultMessageFor(int? status) => switch (status) {
     401 => 'Your session has ended. Please sign in again.',
     403 => 'You do not have permission to do that.',
-    404 => 'We could not find what you were looking for.',
+    404 => 'That page or item could not be found.',
     422 => 'Please check the highlighted fields.',
     429 => 'Too many attempts. Please wait a minute and try again.',
     503 => 'The service is temporarily unavailable. Please try again shortly.',

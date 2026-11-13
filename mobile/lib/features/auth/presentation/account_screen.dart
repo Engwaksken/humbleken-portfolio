@@ -188,7 +188,7 @@ class _VerifyEmailBannerState extends ConsumerState<_VerifyEmailBanner> {
       final verified = ref.read(authControllerProvider).value?.emailVerified ?? false;
       if (mounted && !verified) {
         setState(
-          () => _status = 'Your email address is not verified yet. Open the link in the email we sent, then try again.',
+          () => _status = 'Your email address is not verified yet. Open the link in the confirmation email, then try again.',
         );
       }
     } catch (e) {
@@ -229,7 +229,7 @@ class _VerifyEmailBannerState extends ConsumerState<_VerifyEmailBanner> {
               ),
               const SizedBox(height: 8),
               Text(
-                'We sent a verification link to your email. Open it to activate support tickets.',
+                'A verification link has been sent to your email. Open it to activate support tickets.',
                 style: TextStyle(color: scheme.onTertiaryContainer),
               ),
               if (_status != null) ...[

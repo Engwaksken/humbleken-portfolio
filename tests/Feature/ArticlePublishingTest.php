@@ -55,7 +55,7 @@ class ArticlePublishingTest extends TestCase
             ->assertSee('<title>Choosing a router', false)
             ->assertSee('<meta property="og:type" content="article">', false)
             ->assertSee('article:published_time', false)
-            ->assertSee('<h2>Throughput</h2>', false)
+            ->assertSee('<h2 id="throughput">Throughput</h2>', false)
             ->assertSee('1 min read')
             ->assertSee(route('articles.index', ['category' => 'networking']), false)
             ->assertSee(route('articles.index', ['tag' => 'hardware']), false);

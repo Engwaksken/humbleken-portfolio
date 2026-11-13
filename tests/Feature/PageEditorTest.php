@@ -40,7 +40,7 @@ class PageEditorTest extends TestCase
             ->assertOk()
             ->assertSee('Engineering solutions for reliable, effective IT.')
             ->assertSee('Start with the challenge')
-            ->assertSee('Why work with us')
+            ->assertSee('Why work with me')
             ->assertSee('Have a technical challenge in mind?');
     }
 
@@ -218,7 +218,7 @@ class PageEditorTest extends TestCase
         PageContent::save('contact', array_merge(PageContent::raw('contact'), ['image' => $old]));
 
         Livewire::test(SitePages::class)
-            ->assertSee(['Hero', 'Why work with us', 'Recent work', 'Call to action'])
+            ->assertSee(['Hero', 'Why work with me', 'Recent work', 'Call to action'])
             ->set('data.home.hero_title', 'Edited in the admin')
             ->set('data.contact.title', 'Edited contact title')
             ->set('data.contact.image', null)

@@ -103,7 +103,7 @@
                     <a class="{{ $mobileLink }}" href="{{ route('account.dashboard') }}" @if (request()->routeIs('account.*')) aria-current="page" @endif>Your account<i class="fa-solid fa-chevron-right text-xs text-muted" aria-hidden="true"></i></a>
                 @endauth
                 <div class="mt-2 grid gap-2 border-t border-line pt-3 sm:grid-cols-2">
-                    <a class="btn-primary w-full" href="{{ route('contact') }}">Contact us</a>
+                    <a class="btn-primary w-full" href="{{ route('contact') }}">Contact me</a>
                     @auth
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -137,11 +137,11 @@
                     <li><a class="{{ $footerLink }}" href="{{ route('services.index') }}">Services</a></li>
                     @if ($hasPublishedProjects)<li><a class="{{ $footerLink }}" href="{{ route('projects.index') }}">Projects</a></li>@endif
                     @if ($hasPublishedArticles)<li><a class="{{ $footerLink }}" href="{{ route('articles.index') }}">Articles</a></li>@endif
-                    <li><a class="{{ $footerLink }}" href="{{ route('approach') }}">Our approach</a></li>
+                    <li><a class="{{ $footerLink }}" href="{{ route('approach') }}">My approach</a></li>
                 </ul>
             </div>
             <div class="lg:col-span-3">
-                <h2 class="text-xs font-bold tracking-[.18em] text-white uppercase">Work with us</h2>
+                <h2 class="text-xs font-bold tracking-[.18em] text-white uppercase">Work with me</h2>
                 <ul class="mt-3 space-y-2.5">
                     <li><a class="{{ $footerLink }}" href="{{ route('booking') }}">Book a consultation</a></li>
                     <li><a class="{{ $footerLink }}" href="{{ route('contact') }}">Contact</a></li>

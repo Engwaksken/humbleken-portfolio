@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\HeroImagePosition;
 use App\Enums\PublicationStatus;
 use App\Filament\Resources\ArticleResource\Pages;
 use App\Models\Article;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -81,6 +83,11 @@ class ArticleResource extends Resource
                                     ->label('Image description (alt text)')
                                     ->maxLength(255)
                                     ->helperText('Describe the image for people using screen readers. Leave empty if it is purely decorative.'),
+                                Radio::make('image_position')
+                                    ->label('Show the image')
+                                    ->options(HeroImagePosition::class)
+                                    ->default(HeroImagePosition::Below->value)
+                                    ->helperText('The article card always shows the image at the top.'),
                             ]),
                         Tab::make('Body')
                             ->icon(Heroicon::OutlinedDocumentText)

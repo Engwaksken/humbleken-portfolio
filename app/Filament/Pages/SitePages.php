@@ -195,7 +195,7 @@ class SitePages extends Page
                             TextInput::make('home.services_count')->label('Number of services to show')->numeric()->integer()->minValue(1)->maxValue(12)->required(),
                         ]),
                 ]),
-            Section::make('Why work with us')
+            Section::make('Why work with me')
                 ->collapsible()
                 ->schema([
                     Toggle::make('home.why_enabled')->label('Show this section')->live(),

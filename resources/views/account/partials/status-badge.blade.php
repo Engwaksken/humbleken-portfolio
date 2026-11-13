@@ -5,7 +5,7 @@
         \App\Enums\TicketStatus::Closed => 'bg-[#eef0f3] text-[#3d4b5c]',
     };
     $badgeLabel = match ($status) {
-        \App\Enums\TicketStatus::Open => 'Waiting for us',
+        \App\Enums\TicketStatus::Open => 'Waiting for my reply',
         \App\Enums\TicketStatus::Answered => 'Waiting for you',
         \App\Enums\TicketStatus::Closed => 'Closed',
     };

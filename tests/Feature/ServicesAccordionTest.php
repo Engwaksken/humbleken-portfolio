@@ -22,8 +22,9 @@ class ServicesAccordionTest extends TestCase
     {
         $category = ServiceCategory::factory()->create(['name' => $name, 'slug' => str($name)->slug(), 'sort_order' => $order, 'is_active' => true]);
 
-        foreach ($services as $service) {
-            Service::factory()->create(['name' => $service, 'service_category_id' => $category->id, 'is_active' => true]);
+        foreach ($services as $index => $service) {
+            // Fixed order: the factory otherwise picks a random sort_order.
+            Service::factory()->create(['name' => $service, 'service_category_id' => $category->id, 'is_active' => true, 'sort_order' => $index]);
         }
 
         return $category;

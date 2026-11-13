@@ -115,7 +115,13 @@ class ArticlePageTest extends TestCase
         ]);
         $page = fn () => $this->get(route('articles.show', $article->slug))->assertOk();
 
-        // Default: a full-width figure under the header.
+        // Default: the image fills a tall header with the title over its lower part.
+        $page()->assertSee('hero-on-image', false)
+            ->assertSee('lg:min-h-[40rem]', false)
+            ->assertSee('alt="Patch panel"', false)
+            ->assertDontSee('<figure class="container-site', false);
+
+        $article->update(['image_position' => HeroImagePosition::Below]);
         $page()->assertSee('<figure class="container-site', false)->assertDontSee('hero-on-image', false);
 
         $article->update(['image_position' => HeroImagePosition::Right]);
@@ -126,6 +132,20 @@ class ArticlePageTest extends TestCase
 
         $article->update(['image_position' => HeroImagePosition::Background]);
         $page()->assertSee('hero-on-image', false)->assertSee('alt="Patch panel"', false)->assertDontSee('<figure class="container-site', false);
+    }
+
+    public function test_service_background_image_keeps_the_standard_header_height(): void
+    {
+        $service = Service::factory()->create([
+            'is_active' => true,
+            'sample_image' => $this->image('service-samples/rack.png'),
+            'image_position' => HeroImagePosition::Background,
+        ]);
+
+        $this->get(route('services.show', $service->slug))
+            ->assertOk()
+            ->assertSee('hero-on-image', false)
+            ->assertDontSee('lg:min-h-[40rem]', false);
     }
 
     public function test_service_image_defaults_beside_the_title_and_can_move(): void

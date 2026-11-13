@@ -46,10 +46,10 @@ class Article extends Model
         return ['image_position' => HeroImagePosition::class];
     }
 
-    /** Where the featured image goes; articles default to a full-width image below the title. */
+    /** Where the featured image goes; articles default to filling the page header behind the title. */
     public function featuredImagePosition(): HeroImagePosition
     {
-        return $this->image_position ?? HeroImagePosition::Below;
+        return $this->image_position ?? HeroImagePosition::Background;
     }
 
     protected static function booted(): void

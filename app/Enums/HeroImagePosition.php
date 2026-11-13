@@ -25,7 +25,7 @@ enum HeroImagePosition: string implements HasLabel
             self::Below => 'Below the title (full width)',
             self::Right => 'Beside the title, on the right',
             self::Left => 'Beside the title, on the left',
-            self::Background => 'Behind the title (background)',
+            self::Background => 'Fill the page header, behind the title',
         };
     }
 

@@ -43,7 +43,7 @@
     </div>
 
     <x-page-hero :eyebrow="$article->category?->name" :title="$article->title" :intro="$article->excerpt" :intro-lines="0" title-id="article-title"
-        :narrow="! in_array($heroPosition, ['right', 'left'], true)" :image="$heroPosition ? $imageUrl : null" :image-alt="(string) $article->featured_image_alt" :image-position="$heroPosition">
+        :narrow="! in_array($heroPosition, ['right', 'left'], true)" :image="$heroPosition ? $imageUrl : null" :image-alt="(string) $article->featured_image_alt" :image-position="$heroPosition" full>
         <x-slot:before>
             <nav aria-label="Breadcrumb" class="breadcrumb mb-8">
                 <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">

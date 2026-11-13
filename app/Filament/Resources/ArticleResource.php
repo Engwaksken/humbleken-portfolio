@@ -86,7 +86,7 @@ class ArticleResource extends Resource
                                 Radio::make('image_position')
                                     ->label('Show the image')
                                     ->options(HeroImagePosition::class)
-                                    ->default(HeroImagePosition::Below->value)
+                                    ->default(HeroImagePosition::Background->value)
                                     ->helperText('The article card always shows the image at the top.'),
                             ]),
                         Tab::make('Body')

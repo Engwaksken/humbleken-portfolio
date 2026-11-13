@@ -9,19 +9,36 @@
     'imageAlt' => '',
     // right, left or background. Anything else (or no image) gives a text-only header.
     'imagePosition' => 'right',
+    // With a background image: a taller header with the text at the bottom, so the image shows in full.
+    'full' => false,
 ])
 @php
     $imagePosition = in_array($imagePosition, ['right', 'left', 'background'], true) ? $imagePosition : null;
     $background = $image && $imagePosition === 'background';
     $side = $image && in_array($imagePosition, ['right', 'left'], true);
+    $full = $background && $full;
 @endphp
-<section {{ $attributes->class(['page-hero', 'relative isolate overflow-hidden', 'hero-on-image bg-secondary text-white' => $background, 'hero-glow' => ! $background]) }}>
+<section {{ $attributes->class([
+    'page-hero', 'relative isolate overflow-hidden',
+    'hero-on-image bg-secondary text-white' => $background,
+    'flex min-h-[28rem] items-end sm:min-h-[34rem] lg:min-h-[40rem]' => $full,
+    'hero-glow' => ! $background,
+]) }}>
     @if ($background)
         <img src="{{ $image }}" alt="{{ $imageAlt }}" class="absolute inset-0 -z-10 h-full w-full object-cover" fetchpriority="high">
-        {{-- Darkens the photo so the text keeps a readable contrast whatever the image. --}}
-        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-secondary/95 via-secondary/85 to-secondary/60" aria-hidden="true"></div>
+        {{-- Darkens the photo where the text sits so it stays readable whatever the image. --}}
+        <div @class([
+            'absolute inset-0 -z-10',
+            'bg-gradient-to-t from-secondary via-secondary/75 to-secondary/10' => $full,
+            'bg-gradient-to-r from-secondary/95 via-secondary/85 to-secondary/60' => ! $full,
+        ]) aria-hidden="true"></div>
     @endif
-    <div @class(['container-site section', 'grid gap-layout lg:grid-cols-12 lg:items-center' => $side, 'py-16 sm:py-24 lg:py-28' => $background])>
+    <div @class([
+        'container-site section',
+        'grid gap-layout lg:grid-cols-12 lg:items-center' => $side,
+        'py-16 sm:py-24 lg:py-28' => $background && ! $full,
+        'w-full pt-24 pb-10 sm:pb-12 lg:pb-14' => $full,
+    ])>
         <div @class([
             'hero-enter',
             'lg:col-span-7' => $side,

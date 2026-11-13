@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Account;
 
 use App\Enums\TicketStatus;
 use App\Http\Controllers\Controller;
+use App\Models\BookingRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,7 @@ class DashboardController extends Controller
         return view('account.dashboard', [
             'recentTickets' => (clone $tickets)->latest('last_activity_at')->limit(5)->get(),
             'awaitingYou' => (clone $tickets)->where('status', TicketStatus::Answered)->count(),
+            'recentBookings' => BookingRequest::query()->ownedBy($request->user())->with('service')->latest()->limit(3)->get(),
         ]);
     }
 }

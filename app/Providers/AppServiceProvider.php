@@ -32,12 +32,13 @@ class AppServiceProvider extends ServiceProvider
             'projects.index', 'projects.show',
             'articles.index', 'articles.show',
             'auth.login', 'auth.register', 'auth.forgot-password', 'auth.reset-password', 'auth.verify-email', 'auth.confirm-password',
-            'account.dashboard', 'account.tickets.index', 'account.tickets.create', 'account.tickets.show',
+            'account.dashboard', 'account.bookings.index', 'account.tickets.index', 'account.tickets.create', 'account.tickets.show',
             'pages.*',
             'welcome',
         ], SiteComposer::class);
 
         RateLimiter::for('enquiries', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+        RateLimiter::for('booking-track', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('chatbot', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('api-auth', fn (Request $request) => Limit::perMinute(6)->by($request->ip()));
         RateLimiter::for('api-content', fn (Request $request) => Limit::perMinute(120)->by($request->user()?->id ?: $request->ip()));

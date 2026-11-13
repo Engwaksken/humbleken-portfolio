@@ -36,6 +36,22 @@
             </div>
         </section>
 
+        <section aria-labelledby="bookings-title" class="mt-10 sm:mt-12">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <h2 id="bookings-title" class="text-2xl font-semibold">Bookings and services</h2>
+                <a href="{{ route('booking') }}" class="btn-ghost w-full sm:w-fit">Request an appointment</a>
+            </div>
+
+            <div class="mt-6">
+                @if ($recentBookings->isEmpty())
+                    <p class="border-l-2 border-brand py-2 pl-4 text-muted">You have no appointment requests yet.</p>
+                @else
+                    @include('account.partials.booking-list', ['bookings' => $recentBookings])
+                    <p class="mt-4 text-sm"><a href="{{ route('account.bookings.index') }}" class="{{ $linkClass }}">All bookings</a></p>
+                @endif
+            </div>
+        </section>
+
         <section aria-labelledby="password-title" class="mt-10 max-w-md sm:mt-12">
             <h2 id="password-title" class="text-2xl font-semibold">Change password</h2>
             <form method="POST" action="{{ route('user-password.update') }}" class="mt-6 grid gap-4 card p-5 sm:p-6 lg:p-8" novalidate>

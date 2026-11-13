@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Account\BookingController;
 use App\Http\Controllers\Account\DashboardController;
 use App\Http\Controllers\Account\SupportTicketController;
 use App\Http\Controllers\Account\TicketAttachmentController;
@@ -48,12 +49,17 @@ Route::post('/enquiries', [EnquiryController::class, 'store'])
 Route::post('/booking-requests', [BookingRequestController::class, 'store'])
     ->middleware('throttle:enquiries')
     ->name('booking-requests.store');
+Route::get('/booking/track', [BookingRequestController::class, 'track'])->name('booking.track');
+Route::post('/booking/track', [BookingRequestController::class, 'track'])
+    ->middleware('throttle:booking-track')
+    ->name('booking.track.lookup');
 Route::post('/chatbot/messages', [ChatbotController::class, 'store'])
     ->middleware('throttle:chatbot')
     ->name('chatbot.messages');
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('account.')->group(function (): void {
     Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
 
     Route::get('/tickets', [SupportTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/create', [SupportTicketController::class, 'create'])->name('tickets.create');

@@ -1,29 +1,60 @@
 @php
     ['hero' => $hero, 'services' => $servicesSection, 'why' => $why, 'projects' => $projectsSection, 'cta' => $cta] = $page;
     $showProjects = $projectsSection['enabled'] && $featuredProjects->isNotEmpty();
+    $heroHasImage = $hero['aside'] === 'image';
+    // The image either sits in a column (left or right of the text) or fills the hero behind it.
+    $heroBackground = $heroHasImage && $hero['image_position'] === 'background';
+    $heroImageSide = $heroHasImage && ! $heroBackground ? $hero['image_position'] : null;
+    $heroHasAside = $heroImageSide !== null || $hero['aside'] === 'card';
 @endphp
 <x-layouts.site :title="$brandName.' — '.$tagline" :description="$hero['intro']">
     {{-- Hero --}}
-    <section class="border-b border-line bg-white">
+    <section @class([
+        'relative isolate overflow-hidden border-b border-line',
+        'bg-white' => ! $heroBackground,
+        'hero-on-image bg-secondary text-white' => $heroBackground,
+    ])>
+        @if ($heroBackground)
+            <img src="{{ $hero['image_url'] }}" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" fetchpriority="high">
+            {{-- Darkens the photo so the text keeps a readable contrast whatever the image. --}}
+            <div class="absolute inset-0 -z-10 bg-gradient-to-r from-secondary/95 via-secondary/80 to-secondary/50" aria-hidden="true"></div>
+        @endif
         <div class="container-site section grid gap-layout lg:grid-cols-12 lg:items-center">
-            <div @class(['lg:col-span-7' => $hero['aside'] !== 'none', 'lg:col-span-9' => $hero['aside'] === 'none'])>
+            <div @class([
+                'lg:col-span-7' => $heroHasAside,
+                'lg:col-span-9' => ! $heroHasAside,
+                'lg:order-last' => $heroImageSide === 'left',
+            ])>
                 @if (filled($hero['eyebrow']))
-                    <p class="eyebrow">{{ $hero['eyebrow'] }}</p>
+                    <p @class(['eyebrow', 'text-white/80!' => $heroBackground])>{{ $hero['eyebrow'] }}</p>
                 @endif
                 <h1 class="mt-4 text-[clamp(2rem,6vw,4.25rem)] leading-[1.05] font-semibold tracking-tight text-balance">{{ $hero['title'] }}</h1>
                 @if (filled($hero['intro']))
-                    <p class="mt-4 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8 text-pretty">{{ $hero['intro'] }}</p>
+                    <div class="mt-4 max-w-2xl" @if ($hero['intro_lines'] > 0) data-read-more style="--read-more-lines: {{ $hero['intro_lines'] }}" @endif>
+                        <p id="hero-intro" data-read-more-text @class([
+                            'text-base leading-7 sm:text-lg sm:leading-8 text-pretty',
+                            'text-muted' => ! $heroBackground,
+                            'text-white/85' => $heroBackground,
+                        ])>{{ $hero['intro'] }}</p>
+                        @if ($hero['intro_lines'] > 0)
+                            <button type="button" class="read-more-toggle" data-read-more-toggle aria-controls="hero-intro" aria-expanded="false" hidden>
+                                <span data-read-more-label>Read more</span>
+                                <i class="fa-solid fa-chevron-down text-xs transition-transform" aria-hidden="true"></i>
+                            </button>
+                        @endif
+                    </div>
                 @endif
                 <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ route('services.index') }}" class="btn-primary">{{ $hero['primary_label'] }} <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></a>
-                    <a href="{{ route('booking') }}" class="btn-ghost">{{ $hero['secondary_label'] }}</a>
+                    <a href="{{ route('booking') }}" @class(['btn-ghost', 'border-white/60! bg-transparent! text-white! hover:bg-white/10!' => $heroBackground])>{{ $hero['secondary_label'] }}</a>
                 </div>
             </div>
-            @if ($hero['aside'] === 'image')
+            @if ($heroImageSide)
                 <div class="lg:col-span-5">
                     <img src="{{ $hero['image_url'] }}" alt="{{ $hero['image_alt'] }}" class="aspect-[4/3] w-full rounded-2xl border border-line object-cover" fetchpriority="high">
                 </div>
-            @elseif ($hero['aside'] === 'card')
+            @endif
+            @if ($hero['aside'] === 'card')
                 <aside class="lg:col-span-5" aria-label="How to get started">
                     <div class="card p-5 sm:p-8">
                         @if (filled($hero['card']['eyebrow']))

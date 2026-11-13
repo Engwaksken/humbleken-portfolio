@@ -8,12 +8,12 @@
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-TVZPuiTZ.css",
+    "file": "assets/app-DSkhyth6.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-l_sNAscT.js",
+    "file": "assets/app-DWgdWHVk.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true

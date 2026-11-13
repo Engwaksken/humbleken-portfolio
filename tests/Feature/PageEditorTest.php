@@ -105,6 +105,44 @@ class PageEditorTest extends TestCase
         $this->get(route('page-media.show', ['file' => 'hero.png']))->assertOk();
     }
 
+    public function test_hero_image_can_sit_left_right_or_behind_the_text(): void
+    {
+        $path = $this->storeImage('hero.png');
+        $save = fn (string $position) => PageContent::save('home', array_merge(PageContent::raw('home'), [
+            'hero_aside' => 'image',
+            'hero_image' => $path,
+            'hero_image_alt' => 'Server rack',
+            'hero_image_position' => $position,
+        ]));
+
+        $save('left');
+        $this->get('/')->assertOk()->assertSee('lg:order-last', false)->assertSee('alt="Server rack"', false);
+
+        $save('right');
+        $this->get('/')->assertOk()->assertDontSee('lg:order-last', false)->assertDontSee('hero-on-image', false);
+
+        // As a background the image is decorative, and the text sits on a darkened overlay.
+        $save('background');
+        $this->get('/')->assertOk()
+            ->assertSee('hero-on-image', false)
+            ->assertSee(route('page-media.show', ['file' => 'hero.png']), false)
+            ->assertDontSee('alt="Server rack"', false);
+
+        $save('somewhere-else');
+        $this->assertSame('right', PageContent::get('home')['hero']['image_position']);
+    }
+
+    public function test_hero_intro_gets_a_read_more_toggle_unless_turned_off(): void
+    {
+        $this->get('/')->assertOk()
+            ->assertSee('data-read-more style="--read-more-lines: 2"', false)
+            ->assertSee('Read more');
+
+        PageContent::save('home', array_merge(PageContent::raw('home'), ['hero_intro_lines' => 0]));
+
+        $this->get('/')->assertOk()->assertDontSee('data-read-more style', false)->assertDontSee('data-read-more-toggle', false);
+    }
+
     public function test_image_aside_without_an_image_falls_back_to_text_only(): void
     {
         PageContent::save('home', array_merge(PageContent::raw('home'), ['hero_aside' => 'image', 'hero_image' => null]));

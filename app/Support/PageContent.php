@@ -45,6 +45,13 @@ class PageContent
         'none' => 'Nothing (text only)',
     ];
 
+    /** Where the hero image sits when the hero shows an image. */
+    public const HERO_IMAGE_POSITIONS = [
+        'right' => 'Right of the text',
+        'left' => 'Left of the text',
+        'background' => 'Behind the text (background)',
+    ];
+
     /**
      * Default content for each page, in the flat shape used by the admin form.
      *
@@ -58,12 +65,14 @@ class PageContent
             'home' => [
                 'hero_eyebrow' => '',
                 'hero_title' => 'Engineering solutions for reliable, effective IT.',
-                'hero_intro' => 'Technical consulting to diagnose recurring issues, improve systems, and guide technology decisions. Get clear recommendations and practical engineering support, explained without unnecessary jargon.',
+                'hero_intro' => 'Practical IT consulting that finds the cause of recurring problems and fixes it. We assess your systems, explain the options in plain language and help you choose a sensible way forward. From a single troublesome server to a wider infrastructure review, you get clear recommendations and hands-on engineering support through to a working result.',
+                'hero_intro_lines' => 2,
                 'hero_primary_label' => 'Explore services',
                 'hero_secondary_label' => 'Book a consultation',
                 'hero_aside' => 'card',
                 'hero_image' => null,
                 'hero_image_alt' => '',
+                'hero_image_position' => 'right',
                 'card_eyebrow' => 'Start with the challenge',
                 'card_text' => 'Describe the issue or objective. We can clarify the requirements and identify a suitable path forward.',
                 'card_steps' => [
@@ -291,12 +300,15 @@ class PageContent
                 'eyebrow' => filled($raw['hero_eyebrow']) ? $raw['hero_eyebrow'] : (Settings::get('tagline') ?: 'Engineering solutions and technical consulting'),
                 'title' => $raw['hero_title'],
                 'intro' => $raw['hero_intro'],
+                // Lines of the introduction shown before "Read more"; 0 shows it all.
+                'intro_lines' => max(0, min(10, (int) $raw['hero_intro_lines'])),
                 'primary_label' => $raw['hero_primary_label'],
                 'secondary_label' => $raw['hero_secondary_label'],
                 // An image aside without an image would leave an empty column.
                 'aside' => $aside === 'image' && $heroImage === null ? 'none' : $aside,
                 'image_url' => $heroImage,
                 'image_alt' => (string) $raw['hero_image_alt'],
+                'image_position' => array_key_exists($raw['hero_image_position'], static::HERO_IMAGE_POSITIONS) ? $raw['hero_image_position'] : 'right',
                 'card' => [
                     'eyebrow' => $raw['card_eyebrow'],
                     'text' => $raw['card_text'],

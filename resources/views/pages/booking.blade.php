@@ -7,7 +7,15 @@
                 @if (session('booking_sent'))
                     <div role="status" class="card flex items-start gap-4 border-brand/40 p-5 sm:p-8">
                         <i class="fa-solid fa-circle-check pt-0.5 text-2xl text-brand" aria-hidden="true"></i>
-                        <p class="font-medium">Thank you. Your appointment request has been received.</p>
+                        <div>
+                            <p class="font-medium">Thank you. Your appointment request has been received.</p>
+                            @if (is_string(session('booking_sent')))
+                                <p class="mt-2 text-sm leading-6 text-muted">
+                                    Your reference is <span class="font-mono font-semibold text-ink">{{ session('booking_sent') }}</span>.
+                                    Keep it to <a href="{{ route('booking.track') }}" class="font-semibold text-brand hover:text-brand-dark">track your booking</a>@auth, or follow it under <a href="{{ route('account.bookings.index') }}" class="font-semibold text-brand hover:text-brand-dark">your bookings</a>@endauth.
+                                </p>
+                            @endif
+                        </div>
                     </div>
                 @else
                     <form method="POST" action="{{ route('booking-requests.store') }}" class="card grid gap-4 p-5 sm:grid-cols-2 sm:p-6 lg:p-8" novalidate>
@@ -59,6 +67,9 @@
                             </li>
                         @endforeach
                     </ol>
+                    <p class="mt-6 border-t border-line pt-5 text-sm">
+                        Already sent a request? <a href="{{ route('booking.track') }}" class="font-semibold text-brand hover:text-brand-dark">Track your booking</a>
+                    </p>
                 </div>
             </aside>
         </div>

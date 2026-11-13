@@ -145,7 +145,15 @@ class SitePages extends Page
                         ->placeholder('Defaults to the site tagline')
                         ->maxLength(255),
                     TextInput::make('home.hero_title')->label('Title')->required()->maxLength(255),
-                    Textarea::make('home.hero_intro')->label('Introduction')->rows(3)->maxLength(1000),
+                    Textarea::make('home.hero_intro')->label('Introduction')->rows(4)->maxLength(2000),
+                    TextInput::make('home.hero_intro_lines')
+                        ->label('Introduction lines shown before "Read more"')
+                        ->helperText('Longer introductions are shortened to this many lines with a "Read more" link. Use 0 to always show the full text.')
+                        ->numeric()
+                        ->integer()
+                        ->minValue(0)
+                        ->maxValue(10)
+                        ->default(2),
                     Grid::make(2)->schema([
                         TextInput::make('home.hero_primary_label')->label('Main button text')->helperText('Links to the services page.')->required()->maxLength(60),
                         TextInput::make('home.hero_secondary_label')->label('Second button text')->helperText('Links to the booking page.')->required()->maxLength(60),
@@ -157,6 +165,12 @@ class SitePages extends Page
                         ->inline()
                         ->live(),
                     $this->imageUpload('home.hero_image', 'Hero image')
+                        ->visible(fn (Get $get): bool => $get('home.hero_aside') === 'image'),
+                    Radio::make('home.hero_image_position')
+                        ->label('Image position')
+                        ->options(PageContent::HERO_IMAGE_POSITIONS)
+                        ->default('right')
+                        ->inline()
                         ->visible(fn (Get $get): bool => $get('home.hero_aside') === 'image'),
                     $this->altText('home.hero_image_alt')
                         ->visible(fn (Get $get): bool => $get('home.hero_aside') === 'image'),

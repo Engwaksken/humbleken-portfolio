@@ -33,10 +33,13 @@ class SubmissionController extends Controller
         // The app sends local time with a UTC offset; store it in the site's time zone.
         $data['preferred_at'] = Carbon::parse($data['preferred_at'])->setTimezone(config('app.timezone'));
 
-        $booking = BookingRequest::create($data);
+        $booking = BookingRequest::create($data + ['user_id' => $request->user('sanctum')?->getKey()]);
 
         Notification::send(User::query()->where('is_admin', true)->get(), new BookingRequestReceived($booking));
 
-        return response()->json(['message' => 'Thank you. Your appointment request has been received. We will contact you to confirm availability.'], 201);
+        return response()->json([
+            'message' => 'Thank you. Your appointment request has been received. We will contact you to confirm availability.',
+            'reference' => $booking->reference,
+        ], 201);
     }
 }

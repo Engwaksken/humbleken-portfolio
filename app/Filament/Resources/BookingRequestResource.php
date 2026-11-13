@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\BookingStatus;
 use App\Filament\Resources\BookingRequestResource\Pages;
 use App\Models\BookingRequest;
 use BackedEnum;
@@ -9,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -33,18 +35,28 @@ class BookingRequestResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([Select::make('status')->options(['new' => 'New', 'contacted' => 'Contacted', 'confirmed' => 'Confirmed', 'declined' => 'Declined'])->required()]);
+        return $schema->components([
+            Select::make('status')->options(BookingStatus::class)->required(),
+            Textarea::make('customer_note')
+                ->label('Note to the customer')
+                ->helperText('Shown when the customer tracks this request, e.g. the confirmed time or meeting link.')
+                ->rows(3)
+                ->maxLength(1000),
+        ])->columns(1);
     }
 
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
             Section::make('Appointment request')->schema([
+                TextEntry::make('reference')->copyable(),
+                TextEntry::make('user.name')->label('Customer account')->placeholder('Made as a guest'),
                 TextEntry::make('name'), TextEntry::make('email')->copyable(), TextEntry::make('phone')->placeholder('Not provided'),
                 TextEntry::make('service.name')->label('Service')->placeholder('Not specified'),
                 TextEntry::make('preferred_at')->label('Preferred time')->dateTime(),
                 TextEntry::make('message')->placeholder('No message')->columnSpanFull(),
                 TextEntry::make('status')->badge(), TextEntry::make('created_at')->label('Received')->dateTime(),
+                TextEntry::make('customer_note')->label('Note to the customer')->placeholder('None')->columnSpanFull(),
             ])->columns(2),
         ]);
     }
@@ -52,6 +64,7 @@ class BookingRequestResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
+            TextColumn::make('reference')->searchable()->copyable()->fontFamily('mono'),
             TextColumn::make('preferred_at')->label('Preferred time')->dateTime()->sortable(),
             TextColumn::make('name')->searchable(), TextColumn::make('email')->searchable(),
             TextColumn::make('service.name')->label('Service'), TextColumn::make('status')->badge()->sortable(),
@@ -59,6 +72,7 @@ class BookingRequestResource extends Resource
             ViewAction::make()->modalWidth(Width::ThreeExtraLarge),
             EditAction::make()->label('Update status')->using(function (BookingRequest $record, array $data): BookingRequest {
                 $record->status = $data['status'];
+                $record->customer_note = $data['customer_note'] ?? null;
                 $record->save();
 
                 return $record;

@@ -394,3 +394,120 @@ html.a11y-reduced-motion *::marker {
 .hero-on-image .author-avatar {
     box-shadow: 0 0 0 2px rgb(255 255 255 / 0.6);
 }
+
+/* ------------------------------------------------------------------------------------------
+ * Page effects. All motion is switched off by the reduced-motion rules above (system setting
+ * or the accessibility panel), and scroll reveal is only applied by resources/js/reveal.js.
+ * ---------------------------------------------------------------------------------------- */
+
+/* Scroll reveal. Uses `transform` so it never fights the `translate` hover lift on cards. */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+        opacity 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms),
+        transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+}
+.reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+}
+
+/* Header entrance: text lines rise in one after another, the image settles into place. */
+@keyframes hero-rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes hero-settle {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+.hero-enter > * {
+    animation: hero-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.hero-enter > :nth-child(2) { animation-delay: 0.06s; }
+.hero-enter > :nth-child(3) { animation-delay: 0.12s; }
+.hero-enter > :nth-child(4) { animation-delay: 0.18s; }
+.hero-enter > :nth-child(5) { animation-delay: 0.24s; }
+.hero-enter > :nth-child(n + 6) { animation-delay: 0.3s; }
+.hero-media {
+    animation: hero-settle 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+}
+
+/* Soft brand-coloured glow and dot pattern behind plain (non-image) headers. */
+.hero-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(38rem 24rem at 92% -10%, color-mix(in srgb, var(--color-brand) 14%, transparent), transparent 70%),
+        radial-gradient(30rem 20rem at -6% 110%, color-mix(in srgb, var(--color-secondary) 8%, transparent), transparent 70%),
+        radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--color-ink) 9%, transparent) 1px, transparent 0) 0 0 / 22px 22px;
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+
+/* Arrows in buttons and links nudge forward on hover. */
+.btn-primary i.fa-arrow-right,
+.btn-ghost i.fa-arrow-right,
+.btn-light i.fa-arrow-right,
+.link-arrow i.fa-arrow-right {
+    transition: transform 0.2s ease;
+}
+.btn-primary:hover i.fa-arrow-right,
+.btn-ghost:hover i.fa-arrow-right,
+.btn-light:hover i.fa-arrow-right,
+.group:hover .link-arrow i.fa-arrow-right,
+.link-arrow:hover i.fa-arrow-right {
+    transform: translateX(3px);
+}
+
+/* Primary buttons get a soft brand shadow on hover. */
+.btn-primary:hover {
+    box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+
+/* Services areas: open and close smoothly where the browser supports animating <details>. */
+.service-group {
+    interpolate-size: allow-keywords;
+}
+.service-group::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+        block-size 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+        content-visibility 0.35s allow-discrete;
+}
+.service-group[open]::details-content {
+    block-size: auto;
+}
+.service-group[open] .service-group-body {
+    animation: hero-rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.service-group:has(summary:focus-visible) {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+.service-group > summary:focus-visible {
+    outline: none;
+}
+
+/* The global reduced-motion rules do not reach this pseudo-element. */
+html.a11y-reduced-motion .service-group::details-content {
+    transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .service-group::details-content {
+        transition: none;
+    }
+}
+
+/* Background header images ease in with a slow zoom. */
+@keyframes hero-zoom {
+    from { transform: scale(1.08); }
+    to { transform: none; }
+}
+.hero-on-image > img:first-child {
+    animation: hero-zoom 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}

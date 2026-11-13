@@ -11,7 +11,7 @@
     {{-- Hero --}}
     <section @class([
         'relative isolate overflow-hidden border-b border-line',
-        'bg-white' => ! $heroBackground,
+        'bg-white hero-glow' => ! $heroBackground,
         'hero-on-image bg-secondary text-white' => $heroBackground,
     ])>
         @if ($heroBackground)
@@ -21,6 +21,7 @@
         @endif
         <div class="container-site section grid gap-layout lg:grid-cols-12 lg:items-center">
             <div @class([
+                'hero-enter',
                 'lg:col-span-7' => $heroHasAside,
                 'lg:col-span-9' => ! $heroHasAside,
                 'lg:order-last' => $heroImageSide === 'left',
@@ -39,12 +40,12 @@
                 </div>
             </div>
             @if ($heroImageSide)
-                <div class="lg:col-span-5">
+                <div class="hero-media lg:col-span-5">
                     <img src="{{ $hero['image_url'] }}" alt="{{ $hero['image_alt'] }}" class="aspect-[4/3] w-full rounded-2xl border border-line object-cover" fetchpriority="high">
                 </div>
             @endif
             @if ($hero['aside'] === 'card')
-                <aside class="lg:col-span-5" aria-label="How to get started">
+                <aside class="hero-media lg:col-span-5" aria-label="How to get started">
                     <div class="card p-5 sm:p-8">
                         @if (filled($hero['card']['eyebrow']))
                             <p class="eyebrow">{{ $hero['card']['eyebrow'] }}</p>

@@ -1,5 +1,5 @@
 <x-layouts.site :title="'Confirm your password — '.$brandName">
-    <x-auth-card heading="Confirm your password" intro="Please confirm your password to continue.">
+    <x-auth-card heading="Confirm your password" intro="Please confirm your password to continue." :brand-name="$brandName" :logo-url="$logoUrl">
         <form method="POST" action="{{ route('password.confirm.store') }}" class="grid gap-4" novalidate>
             @csrf
             <x-form.errors />

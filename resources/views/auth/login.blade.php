@@ -1,5 +1,5 @@
 <x-layouts.site :title="'Sign in — '.$brandName">
-    <x-auth-card heading="Sign in" intro="Sign in to view and reply to your support tickets.">
+    <x-auth-card heading="Sign in" intro="Sign in to view and reply to your support tickets." :brand-name="$brandName" :logo-url="$logoUrl">
         <form method="POST" action="{{ route('login.store') }}" class="grid gap-4" novalidate>
             @csrf
             <x-form.errors />

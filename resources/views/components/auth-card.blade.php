@@ -1,4 +1,4 @@
-@props(['heading', 'intro' => null])
+@props(['heading', 'intro' => null, 'brandName', 'logoUrl' => null])
 <section aria-labelledby="auth-title" class="section flex flex-1 items-center px-4 py-8 sm:py-12">
     <div class="mx-auto w-full max-w-md">
         <div class="card p-5 shadow-[0_24px_60px_-24px_rgb(20_38_61/0.3)] sm:p-8">

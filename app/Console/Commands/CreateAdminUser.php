@@ -56,6 +56,8 @@ class CreateAdminUser extends Command
         ]);
         $user->is_admin = true;
         $user->email_verified_at = now();
+        // Lets the administrator get a sign-in code by email if the authenticator app is unavailable.
+        $user->has_email_authentication = true;
         $user->save();
 
         $this->info("Administrator account created for {$user->email}.");

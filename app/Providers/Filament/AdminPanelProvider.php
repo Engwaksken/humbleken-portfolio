@@ -2,9 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Notifications\TwoFactorEmailCode;
 use App\Support\Settings;
 use App\Support\Theme;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -46,7 +48,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(PanelsRenderHook::STYLES_AFTER, fn (): View => view('filament.admin-styles'))
             ->multiFactorAuthentication(
-                [AppAuthentication::make()->recoverable()],
+                [
+                    AppAuthentication::make()->recoverable(),
+                    // Fallback when the authenticator app is unavailable: a one-time code by email.
+                    EmailAuthentication::make()
+                        ->codeNotification(TwoFactorEmailCode::class)
+                        ->codeExpiryMinutes(10),
+                ],
                 isRequired: fn (): bool => (bool) config('app.admin_mfa_required'),
             )
             // Branding follows admin Settings; rescue() keeps the panel usable before migrations run.

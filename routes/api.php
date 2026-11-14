@@ -28,6 +28,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('/articles', [ContentController::class, 'articles'])->name('articles.index');
         Route::get('/articles/{slug}', [ContentController::class, 'article'])->name('articles.show');
         Route::get('/article-categories', [ContentController::class, 'articleCategories'])->name('article-categories.index');
+        Route::get('/privacy-policy', [ContentController::class, 'privacyPolicy'])->name('privacy-policy');
     });
 
     // Public submissions.
@@ -46,6 +47,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::prefix('auth')->name('auth.')->group(function (): void {
             Route::get('/user', [AuthController::class, 'user'])->name('user');
             Route::put('/notification-preferences', [AuthController::class, 'updateNotificationPreferences'])->name('notification-preferences.update');
+            Route::delete('/account', [AuthController::class, 'deleteAccount'])->middleware('throttle:api-auth')->name('account.destroy');
             Route::post('/email/verification-notification', [AuthController::class, 'resendVerification'])
                 ->middleware('throttle:api-auth')
                 ->name('verification.send');

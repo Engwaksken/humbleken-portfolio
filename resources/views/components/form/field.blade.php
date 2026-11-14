@@ -9,9 +9,11 @@
     'hint' => null,
     'rows' => null,
     'bag' => 'default',
+    'id' => null,
 ])
 @php
-    $id = 'field-'.$name;
+    // Pass an id when two forms on one page share a field name.
+    $id = $id ?? 'field-'.$name;
     $error = $errors->getBag($bag)->first($name);
     $describedBy = trim(($hint ? $id.'-hint ' : '').($error ? $id.'-error' : ''));
     $inputClass = 'input';

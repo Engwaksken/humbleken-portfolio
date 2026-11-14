@@ -13,7 +13,7 @@ class SitemapController extends Controller
         $projects = Project::query()->published()->get(['slug', 'updated_at']);
         $articles = Article::query()->published()->get(['slug', 'updated_at']);
 
-        $urls = collect([['loc' => route('home'), 'lastmod' => null]])
+        $urls = collect([['loc' => route('home'), 'lastmod' => null], ['loc' => route('privacy'), 'lastmod' => null]])
             ->when($projects->isNotEmpty(), fn ($urls) => $urls->push(['loc' => route('projects.index'), 'lastmod' => null]))
             ->when($articles->isNotEmpty(), fn ($urls) => $urls->push(['loc' => route('articles.index'), 'lastmod' => null]))
             ->concat($projects->map(fn (Project $project) => [

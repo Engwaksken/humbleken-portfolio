@@ -84,5 +84,22 @@
                 <x-button>Change password</x-button>
             </form>
         </section>
+
+        <section aria-labelledby="delete-account-title" class="mt-10 max-w-md sm:mt-12">
+            <h2 id="delete-account-title" class="text-2xl font-semibold">Delete account</h2>
+            <form method="POST" action="{{ route('account.destroy') }}" class="mt-6 grid gap-4 card border-[#b42318]/30 p-5 sm:p-6 lg:p-8" novalidate>
+                @csrf
+                @method('DELETE')
+                <p class="text-sm text-muted">This permanently deletes your account, your support tickets and attachments, and the bookings and enquiries linked to your account. It cannot be undone.</p>
+                <x-form.errors bag="deleteAccount" />
+                <x-form.field name="password" id="field-delete-password" label="Your password" type="password" autocomplete="current-password" required bag="deleteAccount" />
+                <label class="flex items-start gap-3 text-sm">
+                    <input type="checkbox" name="confirm" value="1" class="mt-0.5 size-4 accent-[#b42318]" required>
+                    <span>I understand my account and its data will be permanently deleted.</span>
+                </label>
+                @error('confirm', 'deleteAccount')<p class="text-sm text-[#b42318]">{{ $message }}</p>@enderror
+                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#b42318] px-5 py-3 font-semibold text-white hover:bg-[#912018] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b42318]">Delete my account</button>
+            </form>
+        </section>
     </div>
 </x-layouts.site>

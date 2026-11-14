@@ -17,6 +17,7 @@ use App\Support\AiChat;
 use App\Support\Currency;
 use App\Support\PageContent;
 use App\Support\PaymentSettings;
+use App\Support\PrivacyPolicy;
 use App\Support\Settings;
 use App\Support\Theme;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,6 +30,18 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 class ContentController extends Controller
 {
+    /**
+     * The privacy policy as Markdown, for the app's Privacy policy screen.
+     */
+    public function privacyPolicy(): JsonResponse
+    {
+        return response()->json(['data' => [
+            'content' => PrivacyPolicy::markdown(),
+            'updated_at' => PrivacyPolicy::updatedAt(),
+            'url' => route('privacy'),
+        ]]);
+    }
+
     public function site(): JsonResponse
     {
         $links = Settings::get('social_links');

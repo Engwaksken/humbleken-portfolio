@@ -54,6 +54,32 @@ Plain HTTP is allowed only where local development needs it:
   (e.g. `http://localhost:<port>`) for `api/v1/*` in `config/cors.php`. To get a stable port,
   run `flutter run -d chrome --web-port 5000`.
 
+## Play Store release
+
+- **Application ID:** `com.humbleken.app`. It can never change after the first upload.
+- **Server:** release builds use https://www.humbleken.com. Deploy the Laravel site first, so
+  `/api/v1/privacy-policy` and `DELETE /api/v1/auth/account` exist on the live server.
+- **Signing:** `android/key.properties` points at `android/upload-keystore.jks`. Both are
+  git-ignored. Back them up somewhere safe (a password manager or encrypted drive). Every
+  future update must be signed with this upload key. With Play App Signing, Google holds the
+  app signing key, and a lost upload key can be reset through Play Console support.
+- **Version:** bump `version:` in `pubspec.yaml` before each upload. The number after `+` is
+  the Android version code and must go up every time (`1.0.0+1`, `1.0.1+2`, ...).
+
+Build the bundle to upload:
+
+```bash
+flutter build appbundle --release
+# build/app/outputs/bundle/release/app-release.aab
+```
+
+Play Console listing details the app already supports:
+
+- **Privacy policy URL:** https://www.humbleken.com/privacy (edited in admin Settings, Privacy policy).
+- **Account deletion URL:** https://www.humbleken.com/account/delete. In the app: Account, Delete my account.
+- **Data safety:** the app collects name, email, phone (optional), messages, support ticket
+  files and chat messages; all sent over HTTPS; users can request deletion. No ads or tracking.
+
 ## Verification
 
 ```bash

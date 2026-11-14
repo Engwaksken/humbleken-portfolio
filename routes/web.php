@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\BookingController;
 use App\Http\Controllers\Account\DashboardController;
+use App\Http\Controllers\Account\DeleteAccountController;
 use App\Http\Controllers\Account\NotificationPreferenceController;
 use App\Http\Controllers\Account\SupportTicketController;
 use App\Http\Controllers\Account\TicketAttachmentController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicMediaController;
 use App\Http\Controllers\PushSubscriptionController;
@@ -61,6 +63,13 @@ Route::post('/booking/track', [BookingRequestController::class, 'track'])
 Route::post('/chatbot/messages', [ChatbotController::class, 'store'])
     ->middleware('throttle:chatbot')
     ->name('chatbot.messages');
+
+// Public pages required by app stores.
+Route::get('/privacy', [LegalController::class, 'privacy'])->name('privacy');
+Route::get('/account/delete', [LegalController::class, 'deleteAccount'])->name('account.delete-info');
+
+// Deleting an account does not require a verified email.
+Route::delete('/account', DeleteAccountController::class)->middleware(['auth', 'throttle:6,1'])->name('account.destroy');
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('account.')->group(function (): void {
     Route::get('/', DashboardController::class)->name('dashboard');

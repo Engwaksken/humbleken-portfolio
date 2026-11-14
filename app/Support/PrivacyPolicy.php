@@ -21,8 +21,11 @@ class PrivacyPolicy
 
     public static function html(): HtmlString
     {
-        return new HtmlString(Str::markdown(static::markdown(), [
-            'html_input' => 'strip',
+        $markdown = preg_replace('~<(script|style|iframe|object|embed)\b[^>]*>.*?</\1\s*>~is', '', static::markdown()) ?? static::markdown();
+
+        return new HtmlString(Str::markdown($markdown, [
+            // Admins may use HTML for layout/formatting; unsafe links remain blocked.
+            'html_input' => 'allow',
             'allow_unsafe_links' => false,
         ]));
     }

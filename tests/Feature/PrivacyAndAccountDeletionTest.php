@@ -34,17 +34,18 @@ class PrivacyAndAccountDeletionTest extends TestCase
             ->assertSee('/account/delete');
     }
 
-    public function test_admin_can_replace_the_policy_and_raw_html_is_stripped(): void
+    public function test_admin_can_replace_the_policy_with_html_and_scripts_are_stripped(): void
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
 
         Livewire::test(SettingsPage::class)
-            ->set('data.privacy_policy', "## My own policy\n\nI keep things simple.<script>alert(1)</script>")
+            ->set('data.privacy_policy', "## My own policy\n\n<strong>I keep things simple.</strong><script>alert(1)</script>")
             ->call('save')
             ->assertHasNoErrors();
 
         $this->get('/privacy')
             ->assertSee('My own policy')
+            ->assertSee('<strong>I keep things simple.</strong>', false)
             ->assertDontSee('<script>alert(1)</script>', false)
             ->assertSee('Last updated');
 

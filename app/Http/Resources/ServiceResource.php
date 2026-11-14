@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Service;
+use App\Support\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -38,6 +39,8 @@ class ServiceResource extends JsonResource
                 'delivery_method' => $this->delivery_method,
                 'estimated_duration' => $this->estimated_duration,
                 'indicative_price' => $this->indicative_price,
+                'currency' => Currency::code(),
+                'indicative_price_formatted' => $this->formattedPrice(),
                 'video_embed_url' => $this->sampleVideoEmbedUrl(),
             ]),
         ];

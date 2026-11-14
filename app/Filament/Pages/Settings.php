@@ -3,8 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Support\AiChat;
+use App\Support\AutoReply;
+use App\Support\Currency;
 use App\Support\ImageCompressor;
 use App\Support\MailSettings;
+use App\Support\PaymentSettings;
 use App\Support\Settings as SettingsStore;
 use App\Support\Theme;
 use BackedEnum;
@@ -25,10 +28,13 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -294,12 +300,178 @@ class Settings extends Page
                                     ->label('Send emails from (name)')
                                     ->placeholder('Defaults to the brand name')
                                     ->maxLength(255),
+                                Section::make('Email branding')
+                                    ->description('Every email uses your logo, primary colour and brand name from the Site identity and Appearance tabs. These options fine-tune it.')
+                                    ->collapsible()
+                                    ->schema([
+                                        Toggle::make('email_show_logo')
+                                            ->label('Show my logo at the top of emails')
+                                            ->default(true)
+                                            ->helperText('When off, or when no logo is uploaded, the brand name is shown in your primary colour instead.'),
+                                        TextInput::make('email_signature')
+                                            ->label('Sign emails as')
+                                            ->placeholder('Defaults to your name from About you, or the brand name')
+                                            ->helperText('Shown after "Kind regards," in notification emails.')
+                                            ->maxLength(120),
+                                        Textarea::make('email_footer_text')
+                                            ->label('Footer text')
+                                            ->placeholder('e.g. IT support and consulting in Kampala.')
+                                            ->helperText('Shown above your contact details at the bottom of every email.')
+                                            ->rows(2)
+                                            ->maxLength(500),
+                                    ]),
                                 Actions::make([
                                     Action::make('sendTestEmail')
                                         ->label('Send test email')
                                         ->icon(Heroicon::OutlinedPaperAirplane)
                                         ->action(fn () => $this->sendTestEmail()),
                                 ]),
+                            ]),
+                        Tab::make('Payments')
+                            ->icon(Heroicon::OutlinedBanknotes)
+                            ->schema([
+                                Select::make('currency')
+                                    ->label('Currency')
+                                    ->options(Currency::options())
+                                    ->default(Currency::DEFAULT)
+                                    ->selectablePlaceholder(false)
+                                    ->required()
+                                    ->helperText('Used for service prices on the website, the app and in this admin panel.'),
+                                Section::make('ioTec Pay (mobile money)')
+                                    ->description('Collect MTN and Airtel mobile money through ioTec Pay. Find the client ID, client secret and wallet ID in your ioTec Pay dashboard.')
+                                    ->collapsible()
+                                    ->columns(2)
+                                    ->schema([
+                                        Toggle::make('iotec_enabled')
+                                            ->label('Enable ioTec Pay')
+                                            ->columnSpanFull(),
+                                        TextInput::make('iotec_client_id')
+                                            ->label('Client ID')
+                                            ->autocomplete('off')
+                                            ->maxLength(255),
+                                        TextInput::make('iotec_wallet_id')
+                                            ->label('Wallet ID')
+                                            ->autocomplete('off')
+                                            ->maxLength(255),
+                                        TextInput::make('iotec_client_secret')
+                                            ->label('Client secret')
+                                            ->password()
+                                            ->revealable()
+                                            ->autocomplete('new-password')
+                                            ->dehydrated()
+                                            ->helperText(SettingsStore::get('iotec_client_secret_ciphertext') ? 'A secret is stored encrypted. Leave blank to keep it, or enter a new one to replace it.' : 'It is encrypted before storage.'),
+                                        Toggle::make('iotec_client_secret_clear')
+                                            ->label('Remove stored client secret')
+                                            ->inline(false),
+                                        TextInput::make('iotec_token_url')
+                                            ->label('Token URL')
+                                            ->url()
+                                            ->placeholder(PaymentSettings::IOTEC_DEFAULT_TOKEN_URL)
+                                            ->helperText('Leave empty to use the default. Change it only if ioTec gives you a different address, for example for a test account.')
+                                            ->maxLength(500),
+                                        TextInput::make('iotec_api_url')
+                                            ->label('API base URL')
+                                            ->url()
+                                            ->placeholder(PaymentSettings::IOTEC_DEFAULT_API_URL)
+                                            ->helperText('Leave empty to use the default.')
+                                            ->maxLength(500),
+                                        Actions::make([
+                                            Action::make('testIotec')
+                                                ->label('Test ioTec connection')
+                                                ->icon(Heroicon::OutlinedSignal)
+                                                ->action(fn () => $this->testIotecConnection()),
+                                        ])->columnSpanFull(),
+                                    ]),
+                                Section::make('Bank transfer')
+                                    ->description('Shown to clients in automatic replies through the {payment_details} placeholder.')
+                                    ->collapsible()
+                                    ->columns(2)
+                                    ->schema([
+                                        Toggle::make('bank_enabled')
+                                            ->label('Accept bank transfers')
+                                            ->columnSpanFull(),
+                                        TextInput::make('bank_name')
+                                            ->label('Bank name')
+                                            ->placeholder('e.g. Stanbic Bank Uganda')
+                                            ->maxLength(255),
+                                        TextInput::make('bank_account_name')
+                                            ->label('Account name')
+                                            ->maxLength(255),
+                                        TextInput::make('bank_account_number')
+                                            ->label('Account number')
+                                            ->maxLength(64),
+                                        TextInput::make('bank_branch')
+                                            ->label('Branch')
+                                            ->maxLength(255),
+                                        TextInput::make('bank_swift')
+                                            ->label('SWIFT / BIC code')
+                                            ->helperText('For payments from outside Uganda.')
+                                            ->maxLength(20),
+                                    ]),
+                                Section::make('Mobile money (manual)')
+                                    ->description('A number clients can send money to directly, without ioTec.')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->columns(2)
+                                    ->schema([
+                                        Toggle::make('mobile_money_enabled')
+                                            ->label('Accept direct mobile money')
+                                            ->columnSpanFull(),
+                                        Select::make('mobile_money_provider')
+                                            ->label('Network')
+                                            ->options(['MTN Mobile Money' => 'MTN Mobile Money', 'Airtel Money' => 'Airtel Money']),
+                                        TextInput::make('mobile_money_number')
+                                            ->label('Number')
+                                            ->tel()
+                                            ->maxLength(30),
+                                        TextInput::make('mobile_money_name')
+                                            ->label('Registered name')
+                                            ->maxLength(255),
+                                    ]),
+                                Textarea::make('payment_instructions')
+                                    ->label('Extra payment instructions')
+                                    ->placeholder('e.g. Please use your booking reference as the payment reference.')
+                                    ->rows(3)
+                                    ->maxLength(1000),
+                            ]),
+                        Tab::make('Auto replies')
+                            ->icon(Heroicon::OutlinedArrowUturnLeft)
+                            ->schema([
+                                Text::make('Clients get these emails straight after they send an enquiry or appointment request. Placeholders you can use: '.AutoReply::PLACEHOLDERS.'.'),
+                                Section::make('Enquiries')
+                                    ->collapsible()
+                                    ->schema([
+                                        Toggle::make('auto_reply_enquiry_enabled')
+                                            ->label('Send an automatic reply to new enquiries')
+                                            ->default(true),
+                                        TextInput::make('auto_reply_enquiry_subject')
+                                            ->label('Subject')
+                                            ->placeholder(AutoReply::DEFAULTS['enquiry']['subject'])
+                                            ->maxLength(255),
+                                        Textarea::make('auto_reply_enquiry_body')
+                                            ->label('Message')
+                                            ->placeholder(AutoReply::DEFAULTS['enquiry']['body'])
+                                            ->helperText('Leave empty to use the text shown.')
+                                            ->rows(8)
+                                            ->maxLength(5000),
+                                    ]),
+                                Section::make('Appointment requests')
+                                    ->collapsible()
+                                    ->schema([
+                                        Toggle::make('auto_reply_booking_enabled')
+                                            ->label('Send an automatic reply to new appointment requests')
+                                            ->default(true),
+                                        TextInput::make('auto_reply_booking_subject')
+                                            ->label('Subject')
+                                            ->placeholder(AutoReply::DEFAULTS['booking']['subject'])
+                                            ->maxLength(255),
+                                        Textarea::make('auto_reply_booking_body')
+                                            ->label('Message')
+                                            ->placeholder(AutoReply::DEFAULTS['booking']['body'])
+                                            ->helperText('Leave empty to use the text shown.')
+                                            ->rows(10)
+                                            ->maxLength(5000),
+                                    ]),
                             ]),
                         Tab::make('Maintenance')
                             ->icon(Heroicon::OutlinedWrenchScrewdriver)
@@ -351,6 +523,40 @@ class Settings extends Page
                 ->send();
 
             return;
+        }
+
+        $iotecSecret = trim((string) ($state['iotec_client_secret'] ?? ''));
+        $clearIotecSecret = (bool) ($state['iotec_client_secret_clear'] ?? false);
+        unset($state['iotec_client_secret'], $state['iotec_client_secret_clear']);
+
+        if (($state['iotec_enabled'] ?? false)
+            && (blank($state['iotec_client_id'] ?? null)
+                || blank($state['iotec_wallet_id'] ?? null)
+                || ($iotecSecret === '' && ($clearIotecSecret || blank(SettingsStore::get('iotec_client_secret_ciphertext')))))) {
+            Notification::make()
+                ->danger()
+                ->title('ioTec Pay settings are incomplete')
+                ->body('Enter the client ID, client secret and wallet ID before enabling ioTec Pay.')
+                ->send();
+
+            return;
+        }
+
+        if (($state['bank_enabled'] ?? false) && blank($state['bank_account_number'] ?? null)) {
+            Notification::make()
+                ->danger()
+                ->title('Bank details are incomplete')
+                ->body('Enter at least the account number before accepting bank transfers.')
+                ->send();
+
+            return;
+        }
+
+        if ($iotecSecret !== '') {
+            SettingsStore::set('iotec_client_secret_ciphertext', Crypt::encryptString($iotecSecret));
+        } elseif ($clearIotecSecret) {
+            SettingsStore::forget('iotec_client_secret_ciphertext');
+            $state['iotec_enabled'] = false;
         }
 
         if ($apiKey !== '') {
@@ -452,10 +658,16 @@ class Settings extends Page
         app('mail.manager')->purge($mailer);
 
         $fromName = trim((string) ($this->data['mail_from_name'] ?? '')) ?: (SettingsStore::get('brand_name') ?: config('app.name'));
-        $body = "This is a test email from {$fromName}.\n\nIf you can read this, outgoing email is working. Remember to save the settings and switch on 'Send email through this SMTP server'.";
+        // Uses the branded email template, so the logo, colour and footer can be checked too.
+        $html = (string) (new MailMessage)
+            ->greeting('Test email')
+            ->line("This is a test email from {$fromName}.")
+            ->line("If you can read this, outgoing email is working. Remember to save the settings and switch on 'Send email through this SMTP server'.")
+            ->action('Open the admin panel', url('/admin'))
+            ->render();
 
         try {
-            Mail::mailer($mailer)->raw($body, fn ($message) => $message
+            Mail::mailer($mailer)->html($html, fn ($message) => $message
                 ->to($recipient)
                 ->from($from, $fromName)
                 ->subject("Test email from {$fromName}"));
@@ -490,6 +702,34 @@ class Settings extends Page
         };
 
         return $hint.' Server response: '.Str::limit($message, 220);
+    }
+
+    /**
+     * Ask ioTec for an access token with the values currently in the form.
+     */
+    public function testIotecConnection(): void
+    {
+        $clientId = trim((string) ($this->data['iotec_client_id'] ?? ''));
+        $secret = trim((string) ($this->data['iotec_client_secret'] ?? '')) ?: PaymentSettings::iotecClientSecret();
+        $tokenUrl = trim((string) ($this->data['iotec_token_url'] ?? '')) ?: PaymentSettings::IOTEC_DEFAULT_TOKEN_URL;
+
+        if (blank($clientId) || blank($secret)) {
+            Notification::make()
+                ->danger()
+                ->title('ioTec Pay settings are incomplete')
+                ->body('Enter the client ID, and a client secret or save one first.')
+                ->send();
+
+            return;
+        }
+
+        $result = PaymentSettings::requestIotecToken($tokenUrl, $clientId, $secret);
+
+        Notification::make()
+            ->{$result['ok'] ? 'success' : 'danger'}()
+            ->title($result['ok'] ? 'ioTec connection successful' : 'ioTec connection failed')
+            ->body($result['message'])
+            ->send();
     }
 
     public function testAiConnection(): void
@@ -654,8 +894,22 @@ class Settings extends Page
         $data['mail_enabled'] = (bool) ($data['mail_enabled'] ?? false);
         $data['mail_encryption'] = array_key_exists($data['mail_encryption'] ?? '', MailSettings::ENCRYPTIONS) ? $data['mail_encryption'] : 'tls';
         $data['mail_port'] = $data['mail_port'] ?? 587;
-        // Never send stored secrets back to the browser.
-        unset($data['mail_password_ciphertext'], $data['ai_api_key_ciphertext']);
+        $data['currency'] = Currency::code();
+        $data['email_show_logo'] = (bool) ($data['email_show_logo'] ?? true);
+        foreach (['iotec_enabled', 'bank_enabled', 'mobile_money_enabled'] as $key) {
+            $data[$key] = (bool) ($data[$key] ?? false);
+        }
+        foreach (AutoReply::TYPES as $type) {
+            $data["auto_reply_{$type}_enabled"] = AutoReply::enabled($type);
+        }
+        // Never send stored secrets or push keys back to the browser.
+        unset(
+            $data['mail_password_ciphertext'],
+            $data['ai_api_key_ciphertext'],
+            $data['iotec_client_secret_ciphertext'],
+            $data['webpush_public_key'],
+            $data['webpush_private_key_ciphertext'],
+        );
 
         foreach (SettingsStore::BRANDING_FILES as $key) {
             if (filled($data[$key] ?? null) && ! Storage::disk('public')->exists($data[$key])) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BookingRequest;
 use App\Models\User;
 use App\Notifications\BookingRequestReceived;
+use App\Notifications\ClientAutoReply;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ class BookingRequestController extends Controller
         $booking = BookingRequest::create($data + ['user_id' => $request->user()?->getKey()]);
         // Alert admins by email without coupling the request to a particular notification channel.
         Notification::send(User::query()->where('is_admin', true)->get(), new BookingRequestReceived($booking));
+        ClientAutoReply::sendFor($booking);
 
         return redirect()->route('booking')->with('booking_sent', $booking->reference);
     }

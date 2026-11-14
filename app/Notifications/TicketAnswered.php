@@ -3,6 +3,8 @@
 namespace App\Notifications;
 
 use App\Models\SupportTicket;
+use App\Models\User;
+use App\Support\NotificationPreferences;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -22,7 +24,10 @@ class TicketAnswered extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        // Customers can switch these emails off in their account.
+        return $notifiable instanceof User
+            ? NotificationPreferences::channels($notifiable, 'ticket_reply', ['mail'])
+            : ['mail'];
     }
 
     public function toMail(object $notifiable): MailMessage

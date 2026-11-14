@@ -42,6 +42,24 @@ Uploaded images are resized to at most 2000 px and compressed to WebP. They are 
 `/media/pages/...`, so no storage symlink is needed, and images that are no longer used are
 deleted when the pages are saved.
 
+## Currency, payments and notifications
+
+- **Settings, Payments:** the site currency (Ugandan Shillings, UGX, by default) used for
+  service prices, plus ioTec Pay credentials (the client secret is stored encrypted, and
+  "Test ioTec connection" checks them), bank transfer details and a direct mobile money number.
+- **Settings, Auto replies:** the email clients get straight after an enquiry or appointment
+  request. Placeholders such as `{name}`, `{reference}` and `{payment_details}` are filled in.
+- **Branding:** every email (alerts, auto replies, sign-up, password reset, sign-in codes)
+  uses the logo, primary colour and brand name. Settings, Email has options to hide the
+  logo, set the sign-off name and add footer text. Bell and push notifications use the
+  brand colour and favicon.
+- **Configuration, Notifications:** each administrator picks email, dashboard bell and
+  browser push per alert type, and can turn push on per browser. Customers can turn off
+  ticket reply emails from their account page.
+
+Browser push needs HTTPS (or localhost) and the `minishlink/web-push` package:
+`composer require minishlink/web-push`. Without it, email and the bell still work.
+
 ## Mobile app and API
 
 A Flutter companion app lives in [`mobile/`](mobile/README.md). It uses the versioned JSON API

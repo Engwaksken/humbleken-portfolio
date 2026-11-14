@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Support\ImageCompressor;
 use App\Support\PageContent;
+use App\Support\Settings;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\BaseFileUpload;
@@ -57,6 +58,7 @@ class SitePages extends Page
     {
         $this->form->fill(collect(PageContent::PAGES)
             ->mapWithKeys(fn (string $page): array => [$page => PageContent::raw($page)])
+            ->put('privacy_policy', (string) Settings::get('privacy_policy'))
             ->all());
     }
 
@@ -82,6 +84,20 @@ class SitePages extends Page
                         Tab::make('Contact')
                             ->icon(Heroicon::OutlinedPhone)
                             ->schema($this->pageSchema('contact')),
+                        Tab::make('Privacy policy')
+                            ->icon(Heroicon::OutlinedShieldCheck)
+                            ->schema([
+                                Section::make('Privacy policy')
+                                    ->description('Content shown on the public /privacy page and in the mobile app. Leave empty to use the generated default policy.')
+                                    ->schema([
+                                        Textarea::make('privacy_policy')
+                                            ->label('Policy content (Markdown)')
+                                            ->placeholder(\App\Support\PrivacyPolicy::default())
+                                            ->helperText('Use ## for headings and - for bullet points.')
+                                            ->rows(20)
+                                            ->maxLength(50000),
+                                    ]),
+                            ]),
                     ]),
             ])
             ->statePath('data');
@@ -93,6 +109,15 @@ class SitePages extends Page
 
         foreach (PageContent::PAGES as $page) {
             PageContent::save($page, $state[$page] ?? []);
+        }
+
+        if (array_key_exists('privacy_policy', $state)) {
+            $previousPolicy = (string) Settings::get('privacy_policy');
+            $nextPolicy = trim((string) $state['privacy_policy']);
+            if (trim($previousPolicy) !== $nextPolicy) {
+                Settings::set('privacy_policy', $nextPolicy);
+                Settings::set('privacy_policy_updated_at', now()->toDateString());
+            }
         }
 
         PageContent::pruneUnusedMedia();

@@ -200,6 +200,9 @@
     .article-body { @apply text-[1.0625rem] leading-8 sm:text-lg sm:leading-[1.85]; }
     .article-body :where(h2) { @apply mt-14 scroll-mt-28 text-[1.625rem] leading-tight sm:text-3xl; }
     .article-body :where(h3) { @apply mt-10 scroll-mt-28; }
+    .article-body :where(ul) { @apply mt-4 list-disc pl-6; }
+    .article-body :where(ol) { @apply mt-4 list-decimal pl-6; }
+    .article-body :where(li) { @apply mt-2; }
     .article-body > :where(p:first-child) { @apply mt-0; }
     .article-body :where(strong) { @apply font-semibold text-ink; }
     .article-body :where(hr) { @apply my-12 border-line; }

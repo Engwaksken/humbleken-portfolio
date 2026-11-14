@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:humbleken_portfolio/core/api/paginated.dart';
 import 'package:humbleken_portfolio/features/articles/data/article_models.dart';
+import 'package:humbleken_portfolio/features/auth/data/auth_repository.dart';
 import 'package:humbleken_portfolio/features/home/data/home_models.dart';
 import 'package:humbleken_portfolio/features/services/data/service_models.dart';
 import 'package:humbleken_portfolio/features/site/data/site_models.dart';
@@ -176,6 +177,63 @@ void main() {
       expect(groups.map((g) => g.title), ['Networks', 'Cloud', 'Other services']);
       expect(groups[1].description, 'Cloud work');
       expect(groups.last.services.single.slug, 'b');
+    });
+  });
+
+  group('Currency and payments', () {
+    test('service detail prefers the formatted price', () {
+      final service = ServiceDetail.fromJson({
+        'id': 1,
+        'slug': 's',
+        'name': 'S',
+        'indicative_price': '250000.00',
+        'indicative_price_formatted': 'UGX 250,000',
+      });
+      expect(service.indicativePrice, 'UGX 250,000');
+
+      final older = ServiceDetail.fromJson({'id': 1, 'slug': 's', 'name': 'S', 'indicative_price': '250000.00'});
+      expect(older.indicativePrice, '250000.00');
+    });
+
+    test('site config parses currency and payment options', () {
+      final site = SiteConfig.fromJson({
+        'brand_name': 'HumbleKen',
+        'currency': {'code': 'UGX', 'symbol': 'UGX', 'decimals': 0},
+        'payments': {
+          'iotec': true,
+          'bank': {'bank_name': 'Stanbic Bank Uganda', 'account_number': '9030012345678'},
+          'mobile_money': null,
+          'instructions': 'Use your booking reference.',
+        },
+      });
+      expect(site.currency.code, 'UGX');
+      expect(site.payments.iotec, isTrue);
+      expect(site.payments.bank!.bankName, 'Stanbic Bank Uganda');
+      expect(site.payments.mobileMoney, isNull);
+      expect(site.payments.isEmpty, isFalse);
+    });
+
+    test('older servers without payments default to UGX and no options', () {
+      final site = SiteConfig.fromJson({'brand_name': 'HumbleKen'});
+      expect(site.currency.code, 'UGX');
+      expect(site.payments.isEmpty, isTrue);
+    });
+  });
+
+  group('AppUser.fromJson', () {
+    test('reads the ticket reply email preference, defaulting to on', () {
+      expect(AppUser.fromJson({'id': 1, 'name': 'A', 'email': 'a@b.c'}).ticketReplyEmails, isTrue);
+      expect(
+        AppUser.fromJson({
+          'id': 1,
+          'name': 'A',
+          'email': 'a@b.c',
+          'notification_preferences': {
+            'ticket_reply': {'mail': false},
+          },
+        }).ticketReplyEmails,
+        isFalse,
+      );
     });
   });
 }

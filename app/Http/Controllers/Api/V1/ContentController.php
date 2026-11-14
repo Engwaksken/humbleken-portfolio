@@ -14,7 +14,9 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Tag;
 use App\Support\AiChat;
+use App\Support\Currency;
 use App\Support\PageContent;
+use App\Support\PaymentSettings;
 use App\Support\Settings;
 use App\Support\Theme;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,6 +53,8 @@ class ContentController extends Controller
                 ->filter(fn (mixed $url): bool => is_string($url) && preg_match('#^https?://#i', trim($url)) === 1)
                 ->map(fn (string $url, string|int $platform): array => ['platform' => (string) $platform, 'url' => trim($url)])
                 ->values(),
+            'currency' => ['code' => Currency::code(), 'symbol' => Currency::symbol(), 'decimals' => Currency::decimals()],
+            'payments' => PaymentSettings::publicDetails(),
             'features' => [
                 'projects' => Project::query()->published()->exists(),
                 'articles' => Article::query()->published()->exists(),

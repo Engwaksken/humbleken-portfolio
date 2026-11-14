@@ -7,18 +7,28 @@ import '../../../core/config/app_config.dart';
 import '../../../core/utils/json.dart';
 
 class AppUser {
-  const AppUser({required this.id, required this.name, required this.email, required this.emailVerified});
+  const AppUser({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.emailVerified,
+    this.ticketReplyEmails = true,
+  });
 
   final int id;
   final String name;
   final String email;
   final bool emailVerified;
 
+  /// Whether the customer is emailed when I reply to one of their tickets.
+  final bool ticketReplyEmails;
+
   factory AppUser.fromJson(Json json) => AppUser(
     id: asInt(json['id']),
     name: asString(json['name']),
     email: asString(json['email']),
     emailVerified: asBool(json['email_verified']),
+    ticketReplyEmails: asBool(asMap(asMap(json['notification_preferences'])['ticket_reply'])['mail'], true),
   );
 }
 
@@ -76,6 +86,18 @@ class AuthRepository {
     return AppUser.fromJson(asMap(json['data']));
   }
 
+  Future<AppUser> updateTicketReplyEmails(bool enabled) async {
+    final json = await _api.put(
+      'auth/notification-preferences',
+      data: {
+        'notification_preferences': {
+          'ticket_reply': {'mail': enabled},
+        },
+      },
+    );
+    return AppUser.fromJson(asMap(json['data']));
+  }
+
   Future<String> resendVerification() async {
     final json = await _api.post('auth/email/verification-notification');
     return asStringOrNull(json['message']) ?? 'A new verification link has been sent to your email address.';
@@ -117,6 +139,12 @@ class AuthController extends AsyncNotifier<AppUser?> {
   Future<void> refreshUser() async {
     ref.invalidateSelf();
     await future;
+  }
+
+  /// Saves the ticket reply email choice and updates the signed-in user.
+  Future<void> setTicketReplyEmails(bool enabled) async {
+    final user = await ref.read(authRepositoryProvider).updateTicketReplyEmails(enabled);
+    state = AsyncData(user);
   }
 
   Future<void> signOut() async {

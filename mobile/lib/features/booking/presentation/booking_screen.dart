@@ -6,6 +6,7 @@ import '../../../core/utils/format.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/form_widgets.dart';
 import '../../../core/widgets/layout.dart';
+import '../../contact/presentation/payment_details.dart';
 import '../../pages/data/pages_repository.dart';
 import '../../pages/presentation/page_content_view.dart';
 import '../../services/presentation/service_dropdown.dart';
@@ -35,6 +36,7 @@ class BookingScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             PageStepsList(steps: page.steps),
           ],
+          const PaymentDetails(topSpacing: 32),
         ],
       ),
     );

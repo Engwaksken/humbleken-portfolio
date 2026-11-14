@@ -66,6 +66,8 @@ class _SignedInView extends ConsumerWidget {
       children: [
         _ProfileCard(user: user),
         if (!user.emailVerified) ...[const SizedBox(height: 16), const _VerifyEmailBanner()],
+        const SizedBox(height: 16),
+        _NotificationSettingsCard(user: user),
         const SizedBox(height: 24),
         const SectionHeading(title: 'Support tickets'),
       ],
@@ -157,6 +159,48 @@ class _ProfileCard extends ConsumerWidget {
   }
 }
 
+/// Email notification choices, saved to the website account.
+class _NotificationSettingsCard extends ConsumerStatefulWidget {
+  const _NotificationSettingsCard({required this.user});
+  final AppUser user;
+
+  @override
+  ConsumerState<_NotificationSettingsCard> createState() => _NotificationSettingsCardState();
+}
+
+class _NotificationSettingsCardState extends ConsumerState<_NotificationSettingsCard> {
+  bool _saving = false;
+
+  Future<void> _toggle(bool enabled) async {
+    setState(() => _saving = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(authControllerProvider.notifier).setTicketReplyEmails(enabled);
+      messenger.showSnackBar(
+        SnackBar(content: Text(enabled ? 'Ticket reply emails turned on' : 'Ticket reply emails turned off')),
+      );
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(ApiException.messageOf(e))));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: SwitchListTile(
+        secondary: const Icon(Icons.notifications_outlined),
+        title: const Text('Email me about replies to my support tickets'),
+        subtitle: const Text('Important account emails, such as password resets, are always sent.'),
+        value: widget.user.ticketReplyEmails,
+        onChanged: _saving ? null : _toggle,
+      ),
+    );
+  }
+}
+
 class _VerifyEmailBanner extends ConsumerStatefulWidget {
   const _VerifyEmailBanner();
 
@@ -188,7 +232,8 @@ class _VerifyEmailBannerState extends ConsumerState<_VerifyEmailBanner> {
       final verified = ref.read(authControllerProvider).value?.emailVerified ?? false;
       if (mounted && !verified) {
         setState(
-          () => _status = 'Your email address is not verified yet. Open the link in the confirmation email, then try again.',
+          () => _status =
+              'Your email address is not verified yet. Open the link in the confirmation email, then try again.',
         );
       }
     } catch (e) {

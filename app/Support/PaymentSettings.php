@@ -96,6 +96,32 @@ class PaymentSettings
     }
 
     /**
+     * Payment options that are safe to show clients (used by the API and mobile app).
+     * Never includes ioTec credentials.
+     *
+     * @return array{iotec: bool, bank: ?array<string, ?string>, mobile_money: ?array<string, ?string>, instructions: ?string}
+     */
+    public static function publicDetails(): array
+    {
+        return [
+            'iotec' => static::iotecEnabled(),
+            'bank' => static::bankEnabled() ? [
+                'bank_name' => Settings::get('bank_name') ?: null,
+                'account_name' => Settings::get('bank_account_name') ?: null,
+                'account_number' => Settings::get('bank_account_number') ?: null,
+                'branch' => Settings::get('bank_branch') ?: null,
+                'swift' => Settings::get('bank_swift') ?: null,
+            ] : null,
+            'mobile_money' => static::mobileMoneyEnabled() ? [
+                'provider' => Settings::get('mobile_money_provider') ?: null,
+                'number' => Settings::get('mobile_money_number') ?: null,
+                'name' => Settings::get('mobile_money_name') ?: null,
+            ] : null,
+            'instructions' => Settings::get('payment_instructions') ?: null,
+        ];
+    }
+
+    /**
      * Plain-text summary of the manual payment options, used in client emails.
      */
     public static function instructionsText(): string

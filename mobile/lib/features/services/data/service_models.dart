@@ -64,6 +64,8 @@ class ServiceDetail extends ServiceSummary {
   final String? description;
   final String? deliveryMethod;
   final String? estimatedDuration;
+
+  /// Price in the site currency, ready to show (e.g. "UGX 250,000").
   final String? indicativePrice;
   final String? videoEmbedUrl;
 
@@ -79,7 +81,8 @@ class ServiceDetail extends ServiceSummary {
       description: asStringOrNull(json['description']),
       deliveryMethod: asStringOrNull(json['delivery_method']),
       estimatedDuration: asStringOrNull(json['estimated_duration']),
-      indicativePrice: asStringOrNull(json['indicative_price']),
+      // Older servers only send the raw amount.
+      indicativePrice: asStringOrNull(json['indicative_price_formatted']) ?? asStringOrNull(json['indicative_price']),
       videoEmbedUrl: asStringOrNull(json['video_embed_url']),
     );
   }

@@ -213,7 +213,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Our approach'));
+    await tester.tap(find.text('My approach'));
     await tester.pumpAndSettle();
     expect(find.text('Page approach'), findsOneWidget);
     expect(find.text('First'), findsOneWidget);

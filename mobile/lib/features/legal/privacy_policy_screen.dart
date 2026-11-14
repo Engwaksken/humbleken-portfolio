@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:html/dom.dart' as html_dom;
+import 'package:html/parser.dart' as html_parser;
 
 import '../../core/api/api_client.dart';
 import '../../core/utils/json.dart';
@@ -51,7 +53,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
             intro: value.updatedAt == null ? null : 'Last updated ${_formatDate(value.updatedAt!)}.',
           ),
           children: [
-            MarkdownView(data: value.content),
+            MarkdownView(data: _htmlToMarkdown(value.content)),
             if (value.url != null) ...[
               const SizedBox(height: 24),
               Align(
@@ -87,5 +89,54 @@ class PrivacyPolicyScreen extends ConsumerWidget {
       'December',
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  /// The API returns Markdown (which may contain safe raw HTML from the admin).
+  /// flutter_markdown doesn't render raw HTML, so translate common formatting
+  /// tags into their Markdown equivalents before displaying it.
+  static String _htmlToMarkdown(String content) {
+    final document = html_parser.parseFragment(content);
+    String render(html_dom.Node node) {
+      if (node is! html_dom.Element) {
+        return node.text ?? '';
+      }
+
+      final children = node.nodes.map(render).join();
+      switch (node.localName) {
+        case 'strong':
+        case 'b':
+          return '**$children**';
+        case 'em':
+        case 'i':
+          return '*$children*';
+        case 'del':
+        case 's':
+          return '~~$children~~';
+        case 'br':
+          return '\n';
+        case 'p':
+        case 'div':
+        case 'section':
+          return '\n\n$children\n\n';
+        case 'h1':
+          return '# $children\n\n';
+        case 'h2':
+          return '## $children\n\n';
+        case 'h3':
+          return '### $children\n\n';
+        case 'li':
+          return '- $children\n';
+        case 'ul':
+        case 'ol':
+          return '\n$children\n';
+        case 'a':
+          final href = node.attributes['href'];
+          return href == null ? children : '[$children]($href)';
+        default:
+          return children;
+      }
+    }
+
+    return document.nodes.map(render).join();
   }
 }

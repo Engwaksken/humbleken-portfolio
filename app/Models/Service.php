@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\HeroImagePosition;
 use App\Models\Concerns\HasSampleMedia;
+use App\Support\Currency;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,6 +54,12 @@ class Service extends Model
     }
 
     /** Where the featured image goes; services default to beside the title. */
+    /** The indicative price in the site currency, e.g. "UGX 150,000". */
+    public function formattedPrice(): ?string
+    {
+        return Currency::format($this->indicative_price);
+    }
+
     public function featuredImagePosition(): HeroImagePosition
     {
         return $this->image_position ?? HeroImagePosition::Right;

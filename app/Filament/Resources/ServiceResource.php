@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\HeroImagePosition;
 use App\Filament\Resources\ServiceResource\Pages;
 use App\Models\Service;
+use App\Support\Currency;
 use App\Support\ImageCompressor;
 use BackedEnum;
 use Closure;
@@ -72,7 +73,9 @@ class ServiceResource extends Resource
                                     ->maxLength(255),
                                 TextInput::make('indicative_price')
                                     ->numeric()
-                                    ->prefix('$'),
+                                    ->minValue(0)
+                                    ->prefix(fn (): string => Currency::code())
+                                    ->helperText('In the site currency, set in Settings, Payments.'),
                             ]),
                         Tab::make('Images & video')
                             ->icon(Heroicon::OutlinedPhoto)
@@ -125,7 +128,8 @@ class ServiceResource extends Resource
                 TextColumn::make('category.name')->label('Category')->sortable(),
                 TextColumn::make('delivery_method'),
                 TextColumn::make('estimated_duration'),
-                TextColumn::make('indicative_price')->money(),
+                TextColumn::make('indicative_price')
+                    ->formatStateUsing(fn ($state): ?string => Currency::format($state)),
                 IconColumn::make('is_active')->boolean(),
                 TextColumn::make('sort_order')->sortable(),
             ])

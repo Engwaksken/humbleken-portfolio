@@ -4,20 +4,35 @@ namespace App\Notifications;
 
 use App\Filament\Resources\BookingRequestResource;
 use App\Models\BookingRequest;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
-class BookingRequestReceived extends Notification implements ShouldQueue
+class BookingRequestReceived extends AdminAlert
 {
-    use Queueable;
-
     public function __construct(public BookingRequest $bookingRequest) {}
 
-    public function via(object $notifiable): array
+    public function event(): string
     {
-        return ['mail'];
+        return 'booking';
+    }
+
+    public function title(): string
+    {
+        return 'New appointment request';
+    }
+
+    public function summary(): string
+    {
+        return $this->bookingRequest->name.' for '.$this->bookingRequest->preferred_at->format('j M Y, H:i');
+    }
+
+    public function url(): string
+    {
+        return BookingRequestResource::getRecordUrl($this->bookingRequest);
+    }
+
+    public function icon(): string
+    {
+        return 'heroicon-o-calendar-days';
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -29,6 +44,6 @@ class BookingRequestReceived extends Notification implements ShouldQueue
             ->line('Preferred time: '.$this->bookingRequest->preferred_at->format('j M Y, H:i'))
             ->line('Service: '.($this->bookingRequest->service?->name ?? 'Not specified'))
             ->line('Message: '.($this->bookingRequest->message ?: 'None provided'))
-            ->action('Review request', BookingRequestResource::getRecordUrl($this->bookingRequest));
+            ->action('Review request', $this->url());
     }
 }

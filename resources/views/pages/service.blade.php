@@ -30,7 +30,7 @@
                 <div class="space-y-5 lg:sticky lg:top-24">
                     @if ($service->delivery_method || $service->estimated_duration || $service->indicative_price)
                         <dl class="card divide-y divide-line">
-                            @foreach ([['Delivery', $service->delivery_method], ['Estimated duration', $service->estimated_duration], ['Indicative price', $service->indicative_price]] as [$term, $value])
+                            @foreach ([['Delivery', $service->delivery_method], ['Estimated duration', $service->estimated_duration], ['Indicative price', $service->formattedPrice()]] as [$term, $value])
                                 @if ($value)
                                     <div class="p-5">
                                         <dt class="text-xs font-bold tracking-[.14em] text-muted uppercase">{{ $term }}</dt>

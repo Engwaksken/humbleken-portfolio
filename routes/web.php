@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\BookingController;
 use App\Http\Controllers\Account\DashboardController;
+use App\Http\Controllers\Account\NotificationPreferenceController;
 use App\Http\Controllers\Account\SupportTicketController;
 use App\Http\Controllers\Account\TicketAttachmentController;
 use App\Http\Controllers\ArticleController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicMediaController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SitePageController;
 use App\Http\Middleware\EnsureAdminMfaForTicketAttachments;
@@ -76,4 +78,12 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('account.')->gr
         Route::post('/tickets', [SupportTicketController::class, 'store'])->name('tickets.store');
         Route::post('/tickets/{ticket}/replies', [SupportTicketController::class, 'reply'])->whereNumber('ticket')->name('tickets.reply');
     });
+
+    Route::put('/notifications', [NotificationPreferenceController::class, 'update'])->name('notifications.update');
+});
+
+// Browser push subscriptions for administrators (managed from Notification settings in the admin panel).
+Route::middleware(['auth', 'throttle:20,1'])->prefix('admin/push-subscriptions')->name('admin.push-subscriptions.')->group(function (): void {
+    Route::post('/', [PushSubscriptionController::class, 'store'])->name('store');
+    Route::delete('/', [PushSubscriptionController::class, 'destroy'])->name('destroy');
 });

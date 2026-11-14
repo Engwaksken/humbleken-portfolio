@@ -9,6 +9,7 @@ use App\Models\BookingRequest;
 use App\Models\Enquiry;
 use App\Models\User;
 use App\Notifications\BookingRequestReceived;
+use App\Notifications\ClientAutoReply;
 use App\Notifications\EnquiryReceived;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ class SubmissionController extends Controller
         $enquiry = Enquiry::create($request->safe()->except('website'));
 
         Notification::send(User::query()->where('is_admin', true)->get(), new EnquiryReceived($enquiry));
+        ClientAutoReply::sendFor($enquiry);
 
         return response()->json(['message' => 'Thank you. Your enquiry has been received and will be reviewed shortly.'], 201);
     }
@@ -36,6 +38,7 @@ class SubmissionController extends Controller
         $booking = BookingRequest::create($data + ['user_id' => $request->user('sanctum')?->getKey()]);
 
         Notification::send(User::query()->where('is_admin', true)->get(), new BookingRequestReceived($booking));
+        ClientAutoReply::sendFor($booking);
 
         return response()->json([
             'message' => 'Thank you. Your appointment request has been received. I will contact you to confirm availability.',

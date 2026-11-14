@@ -47,6 +47,9 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.auth.profile')),
             ])
             ->renderHook(PanelsRenderHook::STYLES_AFTER, fn (): View => view('filament.admin-styles'))
+            // The bell in the top bar lists new enquiries, bookings and ticket activity.
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->multiFactorAuthentication(
                 [
                     AppAuthentication::make()->recoverable(),

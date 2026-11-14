@@ -52,6 +52,26 @@
             </div>
         </section>
 
+        <section aria-labelledby="notifications-title" class="mt-10 max-w-md sm:mt-12">
+            <h2 id="notifications-title" class="text-2xl font-semibold">Email notifications</h2>
+            <form method="POST" action="{{ route('account.notifications.update') }}" class="mt-6 grid gap-4 card p-5 sm:p-6 lg:p-8">
+                @csrf
+                @method('PUT')
+                @if (session('notifications_saved'))
+                    <p class="text-sm font-semibold text-brand-dark" role="status">Your notification settings were saved.</p>
+                @endif
+                @foreach (\App\Support\NotificationPreferences::CUSTOMER_EVENTS as $event => $label)
+                    <label class="flex items-start gap-3">
+                        <input type="checkbox" name="preferences[{{ $event }}][mail]" value="1" class="mt-1 size-4 accent-brand"
+                            @checked(\App\Support\NotificationPreferences::wants(auth()->user(), $event, 'mail'))>
+                        <span>Email me about {{ lcfirst($label) }}</span>
+                    </label>
+                @endforeach
+                <p class="text-sm text-muted">Important account emails, such as password resets, are always sent.</p>
+                <x-button>Save notification settings</x-button>
+            </form>
+        </section>
+
         <section aria-labelledby="password-title" class="mt-10 max-w-md sm:mt-12">
             <h2 id="password-title" class="text-2xl font-semibold">Change password</h2>
             <form method="POST" action="{{ route('user-password.update') }}" class="mt-6 grid gap-4 card p-5 sm:p-6 lg:p-8" novalidate>

@@ -15,7 +15,7 @@
         @if ($service->indicative_price || $service->estimated_duration)
             <p class="mt-4 flex flex-wrap gap-2 text-xs">
                 @if ($service->estimated_duration)<span class="chip bg-secondary-tint text-ink">{{ $service->estimated_duration }}</span>@endif
-                @if ($service->indicative_price)<span class="chip">{{ $service->indicative_price }}</span>@endif
+                @if ($service->indicative_price)<span class="chip">{{ $service->formattedPrice() }}</span>@endif
             </p>
         @endif
         <span class="link-arrow mt-auto pt-6" aria-hidden="true">Service details <i class="fa-solid fa-arrow-right text-xs"></i></span>

@@ -4,23 +4,35 @@ namespace App\Notifications;
 
 use App\Filament\Resources\EnquiryResource;
 use App\Models\Enquiry;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
-class EnquiryReceived extends Notification implements ShouldQueue
+class EnquiryReceived extends AdminAlert
 {
-    use Queueable;
-
     public function __construct(public Enquiry $enquiry) {}
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function event(): string
     {
-        return ['mail'];
+        return 'enquiry';
+    }
+
+    public function title(): string
+    {
+        return 'New enquiry received';
+    }
+
+    public function summary(): string
+    {
+        return "From {$this->enquiry->name}";
+    }
+
+    public function url(): string
+    {
+        return EnquiryResource::getRecordUrl($this->enquiry);
+    }
+
+    public function icon(): string
+    {
+        return 'heroicon-o-envelope';
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -29,6 +41,6 @@ class EnquiryReceived extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('New enquiry received')
             ->line("A new enquiry was submitted by {$this->enquiry->name}.")
-            ->action('Review enquiry', EnquiryResource::getRecordUrl($this->enquiry));
+            ->action('Review enquiry', $this->url());
     }
 }

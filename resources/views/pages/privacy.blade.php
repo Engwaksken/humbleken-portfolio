@@ -3,7 +3,7 @@
 
     <section class="container-site section">
         <article class="article-body mx-auto max-w-3xl">
-            {{ $policy }}
+            {!! $policy !!}
         </article>
     </section>
 </x-layouts.site>

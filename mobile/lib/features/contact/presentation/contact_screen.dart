@@ -6,6 +6,7 @@ import '../../pages/data/pages_repository.dart';
 import '../../pages/presentation/page_content_view.dart';
 import 'contact_details.dart';
 import 'enquiry_form.dart';
+import 'payment_details.dart';
 
 class ContactScreen extends ConsumerWidget {
   const ContactScreen({super.key});
@@ -21,6 +22,7 @@ class ContactScreen extends ConsumerWidget {
         children: [
           if (page != null) PageContentView(page: page),
           const ContactDetails(),
+          const PaymentDetails(),
           const SizedBox(height: 28),
           const SectionHeading(title: 'Send an enquiry', subtitle: 'I usually reply within one working day.'),
           const SizedBox(height: 16),

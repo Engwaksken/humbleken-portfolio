@@ -6,6 +6,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Support\NotificationPreferences;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -71,6 +72,33 @@ class AuthController extends Controller
     public function user(Request $request): UserResource
     {
         return new UserResource($request->user());
+    }
+
+    /**
+     * Update the customer's email notification choices. Only the events and
+     * channels sent are changed.
+     */
+    public function updateNotificationPreferences(Request $request): UserResource
+    {
+        $request->validate([
+            'notification_preferences' => ['required', 'array'],
+            'notification_preferences.*' => ['array'],
+            'notification_preferences.*.*' => ['boolean'],
+        ]);
+
+        $user = $request->user();
+        $sent = collect($request->input('notification_preferences'))
+            ->only(array_keys(NotificationPreferences::CUSTOMER_EVENTS))
+            ->map(fn (array $channels): array => collect($channels)
+                ->only(array_keys(NotificationPreferences::CUSTOMER_CHANNELS))
+                ->map(fn (mixed $value): bool => (bool) $value)
+                ->all())
+            ->all();
+
+        $user->notification_preferences = array_replace_recursive($user->notification_preferences ?? [], $sent);
+        $user->save();
+
+        return new UserResource($user);
     }
 
     public function resendVerification(Request $request): JsonResponse

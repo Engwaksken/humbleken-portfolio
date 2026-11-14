@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\BookingRequestReceived;
 use App\Notifications\ClientAutoReply;
 use App\Notifications\EnquiryReceived;
+use App\Support\AutoReply;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -25,7 +26,12 @@ class SubmissionController extends Controller
         Notification::send(User::query()->where('is_admin', true)->get(), new EnquiryReceived($enquiry));
         ClientAutoReply::sendFor($enquiry);
 
-        return response()->json(['message' => 'Thank you. Your enquiry has been received and will be reviewed shortly.'], 201);
+        $message = 'Thank you. Your enquiry has been received and will be reviewed shortly.';
+        if (AutoReply::enabled('enquiry')) {
+            $message .= ' A confirmation has been sent to your email.';
+        }
+
+        return response()->json(['message' => $message], 201);
     }
 
     public function booking(Request $request): JsonResponse
@@ -40,8 +46,13 @@ class SubmissionController extends Controller
         Notification::send(User::query()->where('is_admin', true)->get(), new BookingRequestReceived($booking));
         ClientAutoReply::sendFor($booking);
 
+        $message = 'Thank you. Your appointment request has been received. I will contact you to confirm availability.';
+        if (AutoReply::enabled('booking')) {
+            $message .= ' A confirmation with your reference has been sent to your email.';
+        }
+
         return response()->json([
-            'message' => 'Thank you. Your appointment request has been received. I will contact you to confirm availability.',
+            'message' => $message,
             'reference' => $booking->reference,
         ], 201);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\User;
+use App\Support\NotificationPreferences;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,11 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'email_verified' => $this->hasVerifiedEmail(),
+            'notification_preferences' => NotificationPreferences::state(
+                $this->resource,
+                NotificationPreferences::CUSTOMER_EVENTS,
+                NotificationPreferences::CUSTOMER_CHANNELS,
+            ),
         ];
     }
 }

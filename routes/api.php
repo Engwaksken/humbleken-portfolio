@@ -45,6 +45,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::prefix('auth')->name('auth.')->group(function (): void {
             Route::get('/user', [AuthController::class, 'user'])->name('user');
+            Route::put('/notification-preferences', [AuthController::class, 'updateNotificationPreferences'])->name('notification-preferences.update');
             Route::post('/email/verification-notification', [AuthController::class, 'resendVerification'])
                 ->middleware('throttle:api-auth')
                 ->name('verification.send');

@@ -45,6 +45,13 @@ absolute URLs or `null`. Timestamps are ISO 8601 strings.
   "theme": {"primary": "#077784", "secondary": "#14263d"},
   "contact": {"email": "hello@example.test", "phone": null, "whatsapp": null, "business_hours": null, "address": null},
   "social_links": [{"platform": "linkedin", "url": "https://..."}],
+  "currency": {"code": "UGX", "symbol": "UGX", "decimals": 0},
+  "payments": {
+    "iotec": false,                         // ioTec Pay mobile money is configured
+    "bank": {"bank_name": "...", "account_name": "...", "account_number": "...", "branch": null, "swift": null},  // or null
+    "mobile_money": {"provider": "MTN Mobile Money", "number": "...", "name": "..."},                         // or null
+    "instructions": null
+  },
   "features": {"projects": true, "articles": true, "chatbot": false},
   "maintenance": {"enabled": false, "message": null}
 }}
@@ -109,6 +116,10 @@ and is empty for other pages.
 | POST | `/booking-requests` | `name, email, phone?, service_id?, preferred_at (future datetime), message?` | 201 `{"message": "..."}` |
 | POST | `/chatbot/messages` | `messages: [{role: "user"|"assistant", content}]` (1-12) | 200 `{"reply": "..."}`; 404 when the chatbot is disabled |
 
+When automatic replies are on (admin Settings, Auto replies), the client is also emailed a
+confirmation, and the `message` says so. Service details include `indicative_price` (number),
+`indicative_price_formatted` (e.g. "UGX 250,000") and `currency`.
+
 ## Customer authentication (rate limited: 6/min per IP)
 
 | Method | Path | Body | Success |
@@ -117,10 +128,11 @@ and is empty for other pages.
 | POST | `/auth/login` | `email, password, device_name` | 200 `{"token", "user": User}`; 422 on bad credentials |
 | POST | `/auth/forgot-password` | `email` | 202 `{"message"}` (always the same message) |
 | GET | `/auth/user` | – (Bearer) | `{"data": User}` |
+| PUT | `/auth/notification-preferences` | `notification_preferences: {ticket_reply: {mail: bool}}` (Bearer) | `{"data": User}` |
 | POST | `/auth/email/verification-notification` | – (Bearer) | 202 `{"message"}` |
 | POST | `/auth/logout` | – (Bearer) | 204, revokes the current token |
 
-`User`: `{id, name, email, email_verified: bool}`. Administrators cannot sign in through the
+`User`: `{id, name, email, email_verified: bool, notification_preferences: {ticket_reply: {mail: bool}}}`. Administrators cannot sign in through the
 API (their accounts are protected by two-factor authentication in the admin panel); the login
 endpoint returns 422 for them.
 

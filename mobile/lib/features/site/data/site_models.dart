@@ -42,6 +42,76 @@ class SocialLink {
       SocialLink(platform: asString(json['platform']), url: asString(json['url']));
 }
 
+/// The currency chosen in the website admin (Settings, Payments).
+class SiteCurrency {
+  const SiteCurrency({this.code = 'UGX', this.symbol = 'UGX', this.decimals = 0});
+
+  final String code;
+  final String symbol;
+  final int decimals;
+
+  factory SiteCurrency.fromJson(Json json) => SiteCurrency(
+    code: asStringOrNull(json['code']) ?? 'UGX',
+    symbol: asStringOrNull(json['symbol']) ?? asStringOrNull(json['code']) ?? 'UGX',
+    decimals: asInt(json['decimals']),
+  );
+}
+
+class BankDetails {
+  const BankDetails({this.bankName, this.accountName, this.accountNumber, this.branch, this.swift});
+
+  final String? bankName;
+  final String? accountName;
+  final String? accountNumber;
+  final String? branch;
+  final String? swift;
+
+  factory BankDetails.fromJson(Json json) => BankDetails(
+    bankName: asStringOrNull(json['bank_name']),
+    accountName: asStringOrNull(json['account_name']),
+    accountNumber: asStringOrNull(json['account_number']),
+    branch: asStringOrNull(json['branch']),
+    swift: asStringOrNull(json['swift']),
+  );
+}
+
+class MobileMoneyDetails {
+  const MobileMoneyDetails({this.provider, this.number, this.name});
+
+  final String? provider;
+  final String? number;
+  final String? name;
+
+  factory MobileMoneyDetails.fromJson(Json json) => MobileMoneyDetails(
+    provider: asStringOrNull(json['provider']),
+    number: asStringOrNull(json['number']),
+    name: asStringOrNull(json['name']),
+  );
+}
+
+/// Ways clients can pay, from Settings, Payments. Only public details are sent.
+class PaymentOptions {
+  const PaymentOptions({this.iotec = false, this.bank, this.mobileMoney, this.instructions});
+
+  final bool iotec;
+  final BankDetails? bank;
+  final MobileMoneyDetails? mobileMoney;
+  final String? instructions;
+
+  bool get isEmpty => bank == null && mobileMoney == null && instructions == null;
+
+  factory PaymentOptions.fromJson(Json json) {
+    final bank = asMapOrNull(json['bank']);
+    final mobileMoney = asMapOrNull(json['mobile_money']);
+    return PaymentOptions(
+      iotec: asBool(json['iotec']),
+      bank: bank == null ? null : BankDetails.fromJson(bank),
+      mobileMoney: mobileMoney == null ? null : MobileMoneyDetails.fromJson(mobileMoney),
+      instructions: asStringOrNull(json['instructions']),
+    );
+  }
+}
+
 class SiteFeatures {
   const SiteFeatures({this.projects = true, this.articles = true, this.chatbot = false});
 
@@ -67,6 +137,8 @@ class SiteConfig {
     this.contact = const SiteContact(),
     this.socialLinks = const [],
     this.features = const SiteFeatures(),
+    this.currency = const SiteCurrency(),
+    this.payments = const PaymentOptions(),
     this.maintenanceEnabled = false,
     this.maintenanceMessage,
     this.isFallback = false,
@@ -87,6 +159,8 @@ class SiteConfig {
   final SiteContact contact;
   final List<SocialLink> socialLinks;
   final SiteFeatures features;
+  final SiteCurrency currency;
+  final PaymentOptions payments;
   final bool maintenanceEnabled;
   final String? maintenanceMessage;
 
@@ -108,6 +182,8 @@ class SiteConfig {
       contact: SiteContact.fromJson(asMap(json['contact'])),
       socialLinks: asList(json['social_links'], SocialLink.fromJson).where((l) => l.url.isNotEmpty).toList(),
       features: SiteFeatures.fromJson(asMap(json['features'])),
+      currency: SiteCurrency.fromJson(asMap(json['currency'])),
+      payments: PaymentOptions.fromJson(asMap(json['payments'])),
       maintenanceEnabled: asBool(maintenance['enabled']),
       maintenanceMessage: asStringOrNull(maintenance['message']),
     );

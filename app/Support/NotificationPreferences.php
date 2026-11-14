@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\User;
+use App\Notifications\Channels\FcmChannel;
 use App\Notifications\Channels\WebPushChannel;
 
 /**
@@ -22,6 +23,7 @@ class NotificationPreferences
     /** Alerts customers receive. */
     public const CUSTOMER_EVENTS = [
         'ticket_reply' => 'Replies to my support tickets',
+        'booking_update' => 'Updates to my appointment requests',
     ];
 
     public const ADMIN_CHANNELS = [
@@ -30,7 +32,14 @@ class NotificationPreferences
         'push' => 'Browser push',
     ];
 
+    /** "app" is a push notification on phones signed in to the mobile app. */
     public const CUSTOMER_CHANNELS = [
+        'mail' => 'Email',
+        'app' => 'Phone notifications',
+    ];
+
+    /** The website account page only manages email; phone notifications are set in the app. */
+    public const CUSTOMER_WEB_CHANNELS = [
         'mail' => 'Email',
     ];
 
@@ -46,7 +55,7 @@ class NotificationPreferences
      */
     public static function channels(User $user, string $event, array $available = ['mail', 'database', 'push']): array
     {
-        $map = ['mail' => 'mail', 'database' => 'database', 'push' => WebPushChannel::class];
+        $map = ['mail' => 'mail', 'database' => 'database', 'push' => WebPushChannel::class, 'app' => FcmChannel::class];
 
         return collect($available)
             ->filter(fn (string $channel): bool => static::wants($user, $event, $channel))

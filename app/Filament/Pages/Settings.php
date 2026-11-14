@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Support\AiChat;
 use App\Support\AutoReply;
 use App\Support\Currency;
+use App\Support\FirebaseMessaging;
 use App\Support\ImageCompressor;
 use App\Support\MailSettings;
 use App\Support\PaymentSettings;
@@ -474,6 +475,28 @@ class Settings extends Page
                                             ->maxLength(5000),
                                     ]),
                             ]),
+                        Tab::make('Mobile app')
+                            ->icon(Heroicon::OutlinedDevicePhoneMobile)
+                            ->schema([
+                                Text::make(fn (): string => ($account = FirebaseMessaging::serviceAccount())
+                                    ? "Phone notifications are on: a Firebase key for project \"{$account['project_id']}\" is stored encrypted. Customers get a notification when you reply to a ticket or change their booking status."
+                                    : 'Phone notifications are off. Paste a Firebase service account key below to turn them on.'),
+                                Textarea::make('fcm_service_account')
+                                    ->label('Firebase service account key (JSON)')
+                                    ->placeholder('{"type": "service_account", "project_id": "...", ...}')
+                                    ->helperText('In the Firebase console, open Project settings, Service accounts, and select "Generate new private key". Open the downloaded file and paste all of its text here. It is encrypted before storage and is never shown again. Leave empty to keep the stored key.')
+                                    ->rows(6)
+                                    ->autocomplete('off')
+                                    ->dehydrated(),
+                                Toggle::make('fcm_service_account_clear')
+                                    ->label('Remove stored key and turn phone notifications off'),
+                                Actions::make([
+                                    Action::make('testFirebase')
+                                        ->label('Test Firebase connection')
+                                        ->icon(Heroicon::OutlinedSignal)
+                                        ->action(fn () => $this->testFirebaseConnection()),
+                                ]),
+                            ]),
                         Tab::make('Privacy policy')
                             ->icon(Heroicon::OutlinedShieldCheck)
                             ->schema([
@@ -535,6 +558,30 @@ class Settings extends Page
                 ->send();
 
             return;
+        }
+
+        $firebaseKey = trim((string) ($state['fcm_service_account'] ?? ''));
+        $clearFirebaseKey = (bool) ($state['fcm_service_account_clear'] ?? false);
+        unset($state['fcm_service_account'], $state['fcm_service_account_clear']);
+
+        if ($firebaseKey !== '' && FirebaseMessaging::parseServiceAccount($firebaseKey) === null) {
+            Notification::make()
+                ->danger()
+                ->title('That is not a Firebase service account key')
+                ->body('Paste the whole JSON file from Firebase, Project settings, Service accounts, "Generate new private key". It contains "type": "service_account".')
+                ->send();
+
+            return;
+        }
+
+        if ($firebaseKey !== '') {
+            SettingsStore::set('fcm_service_account_ciphertext', Crypt::encryptString($firebaseKey));
+            FirebaseMessaging::forgetAccessToken();
+            $this->data['fcm_service_account'] = null;
+        } elseif ($clearFirebaseKey) {
+            SettingsStore::forget('fcm_service_account_ciphertext');
+            FirebaseMessaging::forgetAccessToken();
+            $this->data['fcm_service_account_clear'] = false;
         }
 
         $iotecSecret = trim((string) ($state['iotec_client_secret'] ?? ''));
@@ -718,6 +765,44 @@ class Settings extends Page
         };
 
         return $hint.' Server response: '.Str::limit($message, 220);
+    }
+
+    /**
+     * Check the pasted (or stored) Firebase key by asking Google for an access token.
+     */
+    public function testFirebaseConnection(): void
+    {
+        $pasted = trim((string) ($this->data['fcm_service_account'] ?? ''));
+        $account = $pasted !== '' ? FirebaseMessaging::parseServiceAccount($pasted) : FirebaseMessaging::serviceAccount();
+
+        if ($account === null) {
+            Notification::make()
+                ->danger()
+                ->title($pasted !== '' ? 'That is not a Firebase service account key' : 'No Firebase key is stored')
+                ->body('Paste the JSON file from Firebase, Project settings, Service accounts, "Generate new private key".')
+                ->send();
+
+            return;
+        }
+
+        try {
+            FirebaseMessaging::accessToken($account, fresh: true);
+
+            Notification::make()
+                ->success()
+                ->title('Firebase connection successful')
+                ->body("Google accepted the key for project \"{$account['project_id']}\".".($pasted !== '' ? ' Save the settings to start using it.' : ''))
+                ->send();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->danger()
+                ->title('Firebase connection failed')
+                ->body(Str::limit($exception->getMessage(), 300))
+                ->persistent()
+                ->send();
+        }
     }
 
     /**
@@ -923,6 +1008,7 @@ class Settings extends Page
             $data['mail_password_ciphertext'],
             $data['ai_api_key_ciphertext'],
             $data['iotec_client_secret_ciphertext'],
+            $data['fcm_service_account_ciphertext'],
             $data['webpush_public_key'],
             $data['webpush_private_key_ciphertext'],
         );

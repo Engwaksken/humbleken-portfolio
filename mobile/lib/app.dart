@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/config/app_config.dart';
+import 'core/push/push_listener.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/state_views.dart';
@@ -30,11 +31,12 @@ class PortfolioApp extends ConsumerWidget {
     return MaterialApp.router(
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: rootMessengerKey,
       theme: AppTheme.light(primaryHex: site.primaryHex, secondaryHex: site.secondaryHex),
       darkTheme: AppTheme.dark(primaryHex: site.primaryHex),
       routerConfig: router,
       builder: (context, child) {
-        if (mode == _StartupMode.ready) return child ?? const SizedBox.shrink();
+        if (mode == _StartupMode.ready) return PushListener(child: child ?? const SizedBox.shrink());
         // Builder content sits above the Navigator, so give it an Overlay for
         // tooltips, ink and text selection.
         return Overlay(

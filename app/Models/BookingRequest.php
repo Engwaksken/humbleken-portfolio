@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BookingStatus;
+use App\Notifications\BookingStatusChanged;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,13 @@ class BookingRequest extends Model
     {
         static::creating(function (BookingRequest $booking): void {
             $booking->reference ??= static::newReference();
+        });
+
+        // Let a signed-up customer know when I change the status of their request.
+        static::updated(function (BookingRequest $booking): void {
+            if ($booking->wasChanged('status') && $booking->user_id !== null && $booking->status !== BookingStatus::New) {
+                $booking->user?->notify(new BookingStatusChanged($booking));
+            }
         });
     }
 

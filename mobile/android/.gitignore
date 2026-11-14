@@ -12,3 +12,7 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Firebase config: kept out of the public repository. Download it again from the
+# Firebase console (project humble-ken) when building on another machine.
+google-services.json

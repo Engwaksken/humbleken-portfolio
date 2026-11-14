@@ -4,6 +4,7 @@ import '../../../core/api/api_client.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/auth/token_store.dart';
 import '../../../core/config/app_config.dart';
+import '../../../core/push/push_registrar.dart';
 import '../../../core/utils/json.dart';
 
 class AppUser {
@@ -12,7 +13,7 @@ class AppUser {
     required this.name,
     required this.email,
     required this.emailVerified,
-    this.ticketReplyEmails = true,
+    this.notificationPreferences = const {},
   });
 
   final int id;
@@ -20,15 +21,30 @@ class AppUser {
   final String email;
   final bool emailVerified;
 
+  /// `{event: {channel: on}}`, e.g. `{"ticket_reply": {"mail": true, "app": false}}`.
+  /// Missing values mean "on".
+  final Map<String, Map<String, bool>> notificationPreferences;
+
+  /// Events customers can choose notifications for, with their labels.
+  static const notificationEvents = {
+    'ticket_reply': 'Replies to my support tickets',
+    'booking_update': 'Updates to my appointment requests',
+  };
+
+  bool wantsNotification(String event, String channel) => notificationPreferences[event]?[channel] ?? true;
+
   /// Whether the customer is emailed when I reply to one of their tickets.
-  final bool ticketReplyEmails;
+  bool get ticketReplyEmails => wantsNotification('ticket_reply', 'mail');
 
   factory AppUser.fromJson(Json json) => AppUser(
     id: asInt(json['id']),
     name: asString(json['name']),
     email: asString(json['email']),
     emailVerified: asBool(json['email_verified']),
-    ticketReplyEmails: asBool(asMap(asMap(json['notification_preferences'])['ticket_reply'])['mail'], true),
+    notificationPreferences: {
+      for (final entry in asMap(json['notification_preferences']).entries)
+        entry.key: {for (final channel in asMap(entry.value).entries) channel.key: asBool(channel.value, true)},
+    },
   );
 }
 
@@ -86,12 +102,13 @@ class AuthRepository {
     return AppUser.fromJson(asMap(json['data']));
   }
 
-  Future<AppUser> updateTicketReplyEmails(bool enabled) async {
+  /// Turns one notification channel ("mail" or "app") on or off for one event.
+  Future<AppUser> updateNotificationPreference(String event, String channel, bool enabled) async {
     final json = await _api.put(
       'auth/notification-preferences',
       data: {
         'notification_preferences': {
-          'ticket_reply': {'mail': enabled},
+          event: {channel: enabled},
         },
       },
     );
@@ -144,19 +161,22 @@ class AuthController extends AsyncNotifier<AppUser?> {
     await future;
   }
 
-  /// Saves the ticket reply email choice and updates the signed-in user.
-  Future<void> setTicketReplyEmails(bool enabled) async {
-    final user = await ref.read(authRepositoryProvider).updateTicketReplyEmails(enabled);
+  /// Saves one notification choice and updates the signed-in user.
+  Future<void> setNotificationPreference(String event, String channel, bool enabled) async {
+    final user = await ref.read(authRepositoryProvider).updateNotificationPreference(event, channel, enabled);
     state = AsyncData(user);
   }
 
   /// Deletes the account on the server, then forgets the (now revoked) token.
   Future<void> deleteAccount(String password) async {
     await ref.read(authRepositoryProvider).deleteAccount(password);
+    await ref.read(pushRegistrarProvider.notifier).forgetLocally();
     await ref.read(authTokenProvider.notifier).clear();
   }
 
   Future<void> signOut() async {
+    // Stop notifications to this phone while the API token still works.
+    await ref.read(pushRegistrarProvider.notifier).unregister();
     try {
       await ref.read(authRepositoryProvider).logout();
     } catch (_) {

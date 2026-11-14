@@ -23,7 +23,7 @@ class NotificationPreferenceController extends Controller
             NotificationPreferences::sanitize(
                 $request->input('preferences', []),
                 NotificationPreferences::CUSTOMER_EVENTS,
-                NotificationPreferences::CUSTOMER_CHANNELS,
+                NotificationPreferences::CUSTOMER_WEB_CHANNELS,
             ),
         );
         $user->save();

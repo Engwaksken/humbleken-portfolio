@@ -502,9 +502,9 @@ class Settings extends Page
                             ->schema([
                                 Text::make('Shown at /privacy and in the mobile app. Google Play needs this page for the app listing. Leave empty to use the default policy, which describes what this site and app collect.'),
                                 Textarea::make('privacy_policy')
-                                    ->label('Privacy policy (Markdown)')
+                                    ->label('Privacy policy (Markdown or HTML)')
                                     ->placeholder(fn (): string => PrivacyPolicy::default())
-                                    ->helperText('Use ## for headings and - for bullet points. Copy the default text from the placeholder to start from it.')
+                                    ->helperText('Use Markdown headings and lists, or paste a full HTML policy. Unsupported or unsafe HTML is removed when displayed. Copy the default text from the placeholder to start from it.')
                                     ->rows(20)
                                     ->maxLength(50000),
                             ]),

@@ -2,6 +2,9 @@
 
 namespace App\Support;
 
+use DOMDocument;
+use DOMElement;
+use DOMNode;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -12,6 +15,14 @@ use Illuminate\Support\Str;
  */
 class PrivacyPolicy
 {
+    private const ALLOWED_HTML_TAGS = [
+        'a', 'article', 'b', 'blockquote', 'br', 'code', 'dd', 'del', 'div', 'dl', 'dt', 'em',
+        'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'i', 'li', 'ol', 'p',
+        'pre', 'section', 'small', 'span', 'strong', 'sub', 'sup', 'u', 'ul',
+    ];
+
+    private const DROP_HTML_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'svg', 'math'];
+
     public static function markdown(): string
     {
         $custom = trim((string) Settings::get('privacy_policy'));
@@ -21,13 +32,83 @@ class PrivacyPolicy
 
     public static function html(): HtmlString
     {
-        $markdown = preg_replace('~<(script|style|iframe|object|embed)\b[^>]*>.*?</\1\s*>~is', '', static::markdown()) ?? static::markdown();
+        $content = static::markdown();
 
-        return new HtmlString(Str::markdown($markdown, [
-            // Admins may use HTML for layout/formatting; unsafe links remain blocked.
-            'html_input' => 'allow',
-            'allow_unsafe_links' => false,
-        ]));
+        // Full HTML fragments should be parsed as HTML, not fed through Markdown's
+        // block parser (which can escape semantic tags such as <article>/<section>).
+        if (! preg_match('/^\s*<(?:article|html|main|div|section|header|footer|p|h[1-6]|ul|ol|blockquote)\b/i', $content)) {
+            $content = Str::markdown($content, [
+                'html_input' => 'allow',
+                'allow_unsafe_links' => false,
+            ]);
+        }
+
+        return new HtmlString(static::sanitizeHtml($content));
+    }
+
+    private static function sanitizeHtml(string $html): string
+    {
+        $previous = libxml_use_internal_errors(true);
+        $document = new DOMDocument('1.0', 'UTF-8');
+        $document->loadHTML(
+            '<!doctype html><html><body><div id="privacy-policy-root">'.$html.'</div></body></html>',
+            LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING
+        );
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+
+        $root = $document->getElementById('privacy-policy-root');
+        if (! $root instanceof DOMElement) {
+            return '';
+        }
+
+        static::sanitizeChildren($root);
+
+        $output = '';
+        foreach ($root->childNodes as $child) {
+            $output .= $document->saveHTML($child);
+        }
+
+        return $output;
+    }
+
+    private static function sanitizeChildren(DOMNode $parent): void
+    {
+        foreach (iterator_to_array($parent->childNodes) as $child) {
+            if (! $child instanceof DOMElement) {
+                continue;
+            }
+
+            $tag = strtolower($child->tagName);
+            if (in_array($tag, self::DROP_HTML_TAGS, true)) {
+                $parent->removeChild($child);
+
+                continue;
+            }
+
+            static::sanitizeChildren($child);
+
+            if (! in_array($tag, self::ALLOWED_HTML_TAGS, true)) {
+                while ($child->firstChild) {
+                    $parent->insertBefore($child->firstChild, $child);
+                }
+                $parent->removeChild($child);
+
+                continue;
+            }
+
+            foreach (iterator_to_array($child->attributes) as $attribute) {
+                $name = strtolower($attribute->name);
+                $value = trim($attribute->value);
+                $allowed = $name === 'title'
+                    || ($name === 'class' && preg_match('/^[\w\s-]+$/u', $value))
+                    || ($tag === 'a' && $name === 'href' && preg_match('/^(?:https?:\/\/|mailto:|tel:|\/|#)/i', $value));
+
+                if (! $allowed) {
+                    $child->removeAttributeNode($attribute);
+                }
+            }
+        }
     }
 
     public static function updatedAt(): ?string

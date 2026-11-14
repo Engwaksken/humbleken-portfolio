@@ -55,6 +55,28 @@ class PrivacyAndAccountDeletionTest extends TestCase
             ->assertJsonFragment(['updated_at' => now()->toDateString()]);
     }
 
+    public function test_full_html_policy_is_rendered_as_markup_and_unsafe_attributes_are_removed(): void
+    {
+        Settings::set('privacy_policy', <<<'HTML'
+<article class="privacy-policy" onclick="alert(1)">
+  <header><h1>Privacy Policy</h1></header>
+  <section><h2>Introduction</h2><p>Contact <a href="mailto:privacy@example.com">privacy@example.com</a>.</p></section>
+  <p><a href="javascript:alert(1)">Unsafe link</a></p>
+  <script>alert(2)</script>
+</article>
+HTML);
+
+        $this->get('/privacy')
+            ->assertOk()
+            ->assertSee('<article class="privacy-policy">', false)
+            ->assertSee('<section>', false)
+            ->assertSee('<h1>Privacy Policy</h1>', false)
+            ->assertSee('href="mailto:privacy@example.com"', false)
+            ->assertDontSee('onclick=', false)
+            ->assertDontSee('javascript:', false)
+            ->assertDontSee('<script>', false);
+    }
+
     public function test_delete_instructions_page_is_public_and_links_from_the_footer(): void
     {
         $this->get('/account/delete')->assertOk()->assertSee('Delete my account');

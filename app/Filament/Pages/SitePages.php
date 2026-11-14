@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Support\ImageCompressor;
 use App\Support\PageContent;
+use App\Support\PrivacyPolicy;
 use App\Support\Settings;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -91,9 +92,9 @@ class SitePages extends Page
                                     ->description('Content shown on the public /privacy page and in the mobile app. Leave empty to use the generated default policy.')
                                     ->schema([
                                         Textarea::make('privacy_policy')
-                                            ->label('Policy content (Markdown)')
-                                            ->placeholder(\App\Support\PrivacyPolicy::default())
-                                            ->helperText('Use ## for headings and - for bullet points.')
+                                            ->label('Policy content (Markdown or HTML)')
+                                            ->placeholder(PrivacyPolicy::default())
+                                            ->helperText('Use Markdown headings and lists, or paste a full HTML policy. Unsupported or unsafe HTML is removed when displayed.')
                                             ->rows(20)
                                             ->maxLength(50000),
                                     ]),

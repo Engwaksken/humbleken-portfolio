@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/api/api_exception.dart';
+import '../../../core/push/push_messaging.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/widgets/brand.dart';
 import '../../../core/widgets/layout.dart';
@@ -173,14 +174,12 @@ class _NotificationSettingsCard extends ConsumerStatefulWidget {
 class _NotificationSettingsCardState extends ConsumerState<_NotificationSettingsCard> {
   bool _saving = false;
 
-  Future<void> _toggle(bool enabled) async {
+  Future<void> _toggle(String event, String channel, bool enabled) async {
     setState(() => _saving = true);
     final messenger = ScaffoldMessenger.of(context);
     try {
-      await ref.read(authControllerProvider.notifier).setTicketReplyEmails(enabled);
-      messenger.showSnackBar(
-        SnackBar(content: Text(enabled ? 'Ticket reply emails turned on' : 'Ticket reply emails turned off')),
-      );
+      await ref.read(authControllerProvider.notifier).setNotificationPreference(event, channel, enabled);
+      messenger.showSnackBar(SnackBar(content: Text(enabled ? 'Notifications turned on' : 'Notifications turned off')));
     } catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(ApiException.messageOf(e))));
     } finally {
@@ -190,14 +189,44 @@ class _NotificationSettingsCardState extends ConsumerState<_NotificationSettings
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    // Phone notifications are offered only where push works (the Android app).
+    final pushAvailable = ref.watch(pushMessagingProvider) is! NoPushMessaging;
+    final user = widget.user;
+
     return Card(
       margin: EdgeInsets.zero,
-      child: SwitchListTile(
-        secondary: const Icon(Icons.notifications_outlined),
-        title: const Text('Email me about replies to my support tickets'),
-        subtitle: const Text('Important account emails, such as password resets, are always sent.'),
-        value: widget.user.ticketReplyEmails,
-        onChanged: _saving ? null : _toggle,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.notifications_outlined),
+              title: Semantics(header: true, child: Text('Notifications', style: theme.textTheme.titleMedium)),
+              subtitle: const Text('Important account emails, such as password resets, are always sent.'),
+            ),
+            for (final MapEntry(key: event, value: label) in AppUser.notificationEvents.entries) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Text(label, style: theme.textTheme.labelLarge),
+              ),
+              SwitchListTile(
+                dense: true,
+                title: const Text('Email'),
+                value: user.wantsNotification(event, 'mail'),
+                onChanged: _saving ? null : (on) => _toggle(event, 'mail', on),
+              ),
+              if (pushAvailable)
+                SwitchListTile(
+                  dense: true,
+                  title: const Text('Phone notifications'),
+                  value: user.wantsNotification(event, 'app'),
+                  onChanged: _saving ? null : (on) => _toggle(event, 'app', on),
+                ),
+            ],
+          ],
+        ),
       ),
     );
   }

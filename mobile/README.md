@@ -63,6 +63,12 @@ Plain HTTP is allowed only where local development needs it:
   git-ignored. Back them up somewhere safe (a password manager or encrypted drive). Every
   future update must be signed with this upload key. With Play App Signing, Google holds the
   app signing key, and a lost upload key can be reset through Play Console support.
+- **Push notifications (Firebase):** `android/app/google-services.json` (Firebase project
+  `humble-ken`, app `com.humbleken.app`) is git-ignored because the repository is public. Download
+  it again from the Firebase console when building on another machine. The server needs the
+  Firebase service account key, pasted in admin Settings, Mobile app. Customers get a phone
+  notification when I reply to a ticket or change their booking status, and can turn each off
+  on the Account screen. Push is Android only; iOS would need APNs setup.
 - **Version:** bump `version:` in `pubspec.yaml` before each upload. The number after `+` is
   the Android version code and must go up every time (`1.0.0+1`, `1.0.1+2`, ...).
 

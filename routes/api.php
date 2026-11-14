@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ContentController;
+use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\SubmissionController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\ChatbotController;
@@ -52,6 +53,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                 ->middleware('throttle:api-auth')
                 ->name('verification.send');
             Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        });
+
+        // Phones that receive push notifications (Firebase Cloud Messaging).
+        Route::prefix('devices')->name('devices.')->middleware('throttle:api-content')->group(function (): void {
+            Route::post('/', [DeviceController::class, 'store'])->name('store');
+            Route::delete('/', [DeviceController::class, 'destroy'])->name('destroy');
         });
 
         // Support tickets are for verified customers only, as on the website.

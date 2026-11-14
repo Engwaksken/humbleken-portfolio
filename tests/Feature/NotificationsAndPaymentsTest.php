@@ -10,6 +10,7 @@ use App\Models\PushSubscription;
 use App\Models\Service;
 use App\Models\SupportTicket;
 use App\Models\User;
+use App\Notifications\Channels\FcmChannel;
 use App\Notifications\Channels\WebPushChannel;
 use App\Notifications\ClientAutoReply;
 use App\Notifications\EnquiryReceived;
@@ -239,10 +240,11 @@ class NotificationsAndPaymentsTest extends TestCase
             ->assertRedirect();
 
         $ticket = SupportTicket::factory()->for($customer)->create();
-        $this->assertSame([], (new TicketAnswered($ticket))->via($customer->fresh()));
+        // Email is off; phone notifications (managed in the app) are untouched.
+        $this->assertSame([FcmChannel::class], (new TicketAnswered($ticket))->via($customer->fresh()));
 
         $this->actingAs($customer)->put(route('account.notifications.update'), ['preferences' => ['ticket_reply' => ['mail' => '1']]]);
-        $this->assertSame(['mail'], (new TicketAnswered($ticket))->via($customer->fresh()));
+        $this->assertSame(['mail', FcmChannel::class], (new TicketAnswered($ticket))->via($customer->fresh()));
     }
 
     public function test_only_admins_can_register_push_subscriptions(): void

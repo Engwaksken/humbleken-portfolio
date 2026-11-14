@@ -24,10 +24,24 @@ class TicketAnswered extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        // Customers can switch these emails off in their account.
+        // Customers can switch email and phone notifications off in their account.
         return $notifiable instanceof User
-            ? NotificationPreferences::channels($notifiable, 'ticket_reply', ['mail'])
+            ? NotificationPreferences::channels($notifiable, 'ticket_reply', ['mail', 'app'])
             : ['mail'];
+    }
+
+    /**
+     * Phone notification; the reply text stays in the app, behind sign-in.
+     *
+     * @return array{title: string, body: string, data: array<string, string>}
+     */
+    public function toFcm(object $notifiable): array
+    {
+        return [
+            'title' => "New reply on ticket #{$this->ticket->id}",
+            'body' => 'Tap to read the reply.',
+            'data' => ['route' => "/account/tickets/{$this->ticket->id}"],
+        ];
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -132,12 +132,14 @@ confirmation, and the `message` says so. Service details include `indicative_pri
 | POST | `/auth/login` | `email, password, device_name` | 200 `{"token", "user": User}`; 422 on bad credentials |
 | POST | `/auth/forgot-password` | `email` | 202 `{"message"}` (always the same message) |
 | GET | `/auth/user` | – (Bearer) | `{"data": User}` |
-| PUT | `/auth/notification-preferences` | `notification_preferences: {ticket_reply: {mail: bool}}` (Bearer) | `{"data": User}` |
+| PUT | `/auth/notification-preferences` | `notification_preferences: {event: {channel: bool}}` (Bearer); events `ticket_reply`, `booking_update`; channels `mail`, `app` (phone push) | `{"data": User}` |
+| POST | `/devices` | `token` (FCM registration token), `platform?` (Bearer) | 201; the phone receives push notifications |
+| DELETE | `/devices` | `token` (Bearer) | 204; call before `/auth/logout` |
 | POST | `/auth/email/verification-notification` | – (Bearer) | 202 `{"message"}` |
 | POST | `/auth/logout` | – (Bearer) | 204, revokes the current token |
 | DELETE | `/auth/account` | `password` (Bearer) | 204, permanently deletes the account, its tickets and attachments, and linked bookings and enquiries; 422 on a wrong password |
 
-`User`: `{id, name, email, email_verified: bool, notification_preferences: {ticket_reply: {mail: bool}}}`. Administrators cannot sign in through the
+`User`: `{id, name, email, email_verified: bool, notification_preferences: {ticket_reply: {mail: bool, app: bool}, booking_update: {mail: bool, app: bool}}}`. Administrators cannot sign in through the
 API (their accounts are protected by two-factor authentication in the admin panel); the login
 endpoint returns 422 for them.
 

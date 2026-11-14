@@ -104,6 +104,9 @@ class AuthRepository {
   }
 
   Future<void> logout() => _api.post('auth/logout');
+
+  /// Permanently deletes the account and its data on the server.
+  Future<void> deleteAccount(String password) => _api.delete('auth/account', data: {'password': password});
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) => AuthRepository(ref.watch(apiClientProvider)));
@@ -145,6 +148,12 @@ class AuthController extends AsyncNotifier<AppUser?> {
   Future<void> setTicketReplyEmails(bool enabled) async {
     final user = await ref.read(authRepositoryProvider).updateTicketReplyEmails(enabled);
     state = AsyncData(user);
+  }
+
+  /// Deletes the account on the server, then forgets the (now revoked) token.
+  Future<void> deleteAccount(String password) async {
+    await ref.read(authRepositoryProvider).deleteAccount(password);
+    await ref.read(authTokenProvider.notifier).clear();
   }
 
   Future<void> signOut() async {

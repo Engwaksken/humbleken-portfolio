@@ -6,6 +6,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Support\AccountDeletion;
 use App\Support\NotificationPreferences;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
@@ -72,6 +73,24 @@ class AuthController extends Controller
     public function user(Request $request): UserResource
     {
         return new UserResource($request->user());
+    }
+
+    /**
+     * Permanently delete the signed-in customer's account and linked data.
+     */
+    public function deleteAccount(Request $request): Response
+    {
+        $request->validate(['password' => ['required', 'string']]);
+
+        $user = $request->user();
+
+        if (! Hash::check((string) $request->input('password'), $user->password)) {
+            throw ValidationException::withMessages(['password' => 'The password is incorrect.']);
+        }
+
+        AccountDeletion::delete($user);
+
+        return response()->noContent();
     }
 
     /**

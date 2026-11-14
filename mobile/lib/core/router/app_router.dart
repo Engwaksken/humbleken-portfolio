@@ -11,6 +11,7 @@ import '../../features/booking/presentation/booking_screen.dart';
 import '../../features/chatbot/presentation/chat_screen.dart';
 import '../../features/contact/presentation/contact_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/legal/privacy_policy_screen.dart';
 import '../../features/pages/presentation/generic_page_screen.dart';
 import '../../features/projects/presentation/project_detail_screen.dart';
 import '../../features/projects/presentation/projects_screen.dart';
@@ -125,6 +126,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             BookingScreen(initialServiceId: int.tryParse(state.uri.queryParameters['service'] ?? '')),
       ),
       GoRoute(path: Routes.contact, builder: (_, _) => const ContactScreen()),
+      GoRoute(path: Routes.privacy, builder: (_, _) => const PrivacyPolicyScreen()),
     ],
   );
   ref.onDispose(router.dispose);

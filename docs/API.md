@@ -97,6 +97,10 @@ absolute URLs or `null`. Timestamps are ISO 8601 strings.
 `steps` holds the approach steps for `approach`, the "what happens next" list for `booking`,
 and is empty for other pages.
 
+### `GET /privacy-policy`
+
+`{"data": {"content": "Markdown", "updated_at": "2026-11-14" | null, "url": "https://.../privacy"}}`
+
 ### Services, projects, articles
 
 - `ServiceSummary`: `{id, slug, name, summary, category: {id, name, slug} | null, image_url}`
@@ -131,6 +135,7 @@ confirmation, and the `message` says so. Service details include `indicative_pri
 | PUT | `/auth/notification-preferences` | `notification_preferences: {ticket_reply: {mail: bool}}` (Bearer) | `{"data": User}` |
 | POST | `/auth/email/verification-notification` | – (Bearer) | 202 `{"message"}` |
 | POST | `/auth/logout` | – (Bearer) | 204, revokes the current token |
+| DELETE | `/auth/account` | `password` (Bearer) | 204, permanently deletes the account, its tickets and attachments, and linked bookings and enquiries; 422 on a wrong password |
 
 `User`: `{id, name, email, email_verified: bool, notification_preferences: {ticket_reply: {mail: bool}}}`. Administrators cannot sign in through the
 API (their accounts are protected by two-factor authentication in the admin panel); the login

@@ -10,6 +10,7 @@ abstract final class Routes {
   static const booking = '/booking';
   static const contact = '/contact';
   static const assistant = '/assistant';
+  static const privacy = '/privacy';
 
   static const register = '/account/register';
   static const forgotPassword = '/account/forgot-password';

@@ -68,6 +68,8 @@ class _SignedInView extends ConsumerWidget {
         if (!user.emailVerified) ...[const SizedBox(height: 16), const _VerifyEmailBanner()],
         const SizedBox(height: 16),
         _NotificationSettingsCard(user: user),
+        const SizedBox(height: 16),
+        const _AccountLinksCard(),
         const SizedBox(height: 24),
         const SectionHeading(title: 'Support tickets'),
       ],
@@ -197,6 +199,122 @@ class _NotificationSettingsCardState extends ConsumerState<_NotificationSettings
         value: widget.user.ticketReplyEmails,
         onChanged: _saving ? null : _toggle,
       ),
+    );
+  }
+}
+
+/// Privacy policy link and permanent account deletion (required by Google Play).
+class _AccountLinksCard extends ConsumerWidget {
+  const _AccountLinksCard();
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final deleted = await showDialog<bool>(context: context, builder: (_) => const _DeleteAccountDialog());
+    if (deleted == true && context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Your account and its data have been permanently deleted.')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final error = Theme.of(context).colorScheme.error;
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.privacy_tip_outlined),
+            title: const Text('Privacy policy'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push(Routes.privacy),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Icon(Icons.delete_forever_outlined, color: error),
+            title: Text('Delete my account', style: TextStyle(color: error)),
+            subtitle: const Text('Permanently delete your account and its data'),
+            onTap: () => _confirmDelete(context),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeleteAccountDialog extends ConsumerStatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  ConsumerState<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
+  final _password = TextEditingController();
+  bool _busy = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _delete() async {
+    if (_password.text.isEmpty) {
+      setState(() => _error = 'Enter your password to confirm.');
+      return;
+    }
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await ref.read(authControllerProvider.notifier).deleteAccount(_password.text);
+      if (mounted) Navigator.pop(context, true);
+    } on ApiException catch (e) {
+      if (mounted) setState(() => _error = e.fieldError('password') ?? e.message);
+    } catch (e) {
+      if (mounted) setState(() => _error = ApiException.messageOf(e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return AlertDialog(
+      title: const Text('Delete your account?'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'This permanently deletes your account, your support tickets and attachments, and the bookings '
+              'and enquiries linked to your account. It cannot be undone.',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _password,
+              obscureText: true,
+              autofocus: true,
+              autofillHints: const [AutofillHints.password],
+              decoration: InputDecoration(labelText: 'Your password', errorText: _error),
+              onSubmitted: (_) => _busy ? null : _delete(),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: _busy ? null : () => Navigator.pop(context, false), child: const Text('Cancel')),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: scheme.error, foregroundColor: scheme.onError),
+          onPressed: _busy ? null : _delete,
+          child: Text(_busy ? 'Deleting…' : 'Delete my account'),
+        ),
+      ],
     );
   }
 }

@@ -118,6 +118,11 @@
     </header>
 
     <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
+        @if (session('account_deleted'))
+            <div class="container-site pt-6">
+                <p role="status" class="card px-5 py-4 font-semibold">Your account and its data have been permanently deleted.</p>
+            </div>
+        @endif
         {{ $slot }}
     </main>
 
@@ -155,7 +160,7 @@
         </div>
         <div class="border-t border-white/10">
             <div class="container-site flex flex-col gap-3 py-5 pb-20 sm:flex-row sm:items-center sm:justify-between sm:pb-5">
-                <p>© {{ now()->year }} {{ $brandName }}. All rights reserved.</p>
+                <p>© {{ now()->year }} {{ $brandName }}. All rights reserved. <a class="{{ $footerLink }} ml-2 underline-offset-4 hover:underline" href="{{ route('privacy') }}">Privacy policy</a></p>
                 <a class="{{ $footerLink }} inline-flex w-fit items-center gap-2" href="{{ route('contact') }}"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Get in touch</a>
             </div>
         </div>

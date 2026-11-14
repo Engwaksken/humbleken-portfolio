@@ -146,6 +146,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
                     SubmitButton(label: 'Create account', busy: _busy, onPressed: _submit),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: () => context.push(Routes.privacy),
+                      child: const Text('By creating an account you agree to the privacy policy. Read it here.'),
+                    ),
                   ],
                 ),
               ),

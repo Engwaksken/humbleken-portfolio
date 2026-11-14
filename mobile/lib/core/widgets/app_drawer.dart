@@ -86,6 +86,7 @@ class AppDrawer extends ConsumerWidget {
                 item(Icons.mail_outline, 'Contact', Routes.contact),
                 const Divider(),
                 item(Icons.person_outline, 'Account', Routes.account, tab: true),
+                item(Icons.privacy_tip_outlined, 'Privacy policy', Routes.privacy),
               ],
             ),
           ),

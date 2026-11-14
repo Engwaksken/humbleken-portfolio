@@ -8,6 +8,7 @@ use App\Support\Currency;
 use App\Support\ImageCompressor;
 use App\Support\MailSettings;
 use App\Support\PaymentSettings;
+use App\Support\PrivacyPolicy;
 use App\Support\Settings as SettingsStore;
 use App\Support\Theme;
 use BackedEnum;
@@ -473,6 +474,17 @@ class Settings extends Page
                                             ->maxLength(5000),
                                     ]),
                             ]),
+                        Tab::make('Privacy policy')
+                            ->icon(Heroicon::OutlinedShieldCheck)
+                            ->schema([
+                                Text::make('Shown at /privacy and in the mobile app. Google Play needs this page for the app listing. Leave empty to use the default policy, which describes what this site and app collect.'),
+                                Textarea::make('privacy_policy')
+                                    ->label('Privacy policy (Markdown)')
+                                    ->placeholder(fn (): string => PrivacyPolicy::default())
+                                    ->helperText('Use ## for headings and - for bullet points. Copy the default text from the placeholder to start from it.')
+                                    ->rows(20)
+                                    ->maxLength(50000),
+                            ]),
                         Tab::make('Maintenance')
                             ->icon(Heroicon::OutlinedWrenchScrewdriver)
                             ->schema([
@@ -614,6 +626,10 @@ class Settings extends Page
             if (is_string($previous) && $previous !== '' && $previous !== $path) {
                 Storage::disk('public')->delete($previous);
             }
+        }
+
+        if (array_key_exists('privacy_policy', $state) && trim((string) $state['privacy_policy']) !== trim((string) SettingsStore::get('privacy_policy'))) {
+            SettingsStore::set('privacy_policy_updated_at', now()->toDateString());
         }
 
         foreach ($state as $key => $value) {

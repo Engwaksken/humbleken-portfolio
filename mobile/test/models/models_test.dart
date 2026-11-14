@@ -3,6 +3,7 @@ import 'package:humbleken_portfolio/core/api/paginated.dart';
 import 'package:humbleken_portfolio/features/articles/data/article_models.dart';
 import 'package:humbleken_portfolio/features/auth/data/auth_repository.dart';
 import 'package:humbleken_portfolio/features/home/data/home_models.dart';
+import 'package:humbleken_portfolio/features/legal/privacy_policy_screen.dart';
 import 'package:humbleken_portfolio/features/services/data/service_models.dart';
 import 'package:humbleken_portfolio/features/site/data/site_models.dart';
 import 'package:humbleken_portfolio/features/tickets/data/ticket_models.dart';
@@ -217,6 +218,19 @@ void main() {
       final site = SiteConfig.fromJson({'brand_name': 'HumbleKen'});
       expect(site.currency.code, 'UGX');
       expect(site.payments.isEmpty, isTrue);
+    });
+  });
+
+  group('PrivacyPolicy.fromJson', () {
+    test('parses content, date and link', () {
+      final policy = PrivacyPolicy.fromJson({
+        'content': '## Information I collect',
+        'updated_at': '2026-11-14',
+        'url': 'https://www.humbleken.com/privacy',
+      });
+      expect(policy.content, startsWith('## Information'));
+      expect(policy.updatedAt, DateTime(2026, 11, 14));
+      expect(policy.url, 'https://www.humbleken.com/privacy');
     });
   });
 

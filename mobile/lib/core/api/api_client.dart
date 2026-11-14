@@ -22,6 +22,8 @@ class ApiClient {
 
   Future<Json> put(String path, {Object? data}) => _send(() => _dio.put<dynamic>(path, data: data));
 
+  Future<Json> delete(String path, {Object? data}) => _send(() => _dio.delete<dynamic>(path, data: data));
+
   Future<Json> _send(Future<Response<dynamic>> Function() request) async {
     try {
       final response = await request();

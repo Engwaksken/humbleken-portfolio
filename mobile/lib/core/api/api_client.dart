@@ -6,7 +6,7 @@ import '../config/app_config.dart';
 import '../utils/json.dart';
 import 'api_exception.dart';
 
-final appConfigProvider = Provider<AppConfig>((ref) => AppConfig.fromEnvironment());
+final appConfigProvider = Provider<AppConfig>((ref) => const AppConfig());
 
 /// Thin wrapper over Dio that talks to `/api/v1`, attaches the bearer token,
 /// and converts failures into [ApiException]s.

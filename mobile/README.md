@@ -5,59 +5,21 @@ under `/api/v1`. [`docs/API.md`](../docs/API.md) is the contract it is built aga
 
 Targets: Android, iOS and web. Tested with Flutter 3.44 (Dart 3.12).
 
-## Running against a local Laravel server
+## Running the app
 
-1. Start the API from the repository root:
-
-   ```bash
-   php artisan serve            # http://127.0.0.1:8000
-   ```
-
-   To reach it from a physical device on your network, bind to all interfaces instead:
-   `php artisan serve --host=0.0.0.0 --port=8000`.
-
-2. Install packages and run the app from `mobile/`:
-
-   ```bash
-   cd mobile
-   flutter pub get
-   flutter run                  # pick a device when prompted
-   ```
-
-### API base URL
-
-The app reads the server origin (without `/api/v1`) from a compile-time define:
+The app always talks to the live site, **https://www.humbleken.com** (`AppConfig.productionUrl`
+in `lib/core/config/app_config.dart`), over HTTPS. There is no local server option.
 
 ```bash
-flutter run --dart-define=API_BASE_URL=http://192.168.1.20:8000
-flutter build web --dart-define=API_BASE_URL=https://staging.example.com
+cd mobile
+flutter pub get
+flutter run                  # pick a device when prompted
 ```
-
-When `API_BASE_URL` is not set, **release builds** (`flutter build apk/appbundle/ipa/web`,
-`flutter run --release`) use the live site, **https://www.humbleken.com**. Debug and profile
-builds default to a local server:
-
-| Platform (debug/profile) | Default | Why |
-| --- | --- | --- |
-| Android emulator | `http://10.0.2.2:8000` | `10.0.2.2` is the emulator's alias for the host machine's `127.0.0.1`. `127.0.0.1` inside the emulator is the emulator itself. |
-| iOS simulator, web, desktop | `http://127.0.0.1:8000` | Same machine as `php artisan serve`. |
-
-On a **physical Android/iOS device**, neither default works. Pass your computer's LAN IP with
-`--dart-define` and serve Laravel on `0.0.0.0`.
-
-Plain HTTP is allowed only where local development needs it:
-
-- **Android:** `usesCleartextTraffic` is set in `android/app/src/debug/AndroidManifest.xml`, so
-  only debug builds allow it. Release builds require HTTPS.
-- **iOS:** `NSAllowsLocalNetworking` permits local addresses. Public hosts still require HTTPS.
-- **Web:** the browser enforces CORS. The Laravel app must allow the Flutter dev-server origin
-  (e.g. `http://localhost:<port>`) for `api/v1/*` in `config/cors.php`. To get a stable port,
-  run `flutter run -d chrome --web-port 5000`.
 
 ## Play Store release
 
 - **Application ID:** `com.humbleken.app`. It can never change after the first upload.
-- **Server:** release builds use https://www.humbleken.com. Deploy the Laravel site first, so
+- **Server:** the app uses https://www.humbleken.com. Deploy the Laravel site first, so
   `/api/v1/privacy-policy` and `DELETE /api/v1/auth/account` exist on the live server.
 - **Signing:** `android/key.properties` points at `android/upload-keystore.jks`. Both are
   git-ignored. Back them up somewhere safe (a password manager or encrypted drive). Every
@@ -170,7 +132,7 @@ lib/
   core/
     api/                       ApiClient (Dio), ApiException, Paginated/PageMeta, PaginatedNotifier
     auth/                      TokenStore (secure storage) + AuthToken notifier
-    config/                    AppConfig (API_BASE_URL) and device name
+    config/                    AppConfig (live server URL) and device name
     router/                    routes, GoRouter config, bottom-navigation shell
     theme/                     theme from brand colours, contrast helpers
     utils/                     JSON helpers, validators, formatting, external links

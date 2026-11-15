@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\TicketStatus;
 use App\Filament\Resources\SupportTicketResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\SupportTicket;
 use App\Models\TicketReply;
 use App\Notifications\TicketAnswered;
@@ -91,13 +92,13 @@ class SupportTicketResource extends Resource
             ->filters([
                 SelectFilter::make('status')->options(TicketStatus::class),
             ])
-            ->actions([
+            ->actions(IconActions::make([
                 ViewAction::make()
                     ->label('Conversation')
                     ->modalWidth(Width::ThreeExtraLarge),
                 static::replyAction(),
                 static::changeStatusAction(),
-            ]);
+            ]));
     }
 
     public static function replyAction(): Action

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\Tag;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
@@ -58,10 +59,10 @@ class TagResource extends Resource
                 TextColumn::make('articles_count')->counts('articles')->label('Articles')->sortable(),
             ])
             ->defaultSort('name')
-            ->actions([
+            ->actions(IconActions::make([
                 EditAction::make(),
                 DeleteAction::make(),
-            ]);
+            ]));
     }
 
     public static function getPages(): array

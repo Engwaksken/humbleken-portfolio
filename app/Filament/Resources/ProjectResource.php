@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\PublicationStatus;
 use App\Filament\Resources\ProjectResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\Project;
 use App\Support\ImageCompressor;
 use BackedEnum;
@@ -134,7 +135,7 @@ class ProjectResource extends Resource
             ->filters([
                 SelectFilter::make('status')->options(PublicationStatus::class),
             ])
-            ->actions([
+            ->actions(IconActions::make([
                 Action::make('viewPublic')
                     ->label('View on site')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
@@ -144,7 +145,7 @@ class ProjectResource extends Resource
                     ->visible(fn (Project $record): bool => $record->isPublished()),
                 EditAction::make()->modalWidth(Width::FiveExtraLarge),
                 DeleteAction::make(),
-            ])
+            ]))
             ->bulkActions([
                 DeleteBulkAction::make(),
             ]);

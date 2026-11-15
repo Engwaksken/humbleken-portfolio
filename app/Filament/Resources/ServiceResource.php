@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\HeroImagePosition;
 use App\Filament\Resources\ServiceResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\Service;
 use App\Support\Currency;
 use App\Support\ImageCompressor;
@@ -134,10 +135,10 @@ class ServiceResource extends Resource
                 TextColumn::make('sort_order')->sortable(),
             ])
             ->defaultSort('sort_order')
-            ->actions([
+            ->actions(IconActions::make([
                 EditAction::make()->modalWidth(Width::ThreeExtraLarge),
                 DeleteAction::make(),
-            ])
+            ]))
             ->bulkActions([
                 DeleteBulkAction::make(),
             ]);

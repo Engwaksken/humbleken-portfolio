@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\EnquiryStatus;
 use App\Filament\Resources\EnquiryResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\Enquiry;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
@@ -83,10 +84,11 @@ class EnquiryResource extends Resource
             ->filters([
                 SelectFilter::make('status')->options(EnquiryStatus::class),
             ])
-            ->actions([
+            ->actions(IconActions::make([
                 ViewAction::make()->modalWidth(Width::ThreeExtraLarge),
                 EditAction::make()
                     ->label('Update status')
+                    ->icon(Heroicon::OutlinedArrowPath)
                     ->modalHeading('Update enquiry status')
                     ->using(function (Enquiry $record, array $data): Enquiry {
                         // Status is not mass-assignable (public submissions must not set it), so set it explicitly.
@@ -96,7 +98,7 @@ class EnquiryResource extends Resource
                         return $record;
                     }),
                 DeleteAction::make(),
-            ]);
+            ]));
     }
 
     /**

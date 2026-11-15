@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Support\IconActions;
 use App\Support\Backups as BackupStore;
 use App\Support\Settings as SettingsStore;
 use BackedEnum;
@@ -107,7 +108,7 @@ class Backups extends Page implements HasTable
             ])
             ->emptyStateHeading('No backups yet')
             ->emptyStateDescription('Use "Create backup" to make the first one.')
-            ->actions([
+            ->actions(IconActions::make([
                 Action::make('download')
                     ->icon(Heroicon::OutlinedArrowDownTray)
                     ->action(fn (array $record): StreamedResponse => Storage::disk($record['disk'])
@@ -121,6 +122,6 @@ class Backups extends Page implements HasTable
                         BackupStore::delete($record['name'], $record['disk']);
                         Notification::make()->success()->title('Backup deleted')->send();
                     }),
-            ]);
+            ]));
     }
 }

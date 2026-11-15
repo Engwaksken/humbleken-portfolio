@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServiceCategoryResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\ServiceCategory;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
@@ -60,10 +61,10 @@ class ServiceCategoryResource extends Resource
                 TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('sort_order')
-            ->actions([
+            ->actions(IconActions::make([
                 EditAction::make(),
                 DeleteAction::make(),
-            ])
+            ]))
             ->bulkActions([
                 DeleteBulkAction::make(),
             ]);

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\BookingStatus;
 use App\Filament\Resources\BookingRequestResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\BookingRequest;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
@@ -68,9 +69,9 @@ class BookingRequestResource extends Resource
             TextColumn::make('preferred_at')->label('Preferred time')->dateTime()->sortable(),
             TextColumn::make('name')->searchable(), TextColumn::make('email')->searchable(),
             TextColumn::make('service.name')->label('Service'), TextColumn::make('status')->badge()->sortable(),
-        ])->defaultSort('created_at', 'desc')->actions([
+        ])->defaultSort('created_at', 'desc')->actions(IconActions::make([
             ViewAction::make()->modalWidth(Width::ThreeExtraLarge),
-            EditAction::make()->label('Update status')->using(function (BookingRequest $record, array $data): BookingRequest {
+            EditAction::make()->label('Update status')->icon(Heroicon::OutlinedArrowPath)->using(function (BookingRequest $record, array $data): BookingRequest {
                 $record->status = $data['status'];
                 $record->customer_note = $data['customer_note'] ?? null;
                 $record->save();
@@ -78,7 +79,7 @@ class BookingRequestResource extends Resource
                 return $record;
             }),
             DeleteAction::make(),
-        ]);
+        ]));
     }
 
     public static function getRecordUrl(BookingRequest $record): string

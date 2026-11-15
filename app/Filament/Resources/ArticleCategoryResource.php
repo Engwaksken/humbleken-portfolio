@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ArticleCategoryResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\ArticleCategory;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
@@ -57,10 +58,10 @@ class ArticleCategoryResource extends Resource
                 TextColumn::make('sort_order')->sortable(),
             ])
             ->defaultSort('sort_order')
-            ->actions([
+            ->actions(IconActions::make([
                 EditAction::make(),
                 DeleteAction::make(),
-            ]);
+            ]));
     }
 
     public static function getPages(): array

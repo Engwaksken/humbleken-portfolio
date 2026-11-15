@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\HeroImagePosition;
 use App\Enums\PublicationStatus;
 use App\Filament\Resources\ArticleResource\Pages;
+use App\Filament\Support\IconActions;
 use App\Models\Article;
 use App\Support\ImageCompressor;
 use BackedEnum;
@@ -141,7 +142,7 @@ class ArticleResource extends Resource
                 SelectFilter::make('status')->options(PublicationStatus::class),
                 SelectFilter::make('article_category_id')->label('Category')->relationship('category', 'name'),
             ])
-            ->actions([
+            ->actions(IconActions::make([
                 Action::make('viewPublic')
                     ->label('View on site')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
@@ -151,7 +152,7 @@ class ArticleResource extends Resource
                     ->visible(fn (Article $record): bool => $record->isPublished()),
                 EditAction::make()->modalWidth(Width::FiveExtraLarge),
                 DeleteAction::make(),
-            ])
+            ]))
             ->bulkActions([
                 DeleteBulkAction::make(),
             ]);

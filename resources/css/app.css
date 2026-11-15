@@ -53,6 +53,15 @@
     }
     body {
         overflow-x: hidden;
+        /* Long words, URLs and email addresses wrap instead of pushing the page wider than the phone. */
+        overflow-wrap: break-word;
+    }
+    /* Form fields (especially date and time pickers) never force a minimum width wider than their column. */
+    input,
+    select,
+    textarea {
+        min-width: 0;
+        max-width: 100%;
     }
     /* Links are styled by colour and weight, never underlined by default. */
     a {
@@ -60,7 +69,9 @@
     }
     img,
     video,
-    iframe {
+    iframe,
+    embed,
+    object {
         max-width: 100%;
     }
     :focus-visible {
@@ -208,6 +219,20 @@
     .article-body :where(hr) { @apply my-12 border-line; }
     .article-body :where(li)::marker { @apply text-brand; }
     .article-body :where(img) { @apply w-full border border-line; }
+
+    /*
+     * Content from the admin editor (articles, privacy policy, Markdown) can hold long URLs, wide
+     * tables and code. On phones it wraps or scrolls inside its own box, never the whole page.
+     */
+    .article-body,
+    .markdown-body { overflow-wrap: anywhere; }
+    .article-body :where(table) { @apply mt-6 block w-full overflow-x-auto text-sm; }
+    .article-body :where(th, td) { @apply border border-line px-3 py-2 text-left; }
+    .article-body :where(pre) { @apply mt-5 max-w-full overflow-x-auto; }
+    .article-body :where(pre, table) { overflow-wrap: normal; }
+    .markdown-body :where(pre, table) { overflow-wrap: normal; }
+    .article-body :where(iframe, video) { @apply mt-6 w-full; }
+    .article-body :where(iframe) { aspect-ratio: 16 / 9; height: auto; }
 }
 
 /* Chat message content (assistant replies may contain line breaks and lists). */

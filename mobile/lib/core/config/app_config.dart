@@ -8,30 +8,51 @@ class AppConfig {
   const AppConfig({required this.apiBaseUrl});
 
   /// Origin of the Laravel app, without the `/api/v1` suffix,
-  /// e.g. `http://127.0.0.1:8000`.
+  /// e.g. `https://www.humbleken.com`.
   final String apiBaseUrl;
 
   /// Base URL every API request is resolved against.
   String get apiV1Url => '${_trimSlash(apiBaseUrl)}/api/v1';
 
-  static const String _defined = String.fromEnvironment('API_BASE_URL');
-
-  /// The live website, used by release builds.
+  /// The live website. Every build talks to it unless told otherwise.
   static const String productionUrl = 'https://www.humbleken.com';
 
-  /// Uses `--dart-define=API_BASE_URL=...` when provided. Otherwise release builds
-  /// use the live site, and debug/profile builds use a local `php artisan serve`:
-  /// `10.0.2.2:8000` on Android (the emulator's alias for the host machine's
-  /// loopback) and `127.0.0.1:8000` everywhere else.
+  /// `--dart-define=API_BASE_URL=https://staging.example.com` points the app at any server.
+  static const String _definedUrl = String.fromEnvironment('API_BASE_URL');
+
+  /// `--dart-define=LOCAL_API=true` points the app at a local `php artisan serve`.
+  static const bool _useLocal = bool.fromEnvironment('LOCAL_API');
+
+  /// Resolution order:
+  /// 1. `API_BASE_URL`, when set.
+  /// 2. A local server, when `LOCAL_API=true` (see [localBaseUrl]).
+  /// 3. The live site, for debug, profile and release builds alike.
   factory AppConfig.fromEnvironment() {
-    if (_defined.isNotEmpty) return const AppConfig(apiBaseUrl: _defined);
     return AppConfig(
-      apiBaseUrl: defaultBaseUrl(isWeb: kIsWeb, platform: defaultTargetPlatform, isRelease: kReleaseMode),
+      apiBaseUrl: resolveBaseUrl(
+        definedUrl: _definedUrl,
+        useLocal: _useLocal,
+        isWeb: kIsWeb,
+        platform: defaultTargetPlatform,
+      ),
     );
   }
 
-  static String defaultBaseUrl({required bool isWeb, required TargetPlatform platform, bool isRelease = false}) {
-    if (isRelease) return productionUrl;
+  static String resolveBaseUrl({
+    String definedUrl = '',
+    bool useLocal = false,
+    required bool isWeb,
+    required TargetPlatform platform,
+  }) {
+    final trimmed = definedUrl.trim();
+    if (trimmed.isNotEmpty) return trimmed;
+    if (useLocal) return localBaseUrl(isWeb: isWeb, platform: platform);
+    return productionUrl;
+  }
+
+  /// Local `php artisan serve`: `10.0.2.2:8000` on the Android emulator (its alias
+  /// for the host machine's loopback) and `127.0.0.1:8000` everywhere else.
+  static String localBaseUrl({required bool isWeb, required TargetPlatform platform}) {
     if (!isWeb && platform == TargetPlatform.android) return 'http://10.0.2.2:8000';
     return 'http://127.0.0.1:8000';
   }

@@ -67,19 +67,38 @@ void main() {
   });
 
   group('config', () {
-    test('Android emulator uses the host loopback alias', () {
-      expect(AppConfig.defaultBaseUrl(isWeb: false, platform: TargetPlatform.android), 'http://10.0.2.2:8000');
-      expect(AppConfig.defaultBaseUrl(isWeb: true, platform: TargetPlatform.android), 'http://127.0.0.1:8000');
-      expect(AppConfig.defaultBaseUrl(isWeb: false, platform: TargetPlatform.iOS), 'http://127.0.0.1:8000');
-      for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
-        expect(
-          AppConfig.defaultBaseUrl(isWeb: false, platform: platform, isRelease: true),
-          'https://www.humbleken.com',
-        );
+    test('every platform uses the live site by default', () {
+      for (final isWeb in [false, true]) {
+        for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+          expect(AppConfig.resolveBaseUrl(isWeb: isWeb, platform: platform), 'https://www.humbleken.com');
+        }
       }
+    });
+
+    test('API_BASE_URL overrides everything', () {
       expect(
-        AppConfig.defaultBaseUrl(isWeb: true, platform: TargetPlatform.android, isRelease: true),
-        'https://www.humbleken.com',
+        AppConfig.resolveBaseUrl(
+          definedUrl: ' https://staging.example.test ',
+          useLocal: true,
+          isWeb: false,
+          platform: TargetPlatform.android,
+        ),
+        'https://staging.example.test',
+      );
+    });
+
+    test('LOCAL_API uses the host loopback alias on the Android emulator', () {
+      expect(
+        AppConfig.resolveBaseUrl(useLocal: true, isWeb: false, platform: TargetPlatform.android),
+        'http://10.0.2.2:8000',
+      );
+      expect(
+        AppConfig.resolveBaseUrl(useLocal: true, isWeb: true, platform: TargetPlatform.android),
+        'http://127.0.0.1:8000',
+      );
+      expect(
+        AppConfig.resolveBaseUrl(useLocal: true, isWeb: false, platform: TargetPlatform.iOS),
+        'http://127.0.0.1:8000',
       );
     });
 

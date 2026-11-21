@@ -77,6 +77,10 @@ class ServiceResource extends Resource
                                     ->minValue(0)
                                     ->prefix(fn (): string => Currency::code())
                                     ->helperText('In the site currency, set in Settings, Payments.'),
+                                Toggle::make('show_price')
+                                    ->label('Show the indicative price to visitors')
+                                    ->default(true)
+                                    ->helperText('Turn off to keep the price on record but hide it on the website and in the app.'),
                             ]),
                         Tab::make('Images & video')
                             ->icon(Heroicon::OutlinedPhoto)
@@ -130,7 +134,12 @@ class ServiceResource extends Resource
                 TextColumn::make('delivery_method'),
                 TextColumn::make('estimated_duration'),
                 TextColumn::make('indicative_price')
-                    ->formatStateUsing(fn ($state): ?string => Currency::format($state)),
+                    ->formatStateUsing(fn ($state): ?string => Currency::format($state))
+                    ->description(fn (Service $record): ?string => $record->indicative_price !== null && ! $record->show_price ? 'Hidden' : null),
+                IconColumn::make('show_price')
+                    ->label('Price shown')
+                    ->boolean()
+                    ->toggleable(),
                 IconColumn::make('is_active')->boolean(),
                 TextColumn::make('sort_order')->sortable(),
             ])

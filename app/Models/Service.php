@@ -31,6 +31,7 @@ class Service extends Model
         'delivery_method',
         'estimated_duration',
         'indicative_price',
+        'show_price',
         'is_active',
         'sort_order',
         'sample_image',
@@ -49,17 +50,30 @@ class Service extends Model
             'is_active' => 'boolean',
             'sort_order' => 'integer',
             'indicative_price' => 'decimal:2',
+            'show_price' => 'boolean',
             'image_position' => HeroImagePosition::class,
         ];
     }
 
-    /** Where the featured image goes; services default to beside the title. */
     /** The indicative price in the site currency, e.g. "UGX 150,000". */
     public function formattedPrice(): ?string
     {
         return Currency::format($this->indicative_price);
     }
 
+    /** Whether visitors should see the indicative price: one is set and the admin has not hidden it. */
+    public function hasVisiblePrice(): bool
+    {
+        return $this->indicative_price !== null && ($this->show_price ?? true);
+    }
+
+    /** The formatted price for public pages and the API, or null when hidden or not set. */
+    public function publicPrice(): ?string
+    {
+        return $this->hasVisiblePrice() ? $this->formattedPrice() : null;
+    }
+
+    /** Where the featured image goes; services default to beside the title. */
     public function featuredImagePosition(): HeroImagePosition
     {
         return $this->image_position ?? HeroImagePosition::Right;

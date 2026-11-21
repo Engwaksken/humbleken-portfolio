@@ -122,7 +122,8 @@ and is empty for other pages.
 
 When automatic replies are on (admin Settings, Auto replies), the client is also emailed a
 confirmation, and the `message` says so. Service details include `indicative_price` (number),
-`indicative_price_formatted` (e.g. "UGX 250,000") and `currency`.
+`indicative_price_formatted` (e.g. "UGX 250,000") and `currency`. Both price fields are `null`
+when no price is set or the admin has hidden the price for that service.
 
 ## Customer authentication (rate limited: 6/min per IP)
 

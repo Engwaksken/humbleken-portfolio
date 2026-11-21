@@ -26,6 +26,7 @@ class ServiceFactory extends Factory
             'delivery_method' => fake()->optional()->randomElement(['Remote', 'On-site', 'Hybrid']),
             'estimated_duration' => fake()->optional()->randomElement(['1 hour', '1 day', '3 days', '1 week']),
             'indicative_price' => fake()->optional()->randomFloat(2, 50, 5000),
+            'show_price' => true,
             'is_active' => true,
             'sort_order' => fake()->numberBetween(0, 100),
         ];

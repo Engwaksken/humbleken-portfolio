@@ -38,9 +38,9 @@ class ServiceResource extends JsonResource
                 'description' => $this->description,
                 'delivery_method' => $this->delivery_method,
                 'estimated_duration' => $this->estimated_duration,
-                'indicative_price' => $this->indicative_price,
+                'indicative_price' => $this->hasVisiblePrice() ? $this->indicative_price : null,
                 'currency' => Currency::code(),
-                'indicative_price_formatted' => $this->formattedPrice(),
+                'indicative_price_formatted' => $this->publicPrice(),
                 'video_embed_url' => $this->sampleVideoEmbedUrl(),
             ]),
         ];

@@ -65,6 +65,25 @@ class NotificationsAndPaymentsTest extends TestCase
             ->assertSee('UGX 250,000');
     }
 
+    public function test_admin_can_hide_the_indicative_price(): void
+    {
+        $service = Service::factory()->create(['indicative_price' => 250000, 'show_price' => false, 'is_active' => true]);
+
+        $this->get(route('services.show', $service->slug))
+            ->assertOk()
+            ->assertDontSee('UGX 250,000')
+            ->assertDontSee('Indicative price');
+
+        $this->get(route('services.index'))
+            ->assertOk()
+            ->assertDontSee('UGX 250,000');
+
+        $this->getJson("/api/v1/services/{$service->slug}")
+            ->assertOk()
+            ->assertJsonPath('data.indicative_price', null)
+            ->assertJsonPath('data.indicative_price_formatted', null);
+    }
+
     public function test_enquiry_sends_an_automatic_reply_to_the_client(): void
     {
         Notification::fake();
